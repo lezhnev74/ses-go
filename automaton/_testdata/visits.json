@@ -1,0 +1,12 @@
+[
+  {"id": "wd1", "name": "visit", "time": 1650900000, "section": "content", "page": "welcome.html", "country": "ru", "session": "s1"},
+  {"id": "h4w", "name": "visit", "time": 1650900001, "section": "content", "page": "blog.html", "country": "ru", "session": "s1"},
+  {"id": "eh3", "name": "visit", "time": 1650900002, "section": "shop", "page": "products/cups.html", "country": "ru", "session": "s1"},
+  {"id": "s4g", "name": "visit", "time": 1650900003, "section": "content", "page": "welcome.html", "country": "uk", "session": "s2"},
+  {"id": "b23", "name": "visit", "time": 1650900004, "section": "content", "page": "careers.html", "country": "uk", "session": "s2"},
+  {"id": "na9", "name": "visit", "time": 1650900005, "section": "content", "page": "delivery.html", "country": "uk", "session": "s2"},
+  {"id": "43g", "name": "visit", "time": 1650900006, "section": "shop", "page": "checkout.html", "country": "ru", "session": "s1"},
+  {"id": "3h2", "name": "visit", "time": 1650900007, "section": "shop", "page": "thank-you.html", "country": "ru", "session": "s1"},
+  {"id": "0gk", "name": "visit", "time": 1650900008, "section": "shop", "page": "products/food.html", "country": "uk", "session": "s2"},
+  {"id": "g22", "name": "visit", "time": 1650900009, "section": "shop", "page": "checkout.html", "country": "uk", "session": "s2"}
+]
