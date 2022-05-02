@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"ses_pm_antlr/ses"
-	"ses_pm_antlr/vector"
+	"ses_pm_antlr/vector/linked_slice"
 )
 
 func TestMakeExpressionFromCondition(t *testing.T) {
@@ -36,7 +36,7 @@ func TestMakeExpressionFromCondition(t *testing.T) {
 			ses.MakeCondition("=", ses.EventAttributeOperand{"a", "x", true, ses.SelectAll}, ses.EventAttributeOperand{"b", "x", false, ses.SelectAll}),
 			&SimpleEnvironment{
 				current:  map[string]any{"a.x": 2.0},
-				captured: map[string]*vector.LinkedSlice{"b.x": vector.MakeLinkedSliceInitialized(nil, []any{2.0, 2.0})},
+				captured: map[string]*linked_slice.LinkedSlice{"b.x": linked_slice.MakeLinkedSliceInitialized(nil, []any{2.0, 2.0})},
 			},
 			true,
 		},
@@ -45,7 +45,7 @@ func TestMakeExpressionFromCondition(t *testing.T) {
 			ses.MakeCondition("!=", ses.EventAttributeOperand{"a", "x", true, ses.SelectAll}, ses.EventAttributeOperand{"b", "x", false, ses.SelectAll}),
 			&SimpleEnvironment{
 				current:  map[string]any{"a.x": 2.0},
-				captured: map[string]*vector.LinkedSlice{"b.x": vector.MakeLinkedSliceInitialized(nil, []any{1.0, 3.0})},
+				captured: map[string]*linked_slice.LinkedSlice{"b.x": linked_slice.MakeLinkedSliceInitialized(nil, []any{1.0, 3.0})},
 			},
 			true,
 		},
@@ -54,7 +54,7 @@ func TestMakeExpressionFromCondition(t *testing.T) {
 			ses.MakeCondition("!=", ses.EventAttributeOperand{"a", "x", true, ses.SelectAll}, ses.EventAttributeOperand{"b", "x", false, ses.SelectAny}),
 			&SimpleEnvironment{
 				current:  map[string]any{"a.x": 2.0},
-				captured: map[string]*vector.LinkedSlice{"b.x": vector.MakeLinkedSliceInitialized(nil, []any{2.0, 1.0, 0.0})},
+				captured: map[string]*linked_slice.LinkedSlice{"b.x": linked_slice.MakeLinkedSliceInitialized(nil, []any{2.0, 1.0, 0.0})},
 			},
 			true,
 		},

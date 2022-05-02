@@ -3,6 +3,7 @@ package automaton
 import (
 	"ses_pm_antlr/ses"
 	"ses_pm_antlr/vector"
+	"ses_pm_antlr/vector/linked_slice"
 )
 
 // EventAttrBuffer is a container with public access methods, but hidden Data persisting strategies
@@ -15,15 +16,15 @@ type EventAttrBuffer interface {
 
 // SimpleEventAttrBuffer keeps all appending values, no check for duplication or anything
 type SimpleEventAttrBuffer struct {
-	values *vector.LinkedSlice
+	values *linked_slice.LinkedSlice
 }
 
 func MakeSimpleEventAttrBufferInitialized(prev *SimpleEventAttrBuffer, data []any) *SimpleEventAttrBuffer {
-	var prevLinkedSlice *vector.LinkedSlice
+	var prevLinkedSlice *linked_slice.LinkedSlice
 	if prev != nil {
 		prevLinkedSlice = prev.values
 	}
-	slice := vector.MakeLinkedSlice(prevLinkedSlice)
+	slice := linked_slice.MakeLinkedSlice(prevLinkedSlice)
 	for _, d := range data {
 		slice.Append(d)
 	}
@@ -49,16 +50,16 @@ func (b *SimpleEventAttrBuffer) Spawn() EventAttrBuffer {
 // UniqueEventAttrBuffer keeps only unique values (with respect to previous linked buffers)
 // useful for all sorts of comparison like "a.x<b.x" or "a.x=any(b.x)"
 type UniqueEventAttrBuffer struct {
-	values *vector.LinkedSlice
+	values *linked_slice.LinkedSlice
 }
 
 func MakeUniqueEventAttrBuffer(prev *UniqueEventAttrBuffer) *UniqueEventAttrBuffer {
-	var prevLinkedSlice *vector.LinkedSlice
+	var prevLinkedSlice *linked_slice.LinkedSlice
 	if prev != nil {
 		prevLinkedSlice = prev.values
 	}
 	return &UniqueEventAttrBuffer{
-		vector.MakeLinkedSlice(prevLinkedSlice),
+		linked_slice.MakeLinkedSlice(prevLinkedSlice),
 	}
 }
 
@@ -87,16 +88,16 @@ func (b *UniqueEventAttrBuffer) Spawn() EventAttrBuffer {
 
 // FirstEventAttrBuffer only ever memorizes the first accepted value
 type FirstEventAttrBuffer struct {
-	values *vector.LinkedSlice
+	values *linked_slice.LinkedSlice
 }
 
 func MakeFirstEventAttrBuffer(prev *FirstEventAttrBuffer) *FirstEventAttrBuffer {
-	var prevLinkedSlice *vector.LinkedSlice
+	var prevLinkedSlice *linked_slice.LinkedSlice
 	if prev != nil {
 		prevLinkedSlice = prev.values
 	}
 	return &FirstEventAttrBuffer{
-		vector.MakeLinkedSlice(prevLinkedSlice),
+		linked_slice.MakeLinkedSlice(prevLinkedSlice),
 	}
 }
 

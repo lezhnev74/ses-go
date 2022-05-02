@@ -87,7 +87,10 @@ func (s *SES) validate() {
 
 // MakeSES make a correct new SES with given default sets, otherwise panics
 func MakeSES(sets [][]*Event, groupAttr string) *SES {
-	ses := &SES{sets, groupAttr}
+	ses := &SES{
+		sets:      sets,
+		groupAttr: groupAttr,
+	}
 	ses.validate()
 	return ses
 }

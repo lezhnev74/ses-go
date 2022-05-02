@@ -19,6 +19,7 @@ type SESListener struct {
 	groupBy *string
 }
 
+// ParseSESQuery read input text and makes an IR of it (ses)
 func ParseSESQuery(query string) *ses.SES {
 	listener := &SESListener{
 		SES: ses.MakeSES([][]*ses.Event{}, ""),
@@ -34,7 +35,7 @@ func ParseSESQuery(query string) *ses.SES {
 	p := antlr_parser.NewSESParserParser(tokenStream)
 	antlr.ParseTreeWalkerDefault.Walk(listener, p.Parse())
 
-	// Listener contains the parsed structure (todo: change this signature)
+	// Listener contains the parsed structure
 	return listener.SES
 }
 

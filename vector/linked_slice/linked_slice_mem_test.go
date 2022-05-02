@@ -4,24 +4,29 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
+
+	"ses_pm_antlr/automaton/state"
 )
 
 func TestSliceIteration(t *testing.T) {
 	// every slice in a save is linked to the previous one
 	tests := [][][]any{
 		{{}},
-		{{1.0, 2.0, 3.0}},
+		{{1.0, 2.0, 3.0}}, // ints are converted to floats upon serialization to JSON
 		{{1.0}, {2.0, 3.0}},
 		{{1.0}, {2.0, 3.0}, {}, {4.0, "hello"}},
 	}
 
+	db := state.MakeBadgerDb("scope", true)
+
 	for i, input := range tests {
 		t.Run(fmt.Sprintf("test %d", i), func(t *testing.T) {
-			pool := MakeDataPool(t.Name(), true)
 			var lastSlice *LinkedSliceMem
+			var prev uint64
 			expectedRevertedSlice := make([]any, 0)
-			for i, s := range input {
-				lastSlice = pool.MakeSlice(uint64(i))
+			for _, s := range input {
+				lastSlice = MakeLinkedSliceMem(prev, db)
+				prev = lastSlice.id
 				for _, val := range s {
 					lastSlice.Append(val)
 					expectedRevertedSlice = append(expectedRevertedSlice, val)
@@ -35,7 +40,7 @@ func TestSliceIteration(t *testing.T) {
 			}
 
 			// Iterate to a slice
-			actualSlice := pool.get(lastSlice.id).GetIterator().ToSlice()
+			actualSlice := lastSlice.GetIterator().ToSlice()
 
 			if !reflect.DeepEqual(expectedSlice, actualSlice) {
 				t.Errorf("%v/%[1]T not equals to %v/%[2]T", actualSlice, expectedSlice)

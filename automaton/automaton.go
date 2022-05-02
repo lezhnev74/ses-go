@@ -3,7 +3,7 @@ package automaton
 import (
 	"ses_pm_antlr/expr"
 	"ses_pm_antlr/ses"
-	"ses_pm_antlr/vector"
+	"ses_pm_antlr/vector/linked_slice"
 )
 
 // Automaton accepts incoming events and captures matching ones
@@ -278,7 +278,7 @@ func (env *AutomatonEnv) Resolve(operand ses.EventAttributeOperand) any {
 	// captured vector value
 	val := env.a.capturedAttributes[env.a.curSet][operand.GetQualifiedAttributeName()]
 	if val == nil {
-		return vector.MakeLinkedSlice(nil).GetIterator()
+		return linked_slice.MakeLinkedSlice(nil).GetIterator()
 	}
 	return val.GetIterator()
 }
