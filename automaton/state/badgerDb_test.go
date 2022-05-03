@@ -6,7 +6,7 @@ import (
 )
 
 func Test_MissingNodes(t *testing.T) {
-	b := MakeBadgerDb("scope", true)
+	b := MakeBadgerDb("scope", "")
 	// Normal find
 	d := b.Find(1)
 	if d != nil {
@@ -21,7 +21,7 @@ func Test_MissingNodes(t *testing.T) {
 
 func Test_Scoping(t *testing.T) {
 	t.Run("scoping", func(t *testing.T) {
-		b1, b2 := MakeBadgerDb("scope1", true), MakeBadgerDb("scope2", true)
+		b1, b2 := MakeBadgerDb("scope1", ""), MakeBadgerDb("scope2", "")
 
 		// Test Read/Write Scoping
 		key := uint64(1)
@@ -42,7 +42,7 @@ func Test_Scoping(t *testing.T) {
 }
 
 func Test_Tree(t *testing.T) {
-	db := MakeBadgerDb("scope1", true)
+	db := MakeBadgerDb("scope1", "")
 
 	// Node1<---Node2<---Node3
 	db.SaveNode(1, 0, []byte("Node1"))

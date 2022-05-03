@@ -17,7 +17,7 @@ func TestSimpleQueries(t *testing.T) {
 	}{
 		/*empty*/
 		{
-			`event signed_up`,
+			`event signed_up group by session`,
 			ses.MakeSES(
 				[]*ses.Set{
 					ses.MakeSet([]*ses.Event{
@@ -26,7 +26,7 @@ func TestSimpleQueries(t *testing.T) {
 						ses.Window{},
 					),
 				},
-				"",
+				"session",
 			),
 		},
 		/*qty full*/
@@ -45,7 +45,7 @@ func TestSimpleQueries(t *testing.T) {
 		},
 		/*qty partial*/
 		{
-			`event signed_up{,10}`,
+			`event signed_up{,10} group by session`,
 			ses.MakeSES(
 				[]*ses.Set{
 					ses.MakeSet([]*ses.Event{
@@ -54,12 +54,12 @@ func TestSimpleQueries(t *testing.T) {
 						ses.Window{},
 					),
 				},
-				"",
+				"session",
 			),
 		},
 		/*qty partial*/
 		{
-			`event signed_up{1,}`,
+			`event signed_up{1,} group by session`,
 			ses.MakeSES(
 				[]*ses.Set{
 					ses.MakeSet([]*ses.Event{
@@ -68,12 +68,12 @@ func TestSimpleQueries(t *testing.T) {
 						ses.Window{},
 					),
 				},
-				"",
+				"session",
 			),
 		},
 		/*qty partial*/
 		{
-			`event signed_up{,}`,
+			`event signed_up{,} group by session`,
 			ses.MakeSES(
 				[]*ses.Set{
 					ses.MakeSet([]*ses.Event{
@@ -82,12 +82,12 @@ func TestSimpleQueries(t *testing.T) {
 						ses.Window{},
 					),
 				},
-				"",
+				"session",
 			),
 		},
 		/*qty plus*/
 		{
-			`event signed_up+`,
+			`event signed_up+ group by session`,
 			ses.MakeSES(
 				[]*ses.Set{
 					ses.MakeSet([]*ses.Event{
@@ -96,12 +96,12 @@ func TestSimpleQueries(t *testing.T) {
 						ses.Window{},
 					),
 				},
-				"",
+				"session",
 			),
 		},
 		/*qty asterisk*/
 		{
-			`event signed_up*`,
+			`event signed_up* group by session`,
 			ses.MakeSES(
 				[]*ses.Set{
 					ses.MakeSet([]*ses.Event{
@@ -110,12 +110,12 @@ func TestSimpleQueries(t *testing.T) {
 						ses.Window{},
 					),
 				},
-				"",
+				"session",
 			),
 		},
 		/*Condition EQ*/
 		{
-			`event signed_up{1,2} where name="Jar Jar Binks"`, // expands the missing event name to the current event
+			`event signed_up{1,2} where name="Jar Jar Binks" group by session`, // expands the missing event name to the current event
 			ses.MakeSES(
 				[]*ses.Set{
 					ses.MakeSet([]*ses.Event{
@@ -126,12 +126,12 @@ func TestSimpleQueries(t *testing.T) {
 						ses.Window{},
 					),
 				},
-				"",
+				"session",
 			),
 		},
 		/*Condition Multiple*/
 		{
-			`event signed_up where signed_up.a <= 2 and 1000 != signed_up.amount`,
+			`event signed_up where signed_up.a <= 2 and 1000 != signed_up.amount group by session`,
 			ses.MakeSES(
 				[]*ses.Set{
 					ses.MakeSet([]*ses.Event{
@@ -143,12 +143,12 @@ func TestSimpleQueries(t *testing.T) {
 						ses.Window{},
 					),
 				},
-				"",
+				"session",
 			),
 		},
 		/*Condition With Modified Event Attribute*/
 		{
-			`event signed_up where signed_up.a < prev(signed_up.a)`,
+			`event signed_up where signed_up.a < prev(signed_up.a) group by session`,
 			ses.MakeSES(
 				[]*ses.Set{
 					ses.MakeSet([]*ses.Event{
@@ -159,12 +159,12 @@ func TestSimpleQueries(t *testing.T) {
 						ses.Window{},
 					),
 				},
-				"",
+				"session",
 			),
 		},
 		/* Window */
 		{
-			`within 1 minute event signed_up`,
+			`within 1 minute event signed_up group by session`,
 			ses.MakeSES(
 				[]*ses.Set{
 					ses.MakeSet([]*ses.Event{
@@ -173,7 +173,7 @@ func TestSimpleQueries(t *testing.T) {
 						ses.Window{0, time.Minute},
 					),
 				},
-				"",
+				"session",
 			),
 		},
 	}
@@ -193,25 +193,30 @@ func TestValidation(t *testing.T) {
 		panicMessage string
 	}{
 		{
-			`event signed_up where 2>1`,
+			`event signed_up where 2>1 group by session`,
 			`at least one operand must refer to an event attribute`,
 		},
 		{
 			`event signed_up
-			 event logged_in where signed_up.a<logged_in.b`,
+			 event logged_in where signed_up.a<logged_in.b
+			 group by session`,
 			`operands should not be both related to this event set as events are not ordered within a set`,
 		},
 		{
-			`event signed_up where other.a<another.b`,
+			`event signed_up where other.a<another.b group by session`,
 			`operands are not related to signed_up event`,
 		},
 		{
-			`event signed_up where signed_up.a<another.b`,
+			`event signed_up where signed_up.a<another.b group by session`,
 			`event name [another] is not recognized`,
 		},
 		{
-			`event signed_up where signed_up.a>="name"`,
+			`event signed_up where signed_up.a>="name" group by session`,
 			`string operand can not be used with this operator`,
+		},
+		{
+			`event signed_up`,
+			`group-by must be specified`,
 		},
 	}
 	for i, tt := range tests {

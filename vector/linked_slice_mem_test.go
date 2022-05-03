@@ -19,7 +19,7 @@ func TestSliceIteration(t *testing.T) {
 		{{1.0}, {2.0, 3.0}, {}, {4.0, "hello"}},
 	}
 
-	db := state.MakeBadgerDb("scope", true)
+	db := state.MakeBadgerDb("scope", "")
 
 	for i, input := range tests {
 		t.Run(fmt.Sprintf("test %d", i), func(t *testing.T) {

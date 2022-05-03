@@ -194,12 +194,10 @@ func (b *BadgerDb) freeNode(d *treeNode) {
 	b.freeNode(b.findNode(d.Parent))
 }
 
-func MakeBadgerDb(scope string, inMemoryOnly bool) *BadgerDb {
-	opts := badger.DefaultOptions("")
-	if inMemoryOnly {
-		opts = opts.WithInMemory(inMemoryOnly)
-	} else {
-		opts = opts.WithDir(fmt.Sprintf("db.badger.%sequence", scope)) // todo use config
+func MakeBadgerDb(scope string, path string) *BadgerDb {
+	opts := badger.DefaultOptions(path).WithLoggingLevel(badger.WARNING)
+	if path == "" {
+		opts = opts.WithInMemory(true)
 	}
 
 	db, err := badger.Open(opts)

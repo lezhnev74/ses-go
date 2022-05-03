@@ -94,6 +94,10 @@ func (s *SES) Validate() {
 		panic("no sets available for matching")
 	}
 
+	if len(s.groupAttr) == 0 {
+		panic("group-by must be specified")
+	}
+
 	// ---------------------------------------------------------------------------------------------------------
 	// Check that an operand refers to the unknown event
 	declaredEvents := make(map[string]bool)

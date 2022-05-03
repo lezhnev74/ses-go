@@ -106,7 +106,7 @@ func TestUniqueBuffer(t *testing.T) {
 		},
 	}
 
-	db := state.MakeBadgerDb("scope", true)
+	db := state.MakeBadgerDb("scope", "")
 	for i, tt := range tests {
 		t.Run(fmt.Sprintf("test %d", i), func(t *testing.T) {
 

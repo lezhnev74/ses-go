@@ -15,30 +15,31 @@ func TestMakeBufferSpecs(t *testing.T) {
 		want  []attrBufferSpec
 	}{
 		{
-			`event a`,
+			`event a group by session`,
 			[]attrBufferSpec{},
 		},
 		{
 			`event a 
-			 then event b where a.x=b.x`,
+			 then event b where a.x=b.x
+			 group by session`,
 			[]attrBufferSpec{
 				{ses.EventAttributeOperand{"a", "x", false, ses.SelectAll}, 1},
 			},
 		},
 		{
-			`event a where a.x<prev(a.x)`,
+			`event a where a.x<prev(a.x) group by session`,
 			[]attrBufferSpec{
 				{ses.EventAttributeOperand{"a", "x", false, ses.SelectLast}, 0},
 			},
 		},
 		{
-			`event a then event b where first(a.x)<b.y`,
+			`event a then event b where first(a.x)<b.y group by session`,
 			[]attrBufferSpec{
 				{ses.EventAttributeOperand{"a", "x", false, ses.SelectFirst}, 1},
 			},
 		},
 		{
-			`event a then event b where any(a.x)=b.y`,
+			`event a then event b where any(a.x)=b.y group by session`,
 			[]attrBufferSpec{
 				{ses.EventAttributeOperand{"a", "x", false, ses.SelectAny}, 1},
 			},
@@ -47,6 +48,7 @@ func TestMakeBufferSpecs(t *testing.T) {
 			`event a 
 			 then event b where any(a.x)=b.y // any value for a.x
 			 then event c where a.x<c.y      // all value for a.x
+			 group by session
 			`,
 			[]attrBufferSpec{
 				{ses.EventAttributeOperand{"a", "x", false, ses.SelectAll}, 2},
@@ -54,7 +56,8 @@ func TestMakeBufferSpecs(t *testing.T) {
 		},
 		{
 			`event a where a.x<prev(a.x)
-			 then event b where b.x>first(a.x)`,
+			 then event b where b.x>first(a.x)
+			 group by session`,
 			[]attrBufferSpec{
 				{ses.EventAttributeOperand{"a", "x", false, ses.SelectAny}, 1},
 			},

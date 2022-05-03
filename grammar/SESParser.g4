@@ -130,15 +130,15 @@ fragment GTE: '>=';
 fragment LT: '<';
 fragment LTE: '<=';
 
-fragment QUARTER: Q U A R T E R;
-fragment YEAR: Y E A R;
-fragment MONTH: M O N T H;
-fragment WEEK: W E E K;
-fragment DAY: D A Y;
-fragment HOUR: H O U R;
-fragment MINUTE: M I N U T E;
-fragment SECOND: S E C O N D;
-fragment MICROSECOND: M I C R O S E C O N D;
+fragment QUARTER: Q U A R T E R S?;
+fragment YEAR: Y E A R S?;
+fragment MONTH: M O N T H S?;
+fragment WEEK: W E E K S?;
+fragment DAY: D A Y S?;
+fragment HOUR: H O U R S?;
+fragment MINUTE: M I N U T E S?;
+fragment SECOND: S E C O N D S?;
+fragment MICROSECOND: M I C R O S E C O N D S?;
 
 fragment DQUOTA_STRING: '"' ( '\\'. | '""' | ~('"'| '\\') )* '"';
 fragment SQUOTA_STRING: '\'' ('\\'. | '\'\'' | ~('\'' | '\\'))* '\'';

@@ -38,7 +38,7 @@ func TestFailedAutomatons(t *testing.T) {
 	for i, tt := range tests {
 		testName := fmt.Sprintf("test %d", i)
 		t.Run(testName, func(t *testing.T) {
-			db := state.MakeBadgerDb(testName, true)
+			db := state.MakeBadgerDb(testName, fmt.Sprintf("%s/%s", t.TempDir(), testName))
 			ses := parser.ParseSESQuery(tt)
 			runner := MakeRunner(ses, db)
 
@@ -111,7 +111,7 @@ func TestDeterministicAutomaton(t *testing.T) {
 	for i, tt := range tests {
 		testName := fmt.Sprintf("test %d", i)
 		t.Run(testName, func(t *testing.T) {
-			db := state.MakeBadgerDb(testName, true)
+			db := state.MakeBadgerDb(testName, fmt.Sprintf("%s/%s", t.TempDir(), testName))
 			ses := parser.ParseSESQuery(tt.query)
 			runner := MakeRunner(ses, db)
 
@@ -170,7 +170,7 @@ group by session_id
 	ses := parser.ParseSESQuery(query)
 
 	// Run Matching
-	db := state.MakeBadgerDb("scope1", true)
+	db := state.MakeBadgerDb("scope1", fmt.Sprintf("%s/%s", t.TempDir(), "scope1"))
 	runner := MakeRunner(ses, db)
 	for _, event := range events {
 		e := &SimpleEvent{event} // wrap your data to something that implement automaton.Event interface
