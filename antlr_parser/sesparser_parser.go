@@ -48,7 +48,7 @@ func sesparserParserInit() {
 	}
 	staticData.predictionContextCache = antlr.NewPredictionContextCache()
 	staticData.serializedATN = []int32{
-		4, 1, 25, 137, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7,
+		4, 1, 25, 140, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7,
 		4, 2, 5, 7, 5, 2, 6, 7, 6, 2, 7, 7, 7, 2, 8, 7, 8, 2, 9, 7, 9, 2, 10, 7,
 		10, 2, 11, 7, 11, 2, 12, 7, 12, 1, 0, 3, 0, 28, 8, 0, 1, 0, 1, 0, 5, 0,
 		32, 8, 0, 10, 0, 12, 0, 35, 9, 0, 1, 0, 3, 0, 38, 8, 0, 1, 0, 1, 0, 1,
@@ -56,56 +56,57 @@ func sesparserParserInit() {
 		8, 3, 1, 3, 4, 3, 54, 8, 3, 11, 3, 12, 3, 55, 1, 4, 1, 4, 1, 4, 3, 4, 61,
 		8, 4, 1, 4, 1, 4, 1, 4, 1, 4, 5, 4, 67, 8, 4, 10, 4, 12, 4, 70, 9, 4, 3,
 		4, 72, 8, 4, 1, 5, 1, 5, 1, 5, 1, 5, 3, 5, 78, 8, 5, 1, 5, 1, 5, 3, 5,
-		82, 8, 5, 1, 5, 1, 5, 1, 5, 1, 5, 3, 5, 88, 8, 5, 1, 6, 1, 6, 1, 6, 3,
-		6, 93, 8, 6, 1, 6, 3, 6, 96, 8, 6, 1, 6, 1, 6, 3, 6, 100, 8, 6, 1, 7, 1,
-		7, 1, 7, 1, 7, 5, 7, 106, 8, 7, 10, 7, 12, 7, 109, 9, 7, 1, 8, 1, 8, 1,
-		8, 1, 8, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 3, 9, 122, 8, 9, 1,
-		10, 1, 10, 3, 10, 126, 8, 10, 1, 10, 1, 10, 1, 11, 1, 11, 3, 11, 132, 8,
-		11, 1, 12, 1, 12, 1, 12, 1, 12, 0, 0, 13, 0, 2, 4, 6, 8, 10, 12, 14, 16,
-		18, 20, 22, 24, 0, 0, 145, 0, 27, 1, 0, 0, 0, 2, 41, 1, 0, 0, 0, 4, 45,
-		1, 0, 0, 0, 6, 50, 1, 0, 0, 0, 8, 57, 1, 0, 0, 0, 10, 87, 1, 0, 0, 0, 12,
-		89, 1, 0, 0, 0, 14, 101, 1, 0, 0, 0, 16, 110, 1, 0, 0, 0, 18, 121, 1, 0,
-		0, 0, 20, 125, 1, 0, 0, 0, 22, 131, 1, 0, 0, 0, 24, 133, 1, 0, 0, 0, 26,
-		28, 3, 2, 1, 0, 27, 26, 1, 0, 0, 0, 27, 28, 1, 0, 0, 0, 28, 29, 1, 0, 0,
-		0, 29, 33, 3, 4, 2, 0, 30, 32, 3, 6, 3, 0, 31, 30, 1, 0, 0, 0, 32, 35,
-		1, 0, 0, 0, 33, 31, 1, 0, 0, 0, 33, 34, 1, 0, 0, 0, 34, 37, 1, 0, 0, 0,
-		35, 33, 1, 0, 0, 0, 36, 38, 3, 24, 12, 0, 37, 36, 1, 0, 0, 0, 37, 38, 1,
-		0, 0, 0, 38, 39, 1, 0, 0, 0, 39, 40, 5, 0, 0, 1, 40, 1, 1, 0, 0, 0, 41,
-		42, 5, 6, 0, 0, 42, 43, 3, 14, 7, 0, 43, 3, 1, 0, 0, 0, 44, 46, 3, 8, 4,
-		0, 45, 44, 1, 0, 0, 0, 46, 47, 1, 0, 0, 0, 47, 45, 1, 0, 0, 0, 47, 48,
-		1, 0, 0, 0, 48, 5, 1, 0, 0, 0, 49, 51, 3, 12, 6, 0, 50, 49, 1, 0, 0, 0,
-		50, 51, 1, 0, 0, 0, 51, 53, 1, 0, 0, 0, 52, 54, 3, 8, 4, 0, 53, 52, 1,
-		0, 0, 0, 54, 55, 1, 0, 0, 0, 55, 53, 1, 0, 0, 0, 55, 56, 1, 0, 0, 0, 56,
-		7, 1, 0, 0, 0, 57, 58, 5, 4, 0, 0, 58, 60, 5, 25, 0, 0, 59, 61, 3, 10,
-		5, 0, 60, 59, 1, 0, 0, 0, 60, 61, 1, 0, 0, 0, 61, 71, 1, 0, 0, 0, 62, 63,
-		5, 8, 0, 0, 63, 68, 3, 16, 8, 0, 64, 65, 5, 9, 0, 0, 65, 67, 3, 16, 8,
-		0, 66, 64, 1, 0, 0, 0, 67, 70, 1, 0, 0, 0, 68, 66, 1, 0, 0, 0, 68, 69,
-		1, 0, 0, 0, 69, 72, 1, 0, 0, 0, 70, 68, 1, 0, 0, 0, 71, 62, 1, 0, 0, 0,
-		71, 72, 1, 0, 0, 0, 72, 9, 1, 0, 0, 0, 73, 88, 5, 21, 0, 0, 74, 88, 5,
-		22, 0, 0, 75, 77, 5, 17, 0, 0, 76, 78, 5, 23, 0, 0, 77, 76, 1, 0, 0, 0,
-		77, 78, 1, 0, 0, 0, 78, 79, 1, 0, 0, 0, 79, 81, 5, 19, 0, 0, 80, 82, 5,
-		23, 0, 0, 81, 80, 1, 0, 0, 0, 81, 82, 1, 0, 0, 0, 82, 83, 1, 0, 0, 0, 83,
-		88, 5, 18, 0, 0, 84, 85, 5, 17, 0, 0, 85, 86, 5, 23, 0, 0, 86, 88, 5, 18,
-		0, 0, 87, 73, 1, 0, 0, 0, 87, 74, 1, 0, 0, 0, 87, 75, 1, 0, 0, 0, 87, 84,
-		1, 0, 0, 0, 88, 11, 1, 0, 0, 0, 89, 92, 5, 7, 0, 0, 90, 91, 5, 5, 0, 0,
-		91, 93, 3, 14, 7, 0, 92, 90, 1, 0, 0, 0, 92, 93, 1, 0, 0, 0, 93, 99, 1,
-		0, 0, 0, 94, 96, 5, 9, 0, 0, 95, 94, 1, 0, 0, 0, 95, 96, 1, 0, 0, 0, 96,
-		97, 1, 0, 0, 0, 97, 98, 5, 6, 0, 0, 98, 100, 3, 14, 7, 0, 99, 95, 1, 0,
-		0, 0, 99, 100, 1, 0, 0, 0, 100, 13, 1, 0, 0, 0, 101, 102, 5, 23, 0, 0,
-		102, 107, 5, 12, 0, 0, 103, 104, 5, 9, 0, 0, 104, 106, 3, 14, 7, 0, 105,
-		103, 1, 0, 0, 0, 106, 109, 1, 0, 0, 0, 107, 105, 1, 0, 0, 0, 107, 108,
-		1, 0, 0, 0, 108, 15, 1, 0, 0, 0, 109, 107, 1, 0, 0, 0, 110, 111, 3, 18,
-		9, 0, 111, 112, 5, 13, 0, 0, 112, 113, 3, 18, 9, 0, 113, 17, 1, 0, 0, 0,
-		114, 115, 5, 25, 0, 0, 115, 116, 5, 15, 0, 0, 116, 117, 3, 20, 10, 0, 117,
-		118, 5, 16, 0, 0, 118, 122, 1, 0, 0, 0, 119, 122, 3, 20, 10, 0, 120, 122,
-		3, 22, 11, 0, 121, 114, 1, 0, 0, 0, 121, 119, 1, 0, 0, 0, 121, 120, 1,
-		0, 0, 0, 122, 19, 1, 0, 0, 0, 123, 124, 5, 25, 0, 0, 124, 126, 5, 14, 0,
-		0, 125, 123, 1, 0, 0, 0, 125, 126, 1, 0, 0, 0, 126, 127, 1, 0, 0, 0, 127,
-		128, 5, 25, 0, 0, 128, 21, 1, 0, 0, 0, 129, 132, 5, 23, 0, 0, 130, 132,
-		5, 24, 0, 0, 131, 129, 1, 0, 0, 0, 131, 130, 1, 0, 0, 0, 132, 23, 1, 0,
-		0, 0, 133, 134, 5, 11, 0, 0, 134, 135, 3, 20, 10, 0, 135, 25, 1, 0, 0,
-		0, 19, 27, 33, 37, 47, 50, 55, 60, 68, 71, 77, 81, 87, 92, 95, 99, 107,
-		121, 125, 131,
+		82, 8, 5, 1, 5, 1, 5, 1, 5, 1, 5, 3, 5, 88, 8, 5, 1, 6, 3, 6, 91, 8, 6,
+		1, 6, 1, 6, 1, 6, 3, 6, 96, 8, 6, 1, 6, 3, 6, 99, 8, 6, 1, 6, 1, 6, 3,
+		6, 103, 8, 6, 1, 7, 1, 7, 1, 7, 1, 7, 5, 7, 109, 8, 7, 10, 7, 12, 7, 112,
+		9, 7, 1, 8, 1, 8, 1, 8, 1, 8, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9, 1, 9,
+		3, 9, 125, 8, 9, 1, 10, 1, 10, 3, 10, 129, 8, 10, 1, 10, 1, 10, 1, 11,
+		1, 11, 3, 11, 135, 8, 11, 1, 12, 1, 12, 1, 12, 1, 12, 0, 0, 13, 0, 2, 4,
+		6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 0, 0, 149, 0, 27, 1, 0, 0, 0, 2,
+		41, 1, 0, 0, 0, 4, 45, 1, 0, 0, 0, 6, 50, 1, 0, 0, 0, 8, 57, 1, 0, 0, 0,
+		10, 87, 1, 0, 0, 0, 12, 90, 1, 0, 0, 0, 14, 104, 1, 0, 0, 0, 16, 113, 1,
+		0, 0, 0, 18, 124, 1, 0, 0, 0, 20, 128, 1, 0, 0, 0, 22, 134, 1, 0, 0, 0,
+		24, 136, 1, 0, 0, 0, 26, 28, 3, 2, 1, 0, 27, 26, 1, 0, 0, 0, 27, 28, 1,
+		0, 0, 0, 28, 29, 1, 0, 0, 0, 29, 33, 3, 4, 2, 0, 30, 32, 3, 6, 3, 0, 31,
+		30, 1, 0, 0, 0, 32, 35, 1, 0, 0, 0, 33, 31, 1, 0, 0, 0, 33, 34, 1, 0, 0,
+		0, 34, 37, 1, 0, 0, 0, 35, 33, 1, 0, 0, 0, 36, 38, 3, 24, 12, 0, 37, 36,
+		1, 0, 0, 0, 37, 38, 1, 0, 0, 0, 38, 39, 1, 0, 0, 0, 39, 40, 5, 0, 0, 1,
+		40, 1, 1, 0, 0, 0, 41, 42, 5, 6, 0, 0, 42, 43, 3, 14, 7, 0, 43, 3, 1, 0,
+		0, 0, 44, 46, 3, 8, 4, 0, 45, 44, 1, 0, 0, 0, 46, 47, 1, 0, 0, 0, 47, 45,
+		1, 0, 0, 0, 47, 48, 1, 0, 0, 0, 48, 5, 1, 0, 0, 0, 49, 51, 3, 12, 6, 0,
+		50, 49, 1, 0, 0, 0, 50, 51, 1, 0, 0, 0, 51, 53, 1, 0, 0, 0, 52, 54, 3,
+		8, 4, 0, 53, 52, 1, 0, 0, 0, 54, 55, 1, 0, 0, 0, 55, 53, 1, 0, 0, 0, 55,
+		56, 1, 0, 0, 0, 56, 7, 1, 0, 0, 0, 57, 58, 5, 4, 0, 0, 58, 60, 5, 25, 0,
+		0, 59, 61, 3, 10, 5, 0, 60, 59, 1, 0, 0, 0, 60, 61, 1, 0, 0, 0, 61, 71,
+		1, 0, 0, 0, 62, 63, 5, 8, 0, 0, 63, 68, 3, 16, 8, 0, 64, 65, 5, 9, 0, 0,
+		65, 67, 3, 16, 8, 0, 66, 64, 1, 0, 0, 0, 67, 70, 1, 0, 0, 0, 68, 66, 1,
+		0, 0, 0, 68, 69, 1, 0, 0, 0, 69, 72, 1, 0, 0, 0, 70, 68, 1, 0, 0, 0, 71,
+		62, 1, 0, 0, 0, 71, 72, 1, 0, 0, 0, 72, 9, 1, 0, 0, 0, 73, 88, 5, 21, 0,
+		0, 74, 88, 5, 22, 0, 0, 75, 77, 5, 17, 0, 0, 76, 78, 5, 23, 0, 0, 77, 76,
+		1, 0, 0, 0, 77, 78, 1, 0, 0, 0, 78, 79, 1, 0, 0, 0, 79, 81, 5, 19, 0, 0,
+		80, 82, 5, 23, 0, 0, 81, 80, 1, 0, 0, 0, 81, 82, 1, 0, 0, 0, 82, 83, 1,
+		0, 0, 0, 83, 88, 5, 18, 0, 0, 84, 85, 5, 17, 0, 0, 85, 86, 5, 23, 0, 0,
+		86, 88, 5, 18, 0, 0, 87, 73, 1, 0, 0, 0, 87, 74, 1, 0, 0, 0, 87, 75, 1,
+		0, 0, 0, 87, 84, 1, 0, 0, 0, 88, 11, 1, 0, 0, 0, 89, 91, 5, 9, 0, 0, 90,
+		89, 1, 0, 0, 0, 90, 91, 1, 0, 0, 0, 91, 92, 1, 0, 0, 0, 92, 95, 5, 7, 0,
+		0, 93, 94, 5, 5, 0, 0, 94, 96, 3, 14, 7, 0, 95, 93, 1, 0, 0, 0, 95, 96,
+		1, 0, 0, 0, 96, 102, 1, 0, 0, 0, 97, 99, 5, 9, 0, 0, 98, 97, 1, 0, 0, 0,
+		98, 99, 1, 0, 0, 0, 99, 100, 1, 0, 0, 0, 100, 101, 5, 6, 0, 0, 101, 103,
+		3, 14, 7, 0, 102, 98, 1, 0, 0, 0, 102, 103, 1, 0, 0, 0, 103, 13, 1, 0,
+		0, 0, 104, 105, 5, 23, 0, 0, 105, 110, 5, 12, 0, 0, 106, 107, 5, 9, 0,
+		0, 107, 109, 3, 14, 7, 0, 108, 106, 1, 0, 0, 0, 109, 112, 1, 0, 0, 0, 110,
+		108, 1, 0, 0, 0, 110, 111, 1, 0, 0, 0, 111, 15, 1, 0, 0, 0, 112, 110, 1,
+		0, 0, 0, 113, 114, 3, 18, 9, 0, 114, 115, 5, 13, 0, 0, 115, 116, 3, 18,
+		9, 0, 116, 17, 1, 0, 0, 0, 117, 118, 5, 25, 0, 0, 118, 119, 5, 15, 0, 0,
+		119, 120, 3, 20, 10, 0, 120, 121, 5, 16, 0, 0, 121, 125, 1, 0, 0, 0, 122,
+		125, 3, 20, 10, 0, 123, 125, 3, 22, 11, 0, 124, 117, 1, 0, 0, 0, 124, 122,
+		1, 0, 0, 0, 124, 123, 1, 0, 0, 0, 125, 19, 1, 0, 0, 0, 126, 127, 5, 25,
+		0, 0, 127, 129, 5, 14, 0, 0, 128, 126, 1, 0, 0, 0, 128, 129, 1, 0, 0, 0,
+		129, 130, 1, 0, 0, 0, 130, 131, 5, 25, 0, 0, 131, 21, 1, 0, 0, 0, 132,
+		135, 5, 23, 0, 0, 133, 135, 5, 24, 0, 0, 134, 132, 1, 0, 0, 0, 134, 133,
+		1, 0, 0, 0, 135, 23, 1, 0, 0, 0, 136, 137, 5, 11, 0, 0, 137, 138, 3, 20,
+		10, 0, 138, 25, 1, 0, 0, 0, 20, 27, 33, 37, 47, 50, 55, 60, 68, 71, 77,
+		81, 87, 90, 95, 98, 102, 110, 124, 128, 134,
 	}
 	deserializer := antlr.NewATNDeserializer(nil)
 	staticData.atn = deserializer.Deserialize(staticData.serializedATN)
@@ -383,7 +384,7 @@ func (p *SESParserParser) Parse() (localctx IParseContext) {
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
-	for _la == SESParserParserEVENT || _la == SESParserParserTHEN {
+	for ((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<SESParserParserEVENT)|(1<<SESParserParserTHEN)|(1<<SESParserParserAND))) != 0 {
 		{
 			p.SetState(30)
 			p.Windowed_ses()
@@ -834,7 +835,7 @@ func (p *SESParserParser) Windowed_ses() (localctx IWindowed_sesContext) {
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
-	if _la == SESParserParserTHEN {
+	if _la == SESParserParserTHEN || _la == SESParserParserAND {
 		{
 			p.SetState(49)
 			p.Ses_window()
@@ -1045,6 +1046,8 @@ func (p *SESParserParser) Event() (localctx IEventContext) {
 		}
 	}()
 
+	var _alt int
+
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(57)
@@ -1086,21 +1089,23 @@ func (p *SESParserParser) Event() (localctx IEventContext) {
 		}
 		p.SetState(68)
 		p.GetErrorHandler().Sync(p)
-		_la = p.GetTokenStream().LA(1)
+		_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 7, p.GetParserRuleContext())
 
-		for _la == SESParserParserAND {
-			{
-				p.SetState(64)
-				p.Match(SESParserParserAND)
-			}
-			{
-				p.SetState(65)
-				p.Event_expression()
-			}
+		for _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
+			if _alt == 1 {
+				{
+					p.SetState(64)
+					p.Match(SESParserParserAND)
+				}
+				{
+					p.SetState(65)
+					p.Event_expression()
+				}
 
+			}
 			p.SetState(70)
 			p.GetErrorHandler().Sync(p)
-			_la = p.GetTokenStream().LA(1)
+			_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 7, p.GetParserRuleContext())
 		}
 
 	}
@@ -1508,6 +1513,14 @@ func (s *Ses_windowContext) THEN() antlr.TerminalNode {
 	return s.GetToken(SESParserParserTHEN, 0)
 }
 
+func (s *Ses_windowContext) AllAND() []antlr.TerminalNode {
+	return s.GetTokens(SESParserParserAND)
+}
+
+func (s *Ses_windowContext) AND(i int) antlr.TerminalNode {
+	return s.GetToken(SESParserParserAND, i)
+}
+
 func (s *Ses_windowContext) SKIP_() antlr.TerminalNode {
 	return s.GetToken(SESParserParserSKIP_, 0)
 }
@@ -1557,10 +1570,6 @@ func (s *Ses_windowContext) DateInterval(i int) IDateIntervalContext {
 	return t.(IDateIntervalContext)
 }
 
-func (s *Ses_windowContext) AND() antlr.TerminalNode {
-	return s.GetToken(SESParserParserAND, 0)
-}
-
 func (s *Ses_windowContext) GetRuleContext() antlr.RuleContext {
 	return s
 }
@@ -1606,21 +1615,32 @@ func (p *SESParserParser) Ses_window() (localctx ISes_windowContext) {
 	}()
 
 	p.EnterOuterAlt(localctx, 1)
+	p.SetState(90)
+	p.GetErrorHandler().Sync(p)
+	_la = p.GetTokenStream().LA(1)
+
+	if _la == SESParserParserAND {
+		{
+			p.SetState(89)
+			p.Match(SESParserParserAND)
+		}
+
+	}
 	{
-		p.SetState(89)
+		p.SetState(92)
 		p.Match(SESParserParserTHEN)
 	}
-	p.SetState(92)
+	p.SetState(95)
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
 	if _la == SESParserParserSKIP_ {
 		{
-			p.SetState(90)
+			p.SetState(93)
 			p.Match(SESParserParserSKIP_)
 		}
 		{
-			p.SetState(91)
+			p.SetState(94)
 
 			var _x = p.DateInterval()
 
@@ -1628,28 +1648,28 @@ func (p *SESParserParser) Ses_window() (localctx ISes_windowContext) {
 		}
 
 	}
-	p.SetState(99)
+	p.SetState(102)
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
 	if _la == SESParserParserWITHIN || _la == SESParserParserAND {
-		p.SetState(95)
+		p.SetState(98)
 		p.GetErrorHandler().Sync(p)
 		_la = p.GetTokenStream().LA(1)
 
 		if _la == SESParserParserAND {
 			{
-				p.SetState(94)
+				p.SetState(97)
 				p.Match(SESParserParserAND)
 			}
 
 		}
 		{
-			p.SetState(97)
+			p.SetState(100)
 			p.Match(SESParserParserWITHIN)
 		}
 		{
-			p.SetState(98)
+			p.SetState(101)
 
 			var _x = p.DateInterval()
 
@@ -1836,31 +1856,31 @@ func (p *SESParserParser) DateInterval() (localctx IDateIntervalContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(101)
+		p.SetState(104)
 
 		var _m = p.Match(SESParserParserNUMBER)
 
 		localctx.(*DateIntervalContext).num = _m
 	}
 	{
-		p.SetState(102)
+		p.SetState(105)
 
 		var _m = p.Match(SESParserParserDATE_UNIT)
 
 		localctx.(*DateIntervalContext).unit = _m
 	}
-	p.SetState(107)
+	p.SetState(110)
 	p.GetErrorHandler().Sync(p)
-	_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 15, p.GetParserRuleContext())
+	_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 16, p.GetParserRuleContext())
 
 	for _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
 		if _alt == 1 {
 			{
-				p.SetState(103)
+				p.SetState(106)
 				p.Match(SESParserParserAND)
 			}
 			{
-				p.SetState(104)
+				p.SetState(107)
 
 				var _x = p.DateInterval()
 
@@ -1868,9 +1888,9 @@ func (p *SESParserParser) DateInterval() (localctx IDateIntervalContext) {
 			}
 
 		}
-		p.SetState(109)
+		p.SetState(112)
 		p.GetErrorHandler().Sync(p)
-		_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 15, p.GetParserRuleContext())
+		_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 16, p.GetParserRuleContext())
 	}
 
 	return localctx
@@ -2037,21 +2057,21 @@ func (p *SESParserParser) Event_expression() (localctx IEvent_expressionContext)
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(110)
+		p.SetState(113)
 
 		var _x = p.Expr_operand()
 
 		localctx.(*Event_expressionContext).left = _x
 	}
 	{
-		p.SetState(111)
+		p.SetState(114)
 
 		var _m = p.Match(SESParserParserOP_LOGICAL)
 
 		localctx.(*Event_expressionContext).op = _m
 	}
 	{
-		p.SetState(112)
+		p.SetState(115)
 
 		var _x = p.Expr_operand()
 
@@ -2289,29 +2309,29 @@ func (p *SESParserParser) Expr_operand() (localctx IExpr_operandContext) {
 		}
 	}()
 
-	p.SetState(121)
+	p.SetState(124)
 	p.GetErrorHandler().Sync(p)
-	switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 16, p.GetParserRuleContext()) {
+	switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 17, p.GetParserRuleContext()) {
 	case 1:
 		localctx = NewAttrModifiedContext(p, localctx)
 		p.EnterOuterAlt(localctx, 1)
 		{
-			p.SetState(114)
+			p.SetState(117)
 
 			var _m = p.Match(SESParserParserID)
 
 			localctx.(*AttrModifiedContext).modifier = _m
 		}
 		{
-			p.SetState(115)
+			p.SetState(118)
 			p.Match(SESParserParserL_BRACKET)
 		}
 		{
-			p.SetState(116)
+			p.SetState(119)
 			p.EventAttr()
 		}
 		{
-			p.SetState(117)
+			p.SetState(120)
 			p.Match(SESParserParserR_BRACKET)
 		}
 
@@ -2319,7 +2339,7 @@ func (p *SESParserParser) Expr_operand() (localctx IExpr_operandContext) {
 		localctx = NewAttrContext(p, localctx)
 		p.EnterOuterAlt(localctx, 2)
 		{
-			p.SetState(119)
+			p.SetState(122)
 			p.EventAttr()
 		}
 
@@ -2327,7 +2347,7 @@ func (p *SESParserParser) Expr_operand() (localctx IExpr_operandContext) {
 		localctx = NewLitContext(p, localctx)
 		p.EnterOuterAlt(localctx, 3)
 		{
-			p.SetState(120)
+			p.SetState(123)
 			p.Literal()
 		}
 
@@ -2452,25 +2472,25 @@ func (p *SESParserParser) EventAttr() (localctx IEventAttrContext) {
 	}()
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(125)
+	p.SetState(128)
 	p.GetErrorHandler().Sync(p)
 
-	if p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 17, p.GetParserRuleContext()) == 1 {
+	if p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 18, p.GetParserRuleContext()) == 1 {
 		{
-			p.SetState(123)
+			p.SetState(126)
 
 			var _m = p.Match(SESParserParserID)
 
 			localctx.(*EventAttrContext).eventName = _m
 		}
 		{
-			p.SetState(124)
+			p.SetState(127)
 			p.Match(SESParserParserDOT)
 		}
 
 	}
 	{
-		p.SetState(127)
+		p.SetState(130)
 
 		var _m = p.Match(SESParserParserID)
 
@@ -2621,7 +2641,7 @@ func (p *SESParserParser) Literal() (localctx ILiteralContext) {
 		}
 	}()
 
-	p.SetState(131)
+	p.SetState(134)
 	p.GetErrorHandler().Sync(p)
 
 	switch p.GetTokenStream().LA(1) {
@@ -2629,7 +2649,7 @@ func (p *SESParserParser) Literal() (localctx ILiteralContext) {
 		localctx = NewLiteral_numberContext(p, localctx)
 		p.EnterOuterAlt(localctx, 1)
 		{
-			p.SetState(129)
+			p.SetState(132)
 			p.Match(SESParserParserNUMBER)
 		}
 
@@ -2637,7 +2657,7 @@ func (p *SESParserParser) Literal() (localctx ILiteralContext) {
 		localctx = NewLiteral_stringContext(p, localctx)
 		p.EnterOuterAlt(localctx, 2)
 		{
-			p.SetState(130)
+			p.SetState(133)
 			p.Match(SESParserParserSTRING)
 		}
 
@@ -2751,11 +2771,11 @@ func (p *SESParserParser) Group() (localctx IGroupContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(133)
+		p.SetState(136)
 		p.Match(SESParserParserGROUP)
 	}
 	{
-		p.SetState(134)
+		p.SetState(137)
 		p.EventAttr()
 	}
 

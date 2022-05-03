@@ -7,6 +7,7 @@ import (
 	"os"
 	"reflect"
 	"testing"
+	"time"
 
 	"ses_pm_antlr/automaton/state"
 	"ses_pm_antlr/parser"
@@ -52,6 +53,59 @@ func TestFailedAutomatons(t *testing.T) {
 			if len(runner.GetAcceptingAutomatons()) != 0 {
 				t.Errorf("No accepting automatons should be found")
 			}
+		})
+	}
+}
+
+func Test(t *testing.T) {
+	tests := []struct {
+		query          string
+		events         []AnyData
+		matched_groups []string
+	}{
+		{
+			"within 1 second event a and then event b group by session",
+			[]AnyData{
+				// two events match the window
+				{"id": "1", "name": "a", "time": time.Now().Unix(), "session": "s1"},
+				{"id": "2", "name": "b", "time": time.Now().Add(time.Second).Unix(), "session": "s1"},
+				// events are too far, outside the window
+				{"id": "3", "name": "a", "time": time.Now().Unix(), "session": "s2"},
+				{"id": "4", "name": "b", "time": time.Now().Add(2 * time.Second).Unix(), "session": "s2"},
+			},
+			[]string{"s1"},
+		},
+	}
+	for i, test := range tests {
+		testName := fmt.Sprintf("test %d", i)
+		t.Run(testName, func(t *testing.T) {
+			db := state.MakeBadgerDb(testName, "")
+			ses := parser.ParseSESQuery(test.query)
+			runner := MakeRunner(ses, db)
+
+			for _, e := range test.events {
+				runner.Accept(&SimpleEvent{e})
+			}
+
+			sessions := []string{}
+			for _, a := range runner.GetAcceptingAutomatons() {
+				g := a.groupBy.(string)
+				sessions = append(sessions, g)
+			}
+
+			// remove duplicates
+			for i := 0; i < len(sessions); i++ {
+				for j := i + 1; j < len(sessions); j++ {
+					if sessions[i] == sessions[j] {
+						sessions = append(sessions[:j], sessions[j+1:]...)
+					}
+				}
+			}
+
+			if !reflect.DeepEqual(sessions, test.matched_groups) {
+				t.Errorf("Unexpected sessions found %v, expected %v", sessions, test.matched_groups)
+			}
+
 		})
 	}
 }
@@ -142,11 +196,11 @@ func TestDeterministicAutomaton(t *testing.T) {
 func TestPublicExample(t *testing.T) {
 	jsonData := `
 [
-  {"id": "1", "name": "website_visit", "page": "home.html", "session_id": "s1"},
-  {"id": "2", "name": "website_visit", "page": "blog/post1.html", "session_id": "s1"},
-  {"id": "3", "name": "website_visit", "page": "blog/post2.html", "session_id": "s1"},
-  {"id": "4", "name": "website_visit", "page": "cart.html", "session_id": "s1"},
-  {"id": "5", "name": "purchase", "session_id": "s1"}
+  {"id": "1", "name": "website_visit", "page": "home.html", "session_id": "s1", "time":1},
+  {"id": "2", "name": "website_visit", "page": "blog/post1.html", "session_id": "s1", "time":2},
+  {"id": "3", "name": "website_visit", "page": "blog/post2.html", "session_id": "s1", "time":3},
+  {"id": "4", "name": "website_visit", "page": "cart.html", "session_id": "s1", "time":4},
+  {"id": "5", "name": "purchase", "session_id": "s1", "time":5}
 ]
 `
 

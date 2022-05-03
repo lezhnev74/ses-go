@@ -37,11 +37,23 @@ func (s *SimpleEvent) Name() string {
 	return idString
 }
 func (s *SimpleEvent) Time() time.Time {
-	timeInt, isInt := s.Data.Read("time").(int)
-	if !isInt {
-		panic(fmt.Sprintf("time not found in event %v", s.Data))
+	v := s.Data.Read("time")
+	switch t := v.(type) {
+	case int:
+		return time.Unix(int64(t), 0)
+	case string:
+		u, err := strconv.ParseInt(t, 10, 64)
+		if err != nil {
+			panic(fmt.Sprintf("time has invalid format in event %v, must be unixtime", s.Data))
+		}
+		return time.Unix(u, 0)
+	case int64:
+		return time.Unix(t, 0)
+	case float64:
+		return time.Unix(int64(t), 0)
+	default:
+		panic(fmt.Sprintf("time not found or in invalid format in event %v", s.Data))
 	}
-	return time.Unix(int64(timeInt), 0)
 }
 func (s *SimpleEvent) Attribute(path string) any {
 	return s.Data.Read(path)

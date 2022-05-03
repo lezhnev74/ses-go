@@ -1,4 +1,5 @@
 - how to pass db to inner instances, maybe pass container instead and services pick what they need?
 - all numbers are floats only (as JSON unmarshal converts it to floats, so ints are not used anywhere)
-
-- benchmark test (10K events)
+- benchmark test, memory profiling
+- add tiem constraints
+- come up with a design for exploring matched sequences. After the pattern match, how can we process the sequences of events?

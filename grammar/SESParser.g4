@@ -34,7 +34,7 @@ event_qty
     ;
 
 ses_window
-    :   THEN (SKIP_ skip=dateInterval)? (AND? WITHIN within=dateInterval)?
+    :   AND? THEN (SKIP_ skip=dateInterval)? (AND? WITHIN within=dateInterval)?
     ;
 
 dateInterval

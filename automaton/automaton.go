@@ -1,6 +1,8 @@
 package automaton
 
 import (
+	"time"
+
 	"ses_pm_antlr/automaton/state"
 	"ses_pm_antlr/expr"
 	"ses_pm_antlr/ses"
@@ -20,30 +22,55 @@ type Automaton struct {
 	curSet             int                                               // current set index
 	capturedAttributes map[int]map[string]EventAttrBuffer                // map full attr name to buffer
 	acceptedEventIds   map[int]map[string]EventAttrBuffer                // ids per set and per event
-	groupBy            any                                               // keep the unique value that we use to group events
+	groupBy            any                                               // keep the unique value that we use to group events (populated from the initial event)
+	windowStart        *time.Time                                        // remember the start of the window
 }
 
 // Accept tests the incoming event according to automaton criteria
 // returns isAccepted if event was accepted otherwise false, isFailed is true if automaton reached unrecoverable fail state, forks are to test alternative branches of matching
 // note: if isFailed is true then isAccepted is false
 func (a *Automaton) Accept(incomingEvent Event) (isAccepted bool, isFailed bool, forks []*Automaton) {
-	// 1. If automaton is in failed state - reject
+	// Condition: If automaton is in failed state - reject
 	if a.failed {
 		return
 	}
 
-	// 2. If at least one event captured before, check group-by equality, if fails - reject
+	// Condition: events must share group-by attribute
 	if a.groupBy != nil && incomingEvent.Attribute(a.ses.GetGroupBy()) != a.groupBy {
 		return
 	}
 
-	// 3. NonDeterminism check
+	// Condition: event must remain within the SES window
+	windowDuration := a.ses.GetSets()[0].GetWindow().Within // use first set's window as the global window
+	if windowDuration != 0 {                                // disable window check if the duration is 0
+		if a.windowStart != nil {
+			eventTime := incomingEvent.Time()
+			if eventTime.Before(*a.windowStart) {
+				return // event is outside window (before the window) (wrong event order... why is it earlier?!)
+			}
+
+			windowEnd := a.windowStart.Add(windowDuration)
+			if eventTime.After(windowEnd) {
+				// event is outside window (after the window)
+				// Assume window is over and no events are possible
+				a.failed = true
+				isAccepted = false
+				isFailed = true
+				return
+			}
+		} else {
+			t := incomingEvent.Time()
+			a.windowStart = &t
+		}
+	}
+
+	// NonDeterminism Condition:
 	// 3.1 if current set is in ACCEPTING state, check if event matches the next set, if yes - create forked automaton
 	if a.isAcceptingSet(a.curSet) && a.matchEventInSet(incomingEvent, a.curSet) && a.matchEventInSet(incomingEvent, a.curSet+1) {
 		forks = append(forks, a.fork())
 	}
 
-	// 4. Apply event condition expression, if fails - check the next set otherwise reject
+	// Condition: Apply event condition expression, if fails - check the next set otherwise reject
 	if !a.matchEventInSet(incomingEvent, a.curSet) {
 		// if the current set is accepting but event does not match it, then try the next set in the automaton
 		if a.isAcceptingSet(a.curSet) && a.matchEventInSet(incomingEvent, a.curSet+1) {
@@ -53,11 +80,11 @@ func (a *Automaton) Accept(incomingEvent Event) (isAccepted bool, isFailed bool,
 		}
 	}
 
-	// 5. Put event to buffers (id, attrs)
+	// Put event to buffers (id, attrs)
 	isAccepted = true
 	a.saveAcceptedEvent(incomingEvent)
 
-	// 6. Apply qty check, if underflow - accept, wait for more events, if overflow - put the automaton to FAILED state and reject
+	// Condition: Apply qty check, if underflow - accept, wait for more events, if overflow - put the automaton to FAILED state and reject
 	for _, event := range a.ses.GetSets()[a.curSet].GetEvents() {
 		if _, isOverflow := a.checkEventQty(a.curSet, event); isOverflow {
 			a.failed = true
@@ -170,6 +197,10 @@ func (a *Automaton) GetAcceptedEventIdsAsSlice() []map[string][]any {
 		}
 	}
 	return ids
+}
+
+func (a *Automaton) GetGroupBy() any {
+	return a.groupBy
 }
 
 // checkEventQty tests the number of captured events against qty criteria in the SES specification
