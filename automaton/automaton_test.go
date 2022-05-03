@@ -57,33 +57,53 @@ func TestFailedAutomatons(t *testing.T) {
 	}
 }
 
-func Test(t *testing.T) {
+func TestWindow(t *testing.T) {
+	now := time.Now()
 	tests := []struct {
 		query          string
 		events         []AnyData
 		matched_groups []string
 	}{
 		{
+			"within 1 second event a and then event a group by session",
+			[]AnyData{
+				{"id": "1", "name": "a", "time": now.UnixNano(), "session": "s1"},
+				{"id": "2", "name": "a", "time": now.Add(2 * time.Second).UnixNano(), "session": "s1"},
+				{"id": "3", "name": "a", "time": now.Add(3 * time.Second).UnixNano(), "session": "s1"},
+			},
+			[]string{"s1"},
+		},
+		{
+			"within 5 seconds event a+ and then event a{2,} group by session",
+			[]AnyData{
+				{"id": "1", "name": "a", "time": now.UnixNano(), "session": "s1"},
+				{"id": "2", "name": "a", "time": now.Add(3 * time.Second).UnixNano(), "session": "s1"},
+				{"id": "3", "name": "a", "time": now.Add(6 * time.Second).UnixNano(), "session": "s1"},
+				{"id": "4", "name": "a", "time": now.Add(7 * time.Second).UnixNano(), "session": "s1"},
+			},
+			[]string{"s1"},
+		},
+		{
 			"within 1 second event a and then event b group by session",
 			[]AnyData{
 				// two events match the window
-				{"id": "1", "name": "a", "time": time.Now().Unix(), "session": "s1"},
-				{"id": "2", "name": "b", "time": time.Now().Add(time.Second).Unix(), "session": "s1"},
+				{"id": "1", "name": "a", "time": now.UnixNano(), "session": "s1"},
+				{"id": "2", "name": "b", "time": now.Add(time.Second).UnixNano(), "session": "s1"},
 				// events are too far, outside the window
-				{"id": "3", "name": "a", "time": time.Now().Unix(), "session": "s2"},
-				{"id": "4", "name": "b", "time": time.Now().Add(2 * time.Second).Unix(), "session": "s2"},
+				{"id": "3", "name": "a", "time": now.UnixNano(), "session": "s2"},
+				{"id": "4", "name": "b", "time": now.Add(2 * time.Second).UnixNano(), "session": "s2"},
 			},
 			[]string{"s1"},
 		},
 	}
-	for i, test := range tests {
-		testName := fmt.Sprintf("test %d", i)
+	for i, tt := range tests {
+		testName := fmt.Sprintf("tt %d", i)
 		t.Run(testName, func(t *testing.T) {
 			db := state.MakeBadgerDb(testName, "")
-			ses := parser.ParseSESQuery(test.query)
+			ses := parser.ParseSESQuery(tt.query)
 			runner := MakeRunner(ses, db)
 
-			for _, e := range test.events {
+			for _, e := range tt.events {
 				runner.Accept(&SimpleEvent{e})
 			}
 
@@ -102,10 +122,9 @@ func Test(t *testing.T) {
 				}
 			}
 
-			if !reflect.DeepEqual(sessions, test.matched_groups) {
-				t.Errorf("Unexpected sessions found %v, expected %v", sessions, test.matched_groups)
+			if !reflect.DeepEqual(sessions, tt.matched_groups) {
+				t.Errorf("Unexpected sessions found %v, expected %v", sessions, tt.matched_groups)
 			}
-
 		})
 	}
 }

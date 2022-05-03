@@ -38,22 +38,27 @@ func (s *SimpleEvent) Name() string {
 }
 func (s *SimpleEvent) Time() time.Time {
 	v := s.Data.Read("time")
+	var t64 int64
+	// Assume nanoseconds
+	// Convert the input to in64 nanoseconds
 	switch t := v.(type) {
 	case int:
-		return time.Unix(int64(t), 0)
+		t64 = int64(t)
+	case int64:
+		t64 = int64(t)
+	case float64:
+		t64 = int64(t)
 	case string:
 		u, err := strconv.ParseInt(t, 10, 64)
 		if err != nil {
 			panic(fmt.Sprintf("time has invalid format in event %v, must be unixtime", s.Data))
 		}
-		return time.Unix(u, 0)
-	case int64:
-		return time.Unix(t, 0)
-	case float64:
-		return time.Unix(int64(t), 0)
+		t64 = int64(u)
 	default:
 		panic(fmt.Sprintf("time not found or in invalid format in event %v", s.Data))
 	}
+	// convert the int64 time to time
+	return time.Unix(int64(t64)/int64(time.Second), int64(t64)%int64(time.Second))
 }
 func (s *SimpleEvent) Attribute(path string) any {
 	return s.Data.Read(path)
