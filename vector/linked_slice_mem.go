@@ -1,10 +1,9 @@
-package linked_slice
+package vector
 
 import (
 	"encoding/json"
 
 	"ses_pm_antlr/automaton/state"
-	"ses_pm_antlr/vector"
 )
 
 // LinkedSliceMem implements linking to previous slices through pointers.
@@ -39,7 +38,7 @@ func (l *LinkedSliceMem) Spawn() *LinkedSliceMem {
 
 // GetIterator allows to navigate linked slices effectively through the data db management
 // Iteration starts from the end and navigates through the linked lists until the initial element found
-func (l *LinkedSliceMem) GetIterator() vector.Iterator {
+func (l *LinkedSliceMem) GetIterator() Iterator {
 	curSlice := l
 	curIndex := len(l.data) - 1
 
@@ -48,8 +47,8 @@ func (l *LinkedSliceMem) GetIterator() vector.Iterator {
 			if curSlice.prev == 0 {
 				return nil // end of the iteration
 			}
-			parent, state := l.db.FindNode(curSlice.prev)
-			curSlice = Deserialize(curSlice.prev, parent, state, l.db)
+			parent, serialized := l.db.FindNode(curSlice.prev)
+			curSlice = Deserialize(curSlice.prev, parent, serialized, l.db)
 			curIndex = len(curSlice.data) - 1
 		}
 

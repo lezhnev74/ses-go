@@ -1,4 +1,4 @@
-package linked_slice
+package vector
 
 import (
 	"fmt"

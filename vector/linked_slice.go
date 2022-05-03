@@ -1,6 +1,4 @@
-package linked_slice
-
-import "ses_pm_antlr/vector"
+package vector
 
 // LinkedSlice allows reuse of existing data and append only new data on top of that
 // most of the methods are working with pointers
@@ -48,7 +46,7 @@ Usage:
 		// use val
 	}
 */
-func (ls *LinkedSlice) GetIterator() vector.Iterator {
+func (ls *LinkedSlice) GetIterator() Iterator {
 	// collect all linked buffers with the length values
 	buffers := make([]*cappedLinkedSlice, 1)
 	buffers[0] = &cappedLinkedSlice{ls, len(ls.data)}        // put the current slice

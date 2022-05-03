@@ -2,7 +2,7 @@ package expr
 
 import (
 	"ses_pm_antlr/ses"
-	"ses_pm_antlr/vector/linked_slice"
+	"ses_pm_antlr/vector"
 )
 
 // Environment is an area with visible captured/data
@@ -12,7 +12,7 @@ type Environment interface {
 
 // SimpleEnvironment used for testing only
 type SimpleEnvironment struct {
-	captured map[string]*linked_slice.LinkedSlice
+	captured map[string]*vector.LinkedSlice
 	current  map[string]any
 }
 
@@ -28,7 +28,7 @@ func (env *SimpleEnvironment) Resolve(operand ses.EventAttributeOperand) any {
 	// captured vector value
 	val, exists := env.captured[operand.GetQualifiedAttributeName()]
 	if !exists {
-		return linked_slice.MakeLinkedSlice(nil).GetIterator()
+		return vector.MakeLinkedSlice(nil).GetIterator()
 	}
 	return val.GetIterator()
 }

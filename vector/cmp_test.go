@@ -3,8 +3,6 @@ package vector
 import (
 	"fmt"
 	"testing"
-
-	"ses_pm_antlr/vector/linked_slice"
 )
 
 func TestMakeCmpFunc(t *testing.T) {
@@ -38,20 +36,20 @@ func TestMakeCmpVectorFunc(t *testing.T) {
 	type testInput struct {
 		dynamicOperand       any
 		operator             string
-		dynamicVectorOperand *linked_slice.LinkedSlice
+		dynamicVectorOperand *LinkedSlice
 		strategy             int
 		expectedResult       bool
 	}
 	tests := []testInput{
 		// EQ and NEQ:
-		{"true", "=", linked_slice.MakeLinkedSliceInitialized(nil, []any{2.0}), OP_ALL, false},
-		{true, "=", linked_slice.MakeLinkedSliceInitialized(nil, []any{true}), OP_ALL, true},
+		{"true", "=", MakeLinkedSliceInitialized(nil, []any{2.0}), OP_ALL, false},
+		{true, "=", MakeLinkedSliceInitialized(nil, []any{true}), OP_ALL, true},
 		// Ordered CMP:
 		//{1.0, ">", linked_slice.MakeLinkedSliceInitialized([]any{-5.0},
 		//	&linked_slice.cappedLinkedSlice{&linked_slice.LinkedSlice{[]any{-6.0}, nil}, 1}}, OP_ALL, true},
-		{1.0, ">", linked_slice.MakeLinkedSliceInitialized(nil, []any{-1.0, 2.0}), OP_ALL, false},
-		{1.0, ">", linked_slice.MakeLinkedSliceInitialized(nil, []any{-1.0, 2.0}), OP_ANY, true},
-		{5.0, "<=", linked_slice.MakeLinkedSliceInitialized(nil, []any{6.0, 5.0, 10.0}), OP_ALL, true},
+		{1.0, ">", MakeLinkedSliceInitialized(nil, []any{-1.0, 2.0}), OP_ALL, false},
+		{1.0, ">", MakeLinkedSliceInitialized(nil, []any{-1.0, 2.0}), OP_ANY, true},
+		{5.0, "<=", MakeLinkedSliceInitialized(nil, []any{6.0, 5.0, 10.0}), OP_ALL, true},
 	}
 	for i, tt := range tests {
 		t.Run(fmt.Sprintf("test %d", i), func(t *testing.T) {
