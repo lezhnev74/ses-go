@@ -12,7 +12,7 @@ import (
 type treeNode struct {
 	Id, Parent  uint64
 	ChildrenIds []uint64
-	Linked      bool
+	Linked      bool // outside pointer exists, so data must remain
 	Data        []byte
 }
 
@@ -54,7 +54,7 @@ func (b *BadgerDb) Find(id uint64) (data []byte) {
 		data, err = item.ValueCopy(nil)
 		return err
 	})
-	if err != nil {
+	if err != nil && err.Error() != "Key not found" {
 		panic(errors.WithMessagef(err, "key: %d", id))
 	}
 

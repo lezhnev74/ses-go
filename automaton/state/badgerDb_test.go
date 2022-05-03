@@ -5,6 +5,20 @@ import (
 	"testing"
 )
 
+func Test_MissingNodes(t *testing.T) {
+	b := MakeBadgerDb("scope", true)
+	// Normal find
+	d := b.Find(1)
+	if d != nil {
+		t.Errorf("Returned not nil")
+	}
+	// Tree mode
+	_, n := b.FindNode(1)
+	if n != nil {
+		t.Errorf("Returned not nil")
+	}
+}
+
 func Test_Scoping(t *testing.T) {
 	t.Run("scoping", func(t *testing.T) {
 		b1, b2 := MakeBadgerDb("scope1", true), MakeBadgerDb("scope2", true)

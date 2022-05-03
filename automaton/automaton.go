@@ -1,6 +1,7 @@
 package automaton
 
 import (
+	"ses_pm_antlr/automaton/state"
 	"ses_pm_antlr/expr"
 	"ses_pm_antlr/ses"
 	"ses_pm_antlr/vector"
@@ -10,6 +11,8 @@ import (
 // it tests the event based on the given SES specification
 // It can detect non-determinism and fork to test all possible branches
 type Automaton struct {
+	db state.Db
+
 	ses                *ses.SES                                          // source definition of the automaton
 	matchers           map[int]map[string]map[string]expr.BoolExpression // map matches to set events
 	bufferSpecs        map[string]map[string]attrBufferSpec              // a map from event to attr name to buffer spec, when we need to capture an attr we use this spec to make a buffer
@@ -90,7 +93,7 @@ func (a *Automaton) saveAcceptedEvent(e Event) {
 			}
 			_, exists = a.capturedAttributes[a.curSet][spec.operand.GetQualifiedAttributeName()]
 			if !exists {
-				a.capturedAttributes[a.curSet][spec.operand.GetQualifiedAttributeName()] = MakeBufferFromSpec(spec)
+				a.capturedAttributes[a.curSet][spec.operand.GetQualifiedAttributeName()] = MakeBufferFromSpec(spec, a.db)
 			}
 			a.capturedAttributes[a.curSet][spec.operand.GetQualifiedAttributeName()].Accept(val)
 		}
@@ -106,7 +109,7 @@ func (a *Automaton) saveAcceptedEvent(e Event) {
 
 	_, exists = a.acceptedEventIds[a.curSet][e.Name()]
 	if !exists {
-		a.acceptedEventIds[a.curSet][e.Name()] = MakeSimpleEventAttrBuffer(nil)
+		a.acceptedEventIds[a.curSet][e.Name()] = MakeSimpleEventAttrBuffer(a.db)
 	}
 	a.acceptedEventIds[a.curSet][e.Name()].Accept(e.Id())
 }
@@ -163,7 +166,7 @@ func (a *Automaton) GetAcceptedEventIdsAsSlice() []map[string][]any {
 	for set, eventBuffers := range a.GetAcceptedEventIds() {
 		ids[set] = make(map[string][]any)
 		for eventName, buf := range eventBuffers {
-			ids[set][eventName] = buf.GetIterator().ToSlice()
+			ids[set][eventName] = buf.GetIterator().ToInvertedSlice() // iteration goes backwards
 		}
 	}
 	return ids
@@ -215,10 +218,11 @@ func (a *Automaton) fork() *Automaton {
 	return &fork
 }
 
-func MakeAutomaton(s *ses.SES) *Automaton {
+func MakeAutomaton(s *ses.SES, db state.Db) *Automaton {
 	a := Automaton{
 		ses:      s,
 		matchers: make(map[int]map[string]map[string]expr.BoolExpression),
+		db:       db,
 	}
 
 	// 1. Make buffers
@@ -286,6 +290,7 @@ func (env *AutomatonEnv) Resolve(operand ses.EventAttributeOperand) any {
 // Runner should accept incoming event and run all available instances of automatons against it,
 // if nondeterminism found it should add forked instances to the loop
 type Runner struct {
+	db        state.Db
 	ses       *ses.SES
 	instances []*Automaton
 }
@@ -315,7 +320,7 @@ func (r *Runner) appendInstance(a *Automaton) {
 // Accept pushes the event to all available automaton instances
 func (r *Runner) Accept(e Event) {
 	// Every event starts a new potential thread
-	startInstance := MakeAutomaton(r.ses)
+	startInstance := MakeAutomaton(r.ses, r.db)
 	r.appendInstance(startInstance)
 
 	i := 0
@@ -351,9 +356,10 @@ func (r *Runner) GetAcceptingAutomatons() []*Automaton {
 	return accepted
 }
 
-func MakeRunner(ses *ses.SES) *Runner {
+func MakeRunner(ses *ses.SES, db state.Db) *Runner {
 	return &Runner{
-		ses,
-		make([]*Automaton, 0),
+		ses:       ses,
+		instances: make([]*Automaton, 0),
+		db:        db,
 	}
 }

@@ -12,6 +12,8 @@ func TestSliceIteration(t *testing.T) {
 	// every slice in a save is linked to the previous one
 	tests := [][][]any{
 		{{}},
+		{{1.0}, {}},
+		{{1.0}, {}, {2.0}},
 		{{1.0, 2.0, 3.0}}, // ints are converted to floats upon serialization to JSON
 		{{1.0}, {2.0, 3.0}},
 		{{1.0}, {2.0, 3.0}, {}, {4.0, "hello"}},
@@ -22,11 +24,14 @@ func TestSliceIteration(t *testing.T) {
 	for i, input := range tests {
 		t.Run(fmt.Sprintf("test %d", i), func(t *testing.T) {
 			var lastSlice *LinkedSliceMem
-			var prev uint64
 			expectedRevertedSlice := make([]any, 0)
 			for _, s := range input {
-				lastSlice = MakeLinkedSliceMem(prev, db)
-				prev = lastSlice.id
+				if lastSlice == nil {
+					lastSlice = MakeLinkedSliceMem(db)
+				} else {
+					lastSlice = lastSlice.Spawn()
+				}
+
 				for _, val := range s {
 					lastSlice.Append(val)
 					expectedRevertedSlice = append(expectedRevertedSlice, val)

@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"testing"
 
+	"ses_pm_antlr/automaton/state"
 	"ses_pm_antlr/parser"
 )
 
@@ -35,9 +36,11 @@ func TestFailedAutomatons(t *testing.T) {
 	}
 
 	for i, tt := range tests {
-		t.Run(fmt.Sprintf("test %d", i), func(t *testing.T) {
+		testName := fmt.Sprintf("test %d", i)
+		t.Run(testName, func(t *testing.T) {
+			db := state.MakeBadgerDb(testName, true)
 			ses := parser.ParseSESQuery(tt)
-			runner := MakeRunner(ses)
+			runner := MakeRunner(ses, db)
 
 			// feed to the automaton
 			for _, event := range events {
@@ -106,9 +109,11 @@ func TestDeterministicAutomaton(t *testing.T) {
 	}
 
 	for i, tt := range tests {
-		t.Run(fmt.Sprintf("test %d", i), func(t *testing.T) {
+		testName := fmt.Sprintf("test %d", i)
+		t.Run(testName, func(t *testing.T) {
+			db := state.MakeBadgerDb(testName, true)
 			ses := parser.ParseSESQuery(tt.query)
-			runner := MakeRunner(ses)
+			runner := MakeRunner(ses, db)
 
 			// feed to the automaton
 			for _, event := range events {
@@ -165,7 +170,8 @@ group by session_id
 	ses := parser.ParseSESQuery(query)
 
 	// Run Matching
-	runner := MakeRunner(ses)
+	db := state.MakeBadgerDb("scope1", true)
+	runner := MakeRunner(ses, db)
 	for _, event := range events {
 		e := &SimpleEvent{event} // wrap your data to something that implement automaton.Event interface
 		runner.Accept(e)

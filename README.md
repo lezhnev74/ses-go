@@ -1,5 +1,11 @@
 # PoC: Event Set Pattern Matching (in Go)
 
+
+Current points of work:
+- how to pass db to inner instances, maybe pass container instead and services pick what they need?
+- all numbers are floats only (as JSON unmarshal converts it to floats, so ints are not used anywhere)
+
+
 Regular expressions are a notation for describing sets of character strings, this package offers expressions for sets of events.
 **The idea is that an analyst can express complex behaviour in terms of facts (events) and find matching actors by scanning a stream of events**.
 

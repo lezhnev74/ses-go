@@ -1,6 +1,7 @@
 package automaton
 
 import (
+	"ses_pm_antlr/automaton/state"
 	"ses_pm_antlr/ses"
 	"ses_pm_antlr/vector"
 )
@@ -8,30 +9,19 @@ import (
 // EventAttrBuffer is a container with public access methods, but hidden Data persisting strategies
 // it implements different Data strategies (like keep unique values, min/max, calculate average, keep only the last/first one etc.)
 type EventAttrBuffer interface {
-	Accept(value any)             // accept a new matched value to keep for later
+	Accept(value any)             // store a new matched value to keep for later (store accordingly to the buffer impl)
 	GetIterator() vector.Iterator // return an iterator (reads the next value on each call)
-	Spawn() EventAttrBuffer       // Start a new buffer with the same type (may link to the previous buffer for Data integrity)
+	Spawn() EventAttrBuffer       // start a new buffer with the same type (may link to the previous buffer for Data integrity)
 }
 
 // SimpleEventAttrBuffer keeps all appending values, no check for duplication or anything
 type SimpleEventAttrBuffer struct {
-	values *vector.LinkedSlice
+	values *vector.LinkedSliceMem
 }
 
-func MakeSimpleEventAttrBufferInitialized(prev *SimpleEventAttrBuffer, data []any) *SimpleEventAttrBuffer {
-	var prevLinkedSlice *vector.LinkedSlice
-	if prev != nil {
-		prevLinkedSlice = prev.values
-	}
-	slice := vector.MakeLinkedSlice(prevLinkedSlice)
-	for _, d := range data {
-		slice.Append(d)
-	}
+func MakeSimpleEventAttrBuffer(db state.Db) *SimpleEventAttrBuffer {
+	slice := vector.MakeLinkedSliceMem(db)
 	return &SimpleEventAttrBuffer{slice}
-}
-
-func MakeSimpleEventAttrBuffer(prev *SimpleEventAttrBuffer) *SimpleEventAttrBuffer {
-	return MakeSimpleEventAttrBufferInitialized(prev, nil)
 }
 
 func (b *SimpleEventAttrBuffer) Accept(value any) {
@@ -43,23 +33,23 @@ func (b *SimpleEventAttrBuffer) GetIterator() vector.Iterator {
 }
 
 func (b *SimpleEventAttrBuffer) Spawn() EventAttrBuffer {
-	return MakeSimpleEventAttrBuffer(b)
+	// Whenever we fork the buffer, we want to for the slice twice to freeze the current state of the buffer
+	// new and current buffer will get new underlying slices that point to the same frozen slice
+	// and both will be able to grow independently sharing the same initial slice
+	s1, s2 := b.values.Spawn(), b.values.Spawn()
+	b.values = s1
+	return &SimpleEventAttrBuffer{s2}
 }
 
 // UniqueEventAttrBuffer keeps only unique values (with respect to previous linked buffers)
 // useful for all sorts of comparison like "a.x<b.x" or "a.x=any(b.x)"
 type UniqueEventAttrBuffer struct {
-	values *vector.LinkedSlice
+	values *vector.LinkedSliceMem
 }
 
-func MakeUniqueEventAttrBuffer(prev *UniqueEventAttrBuffer) *UniqueEventAttrBuffer {
-	var prevLinkedSlice *vector.LinkedSlice
-	if prev != nil {
-		prevLinkedSlice = prev.values
-	}
-	return &UniqueEventAttrBuffer{
-		vector.MakeLinkedSlice(prevLinkedSlice),
-	}
+func MakeUniqueEventAttrBuffer(db state.Db) *UniqueEventAttrBuffer {
+	slice := vector.MakeLinkedSliceMem(db)
+	return &UniqueEventAttrBuffer{slice}
 }
 
 func (b *UniqueEventAttrBuffer) Accept(value any) {
@@ -82,38 +72,46 @@ func (b *UniqueEventAttrBuffer) GetIterator() vector.Iterator {
 }
 
 func (b *UniqueEventAttrBuffer) Spawn() EventAttrBuffer {
-	return MakeUniqueEventAttrBuffer(b)
+	// Whenever we fork the buffer, we want to for the slice twice to freeze the current state of the buffer
+	// new and current buffer will get new underlying slices that point to the same frozen slice
+	// and both will be able to grow independently sharing the same initial slice
+	s1, s2 := b.values.Spawn(), b.values.Spawn()
+	b.values = s1
+	return &UniqueEventAttrBuffer{s2}
 }
 
 // FirstEventAttrBuffer only ever memorizes the first accepted value
 type FirstEventAttrBuffer struct {
-	values *vector.LinkedSlice
+	// no link to previous buffers as we are only interested in the first value
+	// upon spawning the first value is copied to the new buffer
+	value any
 }
 
-func MakeFirstEventAttrBuffer(prev *FirstEventAttrBuffer) *FirstEventAttrBuffer {
-	var prevLinkedSlice *vector.LinkedSlice
-	if prev != nil {
-		prevLinkedSlice = prev.values
-	}
-	return &FirstEventAttrBuffer{
-		vector.MakeLinkedSlice(prevLinkedSlice),
-	}
+func MakeFirstEventAttrBuffer() *FirstEventAttrBuffer {
+	return &FirstEventAttrBuffer{}
 }
 
 func (b *FirstEventAttrBuffer) Accept(value any) {
-	if b.GetIterator()() != nil {
+	if b.value != nil {
 		return // value already present
 	}
 
-	b.values.Append(value) // save the first value
+	b.value = value // save the first value
 }
 
 func (b *FirstEventAttrBuffer) GetIterator() vector.Iterator {
-	return b.values.GetIterator()
+	i := 0
+	return func() any { // return the most recent one (this one)
+		if i > 0 {
+			return nil
+		}
+		i++
+		return b.value
+	}
 }
 
 func (b *FirstEventAttrBuffer) Spawn() EventAttrBuffer {
-	return MakeFirstEventAttrBuffer(b)
+	return &FirstEventAttrBuffer{b.value}
 }
 
 // LastEventAttrBuffer only memorizes the last value and nothing else
@@ -123,7 +121,7 @@ type LastEventAttrBuffer struct {
 	value any
 }
 
-func MakeLastEventAttrBuffer(prev *LastEventAttrBuffer) *LastEventAttrBuffer {
+func MakeLastEventAttrBuffer() *LastEventAttrBuffer {
 	return &LastEventAttrBuffer{}
 }
 
@@ -143,16 +141,18 @@ func (b *LastEventAttrBuffer) GetIterator() vector.Iterator {
 }
 
 func (b *LastEventAttrBuffer) Spawn() EventAttrBuffer {
-	return MakeLastEventAttrBuffer(b)
+	b2 := MakeLastEventAttrBuffer()
+	b2.value = b.value // copy the current value and don't make a chain
+	return b2
 }
 
-func MakeBufferFromSpec(spec attrBufferSpec) EventAttrBuffer {
+func MakeBufferFromSpec(spec attrBufferSpec, db state.Db) EventAttrBuffer {
 	switch spec.operand.SelectMode {
 	case ses.SelectFirst:
-		return MakeFirstEventAttrBuffer(nil)
+		return MakeFirstEventAttrBuffer()
 	case ses.SelectLast:
-		return MakeLastEventAttrBuffer(nil)
+		return MakeLastEventAttrBuffer()
 	default:
-		return MakeUniqueEventAttrBuffer(nil)
+		return MakeUniqueEventAttrBuffer(db)
 	}
 }
