@@ -10,7 +10,7 @@ type Event struct {
 	conditions     []*Condition
 }
 
-// Validate is used during the parsing phase to make sure the event data is consistent
+// validate is used during the parsing phase to make sure the event data is consistent
 func (e *Event) validate() {
 
 	// At least one operand in every condition must refer to this event

@@ -26,11 +26,23 @@ func (s *BaseSESParserListener) EnterParse(ctx *ParseContext) {}
 // ExitParse is called when production parse is exited.
 func (s *BaseSESParserListener) ExitParse(ctx *ParseContext) {}
 
+// EnterWindow is called when production window is entered.
+func (s *BaseSESParserListener) EnterWindow(ctx *WindowContext) {}
+
+// ExitWindow is called when production window is exited.
+func (s *BaseSESParserListener) ExitWindow(ctx *WindowContext) {}
+
 // EnterSes is called when production ses is entered.
 func (s *BaseSESParserListener) EnterSes(ctx *SesContext) {}
 
 // ExitSes is called when production ses is exited.
 func (s *BaseSESParserListener) ExitSes(ctx *SesContext) {}
+
+// EnterWindowed_ses is called when production windowed_ses is entered.
+func (s *BaseSESParserListener) EnterWindowed_ses(ctx *Windowed_sesContext) {}
+
+// ExitWindowed_ses is called when production windowed_ses is exited.
+func (s *BaseSESParserListener) ExitWindowed_ses(ctx *Windowed_sesContext) {}
 
 // EnterEvent is called when production event is entered.
 func (s *BaseSESParserListener) EnterEvent(ctx *EventContext) {}

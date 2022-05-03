@@ -10,8 +10,14 @@ type SESParserListener interface {
 	// EnterParse is called when entering the parse production.
 	EnterParse(c *ParseContext)
 
+	// EnterWindow is called when entering the window production.
+	EnterWindow(c *WindowContext)
+
 	// EnterSes is called when entering the ses production.
 	EnterSes(c *SesContext)
+
+	// EnterWindowed_ses is called when entering the windowed_ses production.
+	EnterWindowed_ses(c *Windowed_sesContext)
 
 	// EnterEvent is called when entering the event production.
 	EnterEvent(c *EventContext)
@@ -61,8 +67,14 @@ type SESParserListener interface {
 	// ExitParse is called when exiting the parse production.
 	ExitParse(c *ParseContext)
 
+	// ExitWindow is called when exiting the window production.
+	ExitWindow(c *WindowContext)
+
 	// ExitSes is called when exiting the ses production.
 	ExitSes(c *SesContext)
+
+	// ExitWindowed_ses is called when exiting the windowed_ses production.
+	ExitWindowed_ses(c *Windowed_sesContext)
 
 	// ExitEvent is called when exiting the event production.
 	ExitEvent(c *EventContext)

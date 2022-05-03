@@ -1,0 +1,3 @@
+Current points of work:
+- how to pass db to inner instances, maybe pass container instead and services pick what they need?
+- all numbers are floats only (as JSON unmarshal converts it to floats, so ints are not used anywhere)

@@ -58,7 +58,7 @@ func (a *Automaton) Accept(incomingEvent Event) (isAccepted bool, isFailed bool,
 	a.saveAcceptedEvent(incomingEvent)
 
 	// 6. Apply qty check, if underflow - accept, wait for more events, if overflow - put the automaton to FAILED state and reject
-	for _, event := range a.ses.GetSets()[a.curSet] {
+	for _, event := range a.ses.GetSets()[a.curSet].GetEvents() {
 		if _, isOverflow := a.checkEventQty(a.curSet, event); isOverflow {
 			a.failed = true
 			isAccepted = false
@@ -136,7 +136,7 @@ func (a *Automaton) matchEventInSet(e Event, set int) bool {
 
 // isAcceptingSet checks if captured events for the set satisfy qty criteria
 func (a *Automaton) isAcceptingSet(set int) bool {
-	for _, event := range a.ses.GetSets()[set] {
+	for _, event := range a.ses.GetSets()[set].GetEvents() {
 		if isMatch, _ := a.checkEventQty(set, event); !isMatch {
 			return false
 		}
@@ -239,7 +239,7 @@ func MakeAutomaton(s *ses.SES, db state.Db) *Automaton {
 	for i, eventSets := range s.GetSets() {
 		a.matchers[i] = make(map[string]map[string]expr.BoolExpression)
 
-		for _, event := range eventSets {
+		for _, event := range eventSets.GetEvents() {
 			a.matchers[i][event.GetName()] = make(map[string]expr.BoolExpression)
 
 			eventAttrConds := map[string]map[string][]expr.Expression{} // collect all cond expressions for every attribute

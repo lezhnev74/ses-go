@@ -7,11 +7,19 @@ options {
 ////////////////////////// PARSER ///////////////////////////////////////////////////////////
 
 parse
-    :   ses (ses_window ses)* group? EOF
+    :   window? ses windowed_ses* group? EOF
+    ;
+
+window
+    :   WITHIN within=dateInterval
     ;
 
 ses
     :   event+
+    ;
+
+windowed_ses
+    :   ses_window? event+
     ;
 
 event
@@ -26,11 +34,11 @@ event_qty
     ;
 
 ses_window
-    :   THEN (SKIP_ dateInterval)? (AND? WITHIN dateInterval)?
+    :   THEN (SKIP_ skip=dateInterval)? (AND? WITHIN within=dateInterval)?
     ;
 
 dateInterval
-    :   NUMBER DATE_UNIT (AND dateInterval)*
+    :   num=NUMBER unit=DATE_UNIT (AND extra=dateInterval)*
     ;
 
 event_expression

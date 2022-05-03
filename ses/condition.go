@@ -47,7 +47,7 @@ func (c *Condition) String() string {
 	return fmt.Sprintf("%s %s %s", c.operandLeft, c.operation, c.operandRight)
 }
 
-// Validate is used during the parsing phase to make sure the condition data is consistent
+// validate is used during the parsing phase to make sure the condition data is consistent
 func (c *Condition) validate() {
 	// At least one operand must be EventAttributeOperand
 	_, operandLeftEventAttribute := c.operandLeft.(EventAttributeOperand)
@@ -55,7 +55,7 @@ func (c *Condition) validate() {
 	if !operandLeftEventAttribute && !operandRightEventAttribute {
 		panic(fmt.Sprintf("at least one operand must refer to an event attribute"))
 	}
-	//note: IsCurrent is checked in Event.Validate()
+	//note: IsCurrent is checked in Event.validate()
 
 	// Check that only floats can be compared
 	if c.operation == ">" || c.operation == ">=" || c.operation == "<" || c.operation == "<=" {

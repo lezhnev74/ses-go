@@ -5,8 +5,10 @@ import (
 	"math"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
+	"github.com/pkg/errors"
 	"ses_pm_antlr/antlr_parser"
 	"ses_pm_antlr/ses"
 )
@@ -15,16 +17,15 @@ type SESListener struct {
 	*antlr_parser.BaseSESParserListener
 
 	*ses.SES
-	curSet  int
+	window  ses.Window
 	groupBy *string
 }
 
 // ParseSESQuery read input text and makes an IR of it (ses)
 func ParseSESQuery(query string) *ses.SES {
 	listener := &SESListener{
-		SES: ses.MakeSES([][]*ses.Event{}, ""),
+		SES: ses.MakeSES(make([]*ses.Set, 0), ""),
 	}
-	listener.SES.AddSet()
 
 	// Configure ANTLR
 	input := antlr.NewInputStream(query)
@@ -35,8 +36,17 @@ func ParseSESQuery(query string) *ses.SES {
 	p := antlr_parser.NewSESParserParser(tokenStream)
 	antlr.ParseTreeWalkerDefault.Walk(listener, p.Parse())
 
+	//after all validate the whole SES
+	listener.SES.Validate()
+
 	// Listener contains the parsed structure
 	return listener.SES
+}
+
+func (s *SESListener) EnterWindow(ctx *antlr_parser.WindowContext) {
+	s.window = ses.Window{
+		Within: extractDuration(ctx.GetWithin()),
+	}
 }
 
 func (s *SESListener) EnterEvent(ctx *antlr_parser.EventContext) {
@@ -152,14 +162,65 @@ func (s *SESListener) EnterEvent(ctx *antlr_parser.EventContext) {
 	}
 
 	// 2. Push to the current event set
-	s.AddEvent(s.curSet, ses.MakeEvent(eventName, from, to, conditions))
+	e := ses.MakeEvent(eventName, from, to, conditions)
+	s.SES.AddEvent(len(s.SES.GetSets())-1, e)
 }
 
-func (s *SESListener) EnterSes_window(ctx *antlr_parser.Ses_windowContext) {
-	s.curSet++
-	s.AddSet()
+func (s *SESListener) EnterSes(ctx *antlr_parser.SesContext) {
+	s.AddSet(s.window) // use the window
+}
+
+func (s *SESListener) EnterWindowed_ses(ctx *antlr_parser.Windowed_sesContext) {
+	// Parse window
+	var w ses.Window
+	if ctx.Ses_window() != nil {
+		w = ses.Window{
+			Skip:   extractDuration(ctx.Ses_window().GetSkip()),
+			Within: extractDuration(ctx.Ses_window().GetWithin()),
+		}
+	}
+
+	s.AddSet(w)
 }
 
 func (s *SESListener) EnterGroup(ctx *antlr_parser.GroupContext) {
 	s.SES.SetGroupBy(ctx.EventAttr().GetText())
+}
+
+func extractDuration(ctx antlr_parser.IDateIntervalContext) (d time.Duration) {
+	if ctx == nil {
+		return // default zero duration returned
+	}
+
+	i, err := strconv.ParseInt(ctx.GetNum().GetText(), 10, 64)
+	if err != nil {
+		panic(errors.WithMessagef(err, "unable to parse duration number %s %s", ctx.GetNum().GetText(), ctx.GetUnit().GetText()))
+	}
+	number := time.Duration(i)
+	unit := ctx.GetUnit().GetText()
+
+	switch unit {
+	default:
+	case "nanosecond", "nanoseconds":
+		d = time.Nanosecond * number
+	case "microsecond", "microseconds":
+		d = time.Microsecond * number
+	case "second", "seconds":
+		d = time.Second * number
+	case "minute", "minutes":
+		d = time.Minute * number
+	case "hour", "hours":
+		d = time.Hour * number
+	case "day", "days":
+		d = time.Hour * 24 * number
+	case "week", "weeks":
+		d = time.Hour * 24 * 7 * number
+		panic(fmt.Errorf("unable to parse duration unit %s %s", ctx.GetNum().GetText(), ctx.GetUnit().GetText()))
+	}
+
+	if ctx.GetExtra() != nil {
+		d = d + extractDuration(ctx.GetExtra())
+	}
+
+	return d
 }

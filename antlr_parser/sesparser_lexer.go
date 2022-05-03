@@ -50,13 +50,13 @@ func sesparserlexerLexerInit() {
 	staticData.symbolicNames = []string{
 		"", "WS", "LINE_COMMENT", "SPACE", "EVENT", "SKIP_", "WITHIN", "THEN",
 		"WHERE", "AND", "OR", "GROUP", "DATE_UNIT", "OP_LOGICAL", "DOT", "L_BRACKET",
-		"R_BRACKET", "L_SQUARE_BRACKET", "R_SQUARE_BRACKET", "COMMA", "SEMI",
+		"R_BRACKET", "L_CURLY_BRACKET", "R_CURLY_BRACKET", "COMMA", "SEMI",
 		"PLUS", "ASTERISK", "NUMBER", "STRING", "ID",
 	}
 	staticData.ruleNames = []string{
 		"WS", "LINE_COMMENT", "SPACE", "EVENT", "SKIP_", "WITHIN", "THEN", "WHERE",
 		"AND", "OR", "GROUP", "DATE_UNIT", "OP_LOGICAL", "DOT", "L_BRACKET",
-		"R_BRACKET", "L_SQUARE_BRACKET", "R_SQUARE_BRACKET", "COMMA", "SEMI",
+		"R_BRACKET", "L_CURLY_BRACKET", "R_CURLY_BRACKET", "COMMA", "SEMI",
 		"PLUS", "ASTERISK", "NUMBER", "STRING", "ID", "EQ", "RE_EQ", "NEQ",
 		"GT", "GTE", "LT", "LTE", "QUARTER", "YEAR", "MONTH", "WEEK", "DAY",
 		"HOUR", "MINUTE", "SECOND", "MICROSECOND", "DQUOTA_STRING", "SQUOTA_STRING",
@@ -300,29 +300,29 @@ func NewSESParserLexer(input antlr.CharStream) *SESParserLexer {
 
 // SESParserLexer tokens.
 const (
-	SESParserLexerWS               = 1
-	SESParserLexerLINE_COMMENT     = 2
-	SESParserLexerSPACE            = 3
-	SESParserLexerEVENT            = 4
-	SESParserLexerSKIP_            = 5
-	SESParserLexerWITHIN           = 6
-	SESParserLexerTHEN             = 7
-	SESParserLexerWHERE            = 8
-	SESParserLexerAND              = 9
-	SESParserLexerOR               = 10
-	SESParserLexerGROUP            = 11
-	SESParserLexerDATE_UNIT        = 12
-	SESParserLexerOP_LOGICAL       = 13
-	SESParserLexerDOT              = 14
-	SESParserLexerL_BRACKET        = 15
-	SESParserLexerR_BRACKET        = 16
-	SESParserLexerL_SQUARE_BRACKET = 17
-	SESParserLexerR_SQUARE_BRACKET = 18
-	SESParserLexerCOMMA            = 19
-	SESParserLexerSEMI             = 20
-	SESParserLexerPLUS             = 21
-	SESParserLexerASTERISK         = 22
-	SESParserLexerNUMBER           = 23
-	SESParserLexerSTRING           = 24
-	SESParserLexerID               = 25
+	SESParserLexerWS              = 1
+	SESParserLexerLINE_COMMENT    = 2
+	SESParserLexerSPACE           = 3
+	SESParserLexerEVENT           = 4
+	SESParserLexerSKIP_           = 5
+	SESParserLexerWITHIN          = 6
+	SESParserLexerTHEN            = 7
+	SESParserLexerWHERE           = 8
+	SESParserLexerAND             = 9
+	SESParserLexerOR              = 10
+	SESParserLexerGROUP           = 11
+	SESParserLexerDATE_UNIT       = 12
+	SESParserLexerOP_LOGICAL      = 13
+	SESParserLexerDOT             = 14
+	SESParserLexerL_BRACKET       = 15
+	SESParserLexerR_BRACKET       = 16
+	SESParserLexerL_CURLY_BRACKET = 17
+	SESParserLexerR_CURLY_BRACKET = 18
+	SESParserLexerCOMMA           = 19
+	SESParserLexerSEMI            = 20
+	SESParserLexerPLUS            = 21
+	SESParserLexerASTERISK        = 22
+	SESParserLexerNUMBER          = 23
+	SESParserLexerSTRING          = 24
+	SESParserLexerID              = 25
 )
