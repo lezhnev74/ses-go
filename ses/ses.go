@@ -5,16 +5,22 @@ import (
 	"time"
 )
 
-type Window struct {
+type SesWindow struct {
+	From, To                 *time.Time     // "22.02.2022"
+	FromRelative, ToRelative *time.Duration // "Last 90 days" - assume the duration is relative to
+	Within                   *time.Duration // "90 Days"
+}
+
+type SetWindow struct {
 	Skip, Within time.Duration
 }
 
 type Set struct {
 	events []*Event
-	window Window // note: first set's window serves as global window as of now
+	window SetWindow // note: first set's window serves as global window as of now
 }
 
-func (s *Set) GetWindow() Window     { return s.window }
+func (s *Set) GetWindow() SetWindow  { return s.window }
 func (s *Set) GetEvents() []*Event   { return s.events }
 func (s *Set) AddEvent(event *Event) { s.events = append(s.events, event) }
 
@@ -54,7 +60,7 @@ func (s *Set) validate() {
 	// ---------------------------------------------------------------------------------------------------------
 }
 
-func MakeSet(events []*Event, w Window) *Set {
+func MakeSet(events []*Event, w SetWindow) *Set {
 	return &Set{
 		events: events,
 		window: w,
@@ -64,6 +70,7 @@ func MakeSet(events []*Event, w Window) *Set {
 // SES is an ordered Sequence of Event Sets: (0:[event1,event2], 1:[event3], 2:[event4,event5,event6])
 // note: within a set the order is irrelevant
 type SES struct {
+	window    SesWindow
 	sets      []*Set
 	groupAttr string // group all events by this attribute value
 }
@@ -72,16 +79,10 @@ func (s *SES) GetSets() []*Set                { return s.sets }
 func (s *SES) GetGroupBy() string             { return s.groupAttr }
 func (s *SES) SetGroupBy(groupBy string)      { s.groupAttr = groupBy }
 func (s *SES) AddEvent(set int, event *Event) { s.sets[set].AddEvent(event) }
-
-func (s *SES) GetWindow() Window {
-	if len(s.sets) == 0 {
-		panic("Unable to find a widow as there are no sets")
-	}
-	return s.sets[0].GetWindow()
-}
+func (s *SES) GetWindow() SesWindow           { return s.window }
 
 // AddSet pushes a new empty set to the sequence
-func (s *SES) AddSet(w Window) {
+func (s *SES) AddSet(w SetWindow) {
 	s.sets = append(s.sets, &Set{
 		make([]*Event, 0),
 		w,
@@ -127,10 +128,11 @@ func (s *SES) Validate() {
 }
 
 // MakeSES make a correct new SES with given default sets, otherwise panics
-func MakeSES(sets []*Set, groupBy string) *SES {
+func MakeSES(sets []*Set, groupBy string, window SesWindow) *SES {
 	ses := &SES{
 		sets:      sets,
 		groupAttr: groupBy,
+		window:    window,
 	}
 	return ses
 }

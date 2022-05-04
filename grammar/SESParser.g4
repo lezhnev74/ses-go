@@ -7,19 +7,15 @@ options {
 ////////////////////////// PARSER ///////////////////////////////////////////////////////////
 
 parse
-    :   window? ses windowed_ses* group? EOF
+    :   window? ses+ group? EOF
     ;
 
 window
-    :   WITHIN within=dateInterval
+    :   WINDOW (FROM from=date (TO to=date)?)? (WITHIN? within=dateInterval)?
     ;
 
 ses
-    :   event+
-    ;
-
-windowed_ses
-    :   ses_window? event+
+    :   set_window? event+
     ;
 
 event
@@ -33,8 +29,21 @@ event_qty
     |   (L_CURLY_BRACKET exact=NUMBER R_CURLY_BRACKET) # qty_precise_alt
     ;
 
-ses_window
+set_window
     :   AND? THEN (SKIP_ skip=dateInterval)? (AND? WITHIN within=dateInterval)?
+    ;
+
+date
+    :   absoluteDate
+    |   relativeDate
+    ;
+
+absoluteDate
+    :   STRING
+    ;
+
+relativeDate
+    :   LAST last=dateInterval
     ;
 
 dateInterval
@@ -72,6 +81,10 @@ SPACE: [ \t\r\n]+;
 
 // KEYWORDS
 EVENT: E V E N T;
+WINDOW: W I N D O W;
+FROM: F R O M;
+TO: T O;
+LAST: L A S T;
 SKIP_: S K I P;
 WITHIN: W I T H I N;
 THEN: T H E N;

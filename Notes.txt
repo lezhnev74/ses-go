@@ -1,10 +1,13 @@
 - how to pass db to inner instances, maybe pass container instead and services pick what they need?
 - all numbers are floats only (as JSON unmarshal converts it to floats, so ints are not used anywhere)
 - benchmark test, memory profiling
-- add time constraints (global window, set window)
 - come up with a design for exploring matched sequences. After the pattern match, how can we process the sequences of events?
 
 Notes:
 - it assumes all time stamps are in NANOSECONDS
 - it assumes events are ordered in time
 - "event a then <window> event b" - window is calculated from the last matched event in the previous set
+- window expression can contain relative dates ("window from last week to today"). Actual dates should be resolved at run-time.
+    However, an automaton can live for days and thus old captured events might become invalid. So the automaton should be able
+    to confirm it's state by replaying captured events (a.Replay() *automaton). A new instance of an automaton is created and events are fed to it.
+    The caller then may remove automatons which become invalid due to relative window values.

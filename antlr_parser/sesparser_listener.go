@@ -16,9 +16,6 @@ type SESParserListener interface {
 	// EnterSes is called when entering the ses production.
 	EnterSes(c *SesContext)
 
-	// EnterWindowed_ses is called when entering the windowed_ses production.
-	EnterWindowed_ses(c *Windowed_sesContext)
-
 	// EnterEvent is called when entering the event production.
 	EnterEvent(c *EventContext)
 
@@ -34,11 +31,20 @@ type SESParserListener interface {
 	// EnterQty_precise_alt is called when entering the qty_precise_alt production.
 	EnterQty_precise_alt(c *Qty_precise_altContext)
 
-	// EnterSes_window is called when entering the ses_window production.
-	EnterSes_window(c *Ses_windowContext)
+	// EnterSet_window is called when entering the set_window production.
+	EnterSet_window(c *Set_windowContext)
 
 	// EnterDateInterval is called when entering the dateInterval production.
 	EnterDateInterval(c *DateIntervalContext)
+
+	// EnterDate is called when entering the date production.
+	EnterDate(c *DateContext)
+
+	// EnterAbsoluteDate is called when entering the absoluteDate production.
+	EnterAbsoluteDate(c *AbsoluteDateContext)
+
+	// EnterRelativeDate is called when entering the relativeDate production.
+	EnterRelativeDate(c *RelativeDateContext)
 
 	// EnterEvent_expression is called when entering the event_expression production.
 	EnterEvent_expression(c *Event_expressionContext)
@@ -73,9 +79,6 @@ type SESParserListener interface {
 	// ExitSes is called when exiting the ses production.
 	ExitSes(c *SesContext)
 
-	// ExitWindowed_ses is called when exiting the windowed_ses production.
-	ExitWindowed_ses(c *Windowed_sesContext)
-
 	// ExitEvent is called when exiting the event production.
 	ExitEvent(c *EventContext)
 
@@ -91,11 +94,20 @@ type SESParserListener interface {
 	// ExitQty_precise_alt is called when exiting the qty_precise_alt production.
 	ExitQty_precise_alt(c *Qty_precise_altContext)
 
-	// ExitSes_window is called when exiting the ses_window production.
-	ExitSes_window(c *Ses_windowContext)
+	// ExitSet_window is called when exiting the set_window production.
+	ExitSet_window(c *Set_windowContext)
 
 	// ExitDateInterval is called when exiting the dateInterval production.
 	ExitDateInterval(c *DateIntervalContext)
+
+	// ExitDate is called when exiting the date production.
+	ExitDate(c *DateContext)
+
+	// ExitAbsoluteDate is called when exiting the absoluteDate production.
+	ExitAbsoluteDate(c *AbsoluteDateContext)
+
+	// ExitRelativeDate is called when exiting the relativeDate production.
+	ExitRelativeDate(c *RelativeDateContext)
 
 	// ExitEvent_expression is called when exiting the event_expression production.
 	ExitEvent_expression(c *Event_expressionContext)

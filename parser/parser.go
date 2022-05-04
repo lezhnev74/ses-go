@@ -17,14 +17,14 @@ type SESListener struct {
 	*antlr_parser.BaseSESParserListener
 
 	*ses.SES
-	window  ses.Window
+	window  ses.SesWindow
 	groupBy *string
 }
 
 // ParseSESQuery read input text and makes an IR of it (ses)
 func ParseSESQuery(query string) *ses.SES {
 	listener := &SESListener{
-		SES: ses.MakeSES(make([]*ses.Set, 0), ""),
+		SES: ses.MakeSES(make([]*ses.Set, 0), "", ses.SesWindow{}),
 	}
 
 	// Configure ANTLR
@@ -44,9 +44,50 @@ func ParseSESQuery(query string) *ses.SES {
 }
 
 func (s *SESListener) EnterWindow(ctx *antlr_parser.WindowContext) {
-	s.window = ses.Window{
-		Within: extractDuration(ctx.GetWithin()),
+	// Edge case: "window from last week to last day within 3 days" is invalid (use FROM or WITHIN, but not mix it)
+	if ctx.GetFrom() != nil && ctx.GetWithin() != nil {
+		panic(fmt.Errorf("don't mix FROM and WITHIN in %s", ctx.GetText()))
 	}
+
+	s.window = ses.SesWindow{}
+
+	// Parse: WITHIN
+	if ctx.GetWithin() != nil {
+		s.window.Within = extractDuration(ctx.GetWithin())
+	}
+
+	// Parse: FROM
+	if ctx.GetFrom() != nil {
+		date := recognizeDateCtx(ctx.GetFrom())
+		if date == nil {
+			panic(fmt.Errorf("unable to recognize FROM date in %s", ctx.GetText()))
+		}
+		s.window.From = date
+	}
+
+	// Parse: TO
+	if ctx.GetTo() != nil {
+		date := recognizeDateCtx(ctx.GetTo())
+		if date == nil {
+			panic(fmt.Errorf("unable to recognize TO date in %s", ctx.GetText()))
+		}
+		s.window.To = date
+	}
+}
+
+func recognizeDateCtx(ctx *antlr_parser.DateContext) *time.Time {
+	// 1. Check if the date relative
+	// "last week", "last 50 days"
+	if ctx.RelativeDate() != nil {
+		relativeDuration := extractDuration(ctx.RelativeDate().GetLast())
+	}
+
+	// 2. Otherwise, assume an absolute date
+	if ctx.AbsoluteDate() != nil {
+
+	}
+
+	return nil
 }
 
 func (s *SESListener) EnterEvent(ctx *antlr_parser.EventContext) {
@@ -167,16 +208,12 @@ func (s *SESListener) EnterEvent(ctx *antlr_parser.EventContext) {
 }
 
 func (s *SESListener) EnterSes(ctx *antlr_parser.SesContext) {
-	s.AddSet(s.window) // use the window
-}
-
-func (s *SESListener) EnterWindowed_ses(ctx *antlr_parser.Windowed_sesContext) {
 	// Parse window
-	var w ses.Window
-	if ctx.Ses_window() != nil {
-		w = ses.Window{
-			Skip:   extractDuration(ctx.Ses_window().GetSkip()),
-			Within: extractDuration(ctx.Ses_window().GetWithin()),
+	var w ses.SetWindow
+	if ctx.Set_window() != nil {
+		w = ses.SetWindow{
+			Skip:   extractDuration(ctx.Set_window().GetSkip()),
+			Within: extractDuration(ctx.Set_window().GetWithin()),
 		}
 	}
 
