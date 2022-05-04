@@ -68,10 +68,7 @@ func TestSetWindow(t *testing.T) {
 
 	tests := []testInput{
 		{
-			`within 1 hour
-			 event a 
-    and then within 1 minute
-			 event b 
+			`event a then within 1 minute event b 
 			 group by session`,
 			[]AnyData{
 				// b fits within the window
@@ -80,6 +77,19 @@ func TestSetWindow(t *testing.T) {
 				// b is outside the window
 				{"id": "3", "name": "a", "time": now.UnixNano(), "session": "s2"},
 				{"id": "4", "name": "b", "time": now.Add(2 * time.Minute).UnixNano(), "session": "s2"},
+			},
+			[]string{"s1"},
+		},
+		{
+			`event a then skip 2 seconds and within 2 seconds event b 
+			 group by session`,
+			[]AnyData{
+				// b fits within the window
+				{"id": "1", "name": "a", "time": now.UnixNano(), "session": "s1"},
+				{"id": "2", "name": "b", "time": now.Add(3 * time.Second).UnixNano(), "session": "s1"},
+				// b is outside the window
+				{"id": "3", "name": "a", "time": now.UnixNano(), "session": "s2"},
+				{"id": "4", "name": "b", "time": now.Add(1 * time.Second).UnixNano(), "session": "s2"},
 			},
 			[]string{"s1"},
 		},
