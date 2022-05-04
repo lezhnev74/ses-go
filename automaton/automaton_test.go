@@ -57,7 +57,67 @@ func TestFailedAutomatons(t *testing.T) {
 	}
 }
 
-func TestWindow(t *testing.T) {
+func TestSetWindow(t *testing.T) {
+	now := time.Now()
+
+	type testInput struct {
+		query          string
+		events         []AnyData
+		matched_groups []string
+	}
+
+	tests := []testInput{
+		{
+			`within 1 hour
+			 event a 
+    and then within 1 minute
+			 event b 
+			 group by session`,
+			[]AnyData{
+				// b fits within the window
+				{"id": "1", "name": "a", "time": now.UnixNano(), "session": "s1"},
+				{"id": "2", "name": "b", "time": now.Add(time.Second).UnixNano(), "session": "s1"},
+				// b is outside the window
+				{"id": "3", "name": "a", "time": now.UnixNano(), "session": "s2"},
+				{"id": "4", "name": "b", "time": now.Add(2 * time.Minute).UnixNano(), "session": "s2"},
+			},
+			[]string{"s1"},
+		},
+	}
+
+	for i, tt := range tests {
+		t.Run(fmt.Sprintf("tt %d", i), func(t *testing.T) {
+			db := state.MakeBadgerDb("scope1", "")
+			ses := parser.ParseSESQuery(tt.query)
+			runner := MakeRunner(ses, db)
+
+			for _, e := range tt.events {
+				runner.Accept(&SimpleEvent{e})
+			}
+
+			sessions := []string{}
+			for _, a := range runner.GetAcceptingAutomatons() {
+				g := a.groupBy.(string)
+				sessions = append(sessions, g)
+			}
+
+			// remove duplicates
+			for i := 0; i < len(sessions); i++ {
+				for j := i + 1; j < len(sessions); j++ {
+					if sessions[i] == sessions[j] {
+						sessions = append(sessions[:j], sessions[j+1:]...)
+					}
+				}
+			}
+
+			if !reflect.DeepEqual(sessions, tt.matched_groups) {
+				t.Errorf("Unexpected sessions found %v, expected %v", sessions, tt.matched_groups)
+			}
+		})
+	}
+}
+
+func TestSesWindow(t *testing.T) {
 	now := time.Now()
 	tests := []struct {
 		query          string

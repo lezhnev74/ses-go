@@ -22,8 +22,9 @@ type Automaton struct {
 	curSet             int                                               // current set index
 	capturedAttributes map[int]map[string]EventAttrBuffer                // map full attr name to buffer
 	acceptedEventIds   map[int]map[string]EventAttrBuffer                // ids per set and per event
+	setLastEventTime   map[int]*time.Time                                // remember the last event's time for each set (used in window matching)
 	groupBy            any                                               // keep the unique value that we use to group events (populated from the initial event)
-	windowStart        *time.Time                                        // remember the start of the window
+	windowStart        *time.Time                                        // first captured event's time
 }
 
 // Accept tests the incoming event according to automaton criteria
@@ -41,27 +42,21 @@ func (a *Automaton) Accept(incomingEvent Event) (isAccepted bool, isFailed bool,
 	}
 
 	// Condition: event must remain within the SES window
-	windowDuration := a.ses.GetSets()[0].GetWindow().Within // use first set's window as the global window
-	if windowDuration != 0 {                                // disable window check if the duration is 0
-		if a.windowStart != nil {
-			eventTime := incomingEvent.Time()
-			if eventTime.Before(*a.windowStart) {
-				return // event is outside window (before the window) (wrong event order... why is it earlier?!)
-			}
+	windowMatch := a.checkSesWindow(incomingEvent)
+	if windowMatch != 0 {
 
-			windowEnd := a.windowStart.Add(windowDuration)
-			if eventTime.After(windowEnd) {
-				// event is outside window (after the window)
-				// Assume window is over and no events are possible
+		// Edge case: window is over
+		if windowMatch > 0 {
+			if !a.IsAcceptingState() {
+				// Assume events are ordered and no following events can fit in the window
+				// So if the current automaton is NOT accepting then it won't ever be
 				a.failed = true
-				isAccepted = false
 				isFailed = true
-				return
 			}
-		} else {
-			t := incomingEvent.Time()
-			a.windowStart = &t
 		}
+
+		isAccepted = false
+		return
 	}
 
 	// NonDeterminism Condition:
@@ -90,15 +85,80 @@ func (a *Automaton) Accept(incomingEvent Event) (isAccepted bool, isFailed bool,
 			a.failed = true
 			isAccepted = false
 			isFailed = true
+			return
 		}
 	}
 
 	return
 }
 
+// checkSesWindow return -1 is event is below the window, 0 if withing the window, 1 if after the window
+// the func has side-effects (it changes windowStart attribute)
+func (a *Automaton) checkSesWindow(e Event) int {
+	// Condition: skip window check if duration is 0
+	windowDuration := a.ses.GetSets()[0].GetWindow().Within // use first set's window as the global window
+	if windowDuration == 0 {
+		return 0
+	}
+
+	// Condition: if this event is the first in a window
+	eventTime := e.Time()
+	if a.windowStart == nil {
+		a.windowStart = &eventTime // this is the first event in the window
+		return 0
+	}
+
+	// Condition: if an event is before the window (wrong event order...)
+	if eventTime.Before(*a.windowStart) {
+		return -1
+	}
+
+	// Condition: if an event after the window
+	windowEnd := a.windowStart.Add(windowDuration)
+	if eventTime.After(windowEnd) {
+		return 1
+	}
+
+	return 0 // otherwise all is good
+}
+
+// checkSetWindow returns true if the current event fits into the set window
+// only works from the 2nd set on
+func (a *Automaton) checkSetWindow(e Event, set int) bool {
+	// Edge case: the first set does not need this check
+	if set == 0 {
+		return true
+	}
+
+	lastEventTime, captured := a.setLastEventTime[set-1]
+	// Edge case: no events captured in the previous set, so window checking is not applicable
+	// THis can happen in a query like "event a? then within 1 minute event b"
+	if !captured {
+		return true
+	}
+
+	window := a.ses.GetSets()[set].GetWindow()
+	eventTime := e.Time()
+	windowStart := lastEventTime.Add(window.Skip)
+	windowEnd := windowStart.Add(window.Within)
+
+	// Condition: SKIP criteria
+	if eventTime.Before(windowStart) {
+		return false // the event is too early
+	}
+
+	if window.Within != 0 && eventTime.After(windowEnd) {
+		return false // the event is too late
+	}
+
+	return true
+}
+
 // saveAcceptedEvent saves matched event to automaton buffers
 func (a *Automaton) saveAcceptedEvent(e Event) {
 	a.groupBy = e.Attribute(a.ses.GetGroupBy())
+	t := e.Time()
+	a.setLastEventTime[a.curSet] = &t
 
 	// save capturing attributes
 	for event, attrSpecs := range a.bufferSpecs {
@@ -142,7 +202,9 @@ func (a *Automaton) saveAcceptedEvent(e Event) {
 }
 
 // matchEventInSet tests a given event against criteria of a given set
+// criteria includes window-check and where-clauses check
 func (a *Automaton) matchEventInSet(e Event, set int) bool {
+	// Check: set events exposes matching functions, if no - then event is not in the set
 	setConds, exists := a.matchers[set]
 	if !exists {
 		return false
@@ -152,12 +214,19 @@ func (a *Automaton) matchEventInSet(e Event, set int) bool {
 		return false
 	}
 
+	// Check: run where-criteria
 	env := &AutomatonEnv{a, e}
 	for _, attrCond := range eventConds {
 		if !attrCond(env) {
 			return false
 		}
 	}
+
+	// Check window criteria starting from the second set
+	if !a.checkSetWindow(e, set) {
+		return false
+	}
+
 	return true
 }
 
@@ -251,9 +320,10 @@ func (a *Automaton) fork() *Automaton {
 
 func MakeAutomaton(s *ses.SES, db state.Db) *Automaton {
 	a := Automaton{
-		ses:      s,
-		matchers: make(map[int]map[string]map[string]expr.BoolExpression),
-		db:       db,
+		ses:              s,
+		matchers:         make(map[int]map[string]map[string]expr.BoolExpression),
+		db:               db,
+		setLastEventTime: make(map[int]*time.Time),
 	}
 
 	// 1. Make buffers
