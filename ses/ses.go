@@ -3,12 +3,12 @@ package ses
 import (
 	"fmt"
 	"time"
+
+	"github.com/lezhnev74/window-spec"
 )
 
 type SesWindow struct {
-	From, To                 *time.Time     // "22.02.2022"
-	FromRelative, ToRelative *time.Duration // "Last 90 days" - assume the duration is relative to
-	Within                   *time.Duration // "90 Days"
+	window.Window
 }
 
 type SetWindow struct {
@@ -80,6 +80,7 @@ func (s *SES) GetGroupBy() string             { return s.groupAttr }
 func (s *SES) SetGroupBy(groupBy string)      { s.groupAttr = groupBy }
 func (s *SES) AddEvent(set int, event *Event) { s.sets[set].AddEvent(event) }
 func (s *SES) GetWindow() SesWindow           { return s.window }
+func (s *SES) SetWindow(w SesWindow)          { s.window = w }
 
 // AddSet pushes a new empty set to the sequence
 func (s *SES) AddSet(w SetWindow) {
@@ -136,3 +137,16 @@ func MakeSES(sets []*Set, groupBy string, window SesWindow) *SES {
 	}
 	return ses
 }
+
+func MakeSesWindowFromText(text string, now time.Time) SesWindow {
+	// parse the window
+	winSpec, err := window.Start(text)
+	if err != nil {
+		panic(fmt.Sprintf("unable to parse window expression: %s", text))
+	}
+
+	w := winSpec.ResolveAt(now) // time resolving happens here, todo
+	return SesWindow{*w}
+}
+
+func MakeSesWindowFromWindow(w *window.Window) SesWindow { return SesWindow{*w} }

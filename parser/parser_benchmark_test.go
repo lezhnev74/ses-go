@@ -1,6 +1,9 @@
 package parser
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 func BenchmarkQueryParse(b *testing.B) {
 	q := `
@@ -12,6 +15,6 @@ group by session_id                              // so all events must be within
 `
 
 	for i := 0; i < b.N; i++ {
-		ParseSESQuery(q)
+		ParseSESQuery(q, time.Now())
 	}
 }

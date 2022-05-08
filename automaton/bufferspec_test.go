@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
+	"time"
 
 	"ses_pm_antlr/parser"
 	"ses_pm_antlr/ses"
@@ -65,7 +66,7 @@ func TestMakeBufferSpecs(t *testing.T) {
 	}
 	for i, tt := range tests {
 		t.Run(fmt.Sprintf("test %d", i), func(t *testing.T) {
-			s := parser.ParseSESQuery(tt.input)
+			s := parser.ParseSESQuery(tt.input, time.Now())
 			got := makeBufferSpecs(s)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("makeBufferSpecs() = %v, want %v", got, tt.want)

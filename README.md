@@ -12,7 +12,7 @@ At some point I came across an interesting paper called [Sequenced event set pat
 and it's later revision [Efficient event pattern matching with match windows](https://dl.acm.org/doi/10.1145/2339530.2339607).
 Ideas from the papers sparked my imagination. It was tempting to make a language for recognizing events patterns in a stream. So I did.
 
-Similar ideas are used in marketing, see [Segment Personas](https://segment.com/product/personas/), as well as in databases
+Similar ideas are used in marketing, see [Segment Personas](https://segment.com/product/personas/) or [Lytics.com](https://www.lytics.com/), as well as in databases
 see [Vertica Match](https://www.vertica.com/docs/9.2.x/HTML/Content/Authoring/SQLReferenceManual/Statements/SELECT/MATCHClause.htm)
 and [Snowflake Match Recognize](https://docs.snowflake.com/en/sql-reference/constructs/match_recognize.html).
 

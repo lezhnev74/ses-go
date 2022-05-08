@@ -33,89 +33,91 @@ func sesparserParserInit() {
 	staticData := &sesparserParserStaticData
 	staticData.literalNames = []string{
 		"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-		"", "'.'", "'('", "')'", "'{'", "'}'", "','", "';'", "'+'", "'*'",
+		"", "", "'.'", "'('", "')'", "'{'", "'}'", "','", "';'", "'+'", "'*'",
 	}
 	staticData.symbolicNames = []string{
-		"", "WS", "LINE_COMMENT", "SPACE", "EVENT", "WINDOW", "FROM", "TO",
-		"LAST", "SKIP_", "WITHIN", "THEN", "WHERE", "AND", "OR", "GROUP", "DATE_UNIT",
-		"OP_LOGICAL", "DOT", "L_BRACKET", "R_BRACKET", "L_CURLY_BRACKET", "R_CURLY_BRACKET",
-		"COMMA", "SEMI", "PLUS", "ASTERISK", "NUMBER", "STRING", "ID",
+		"", "WS", "LINE_COMMENT", "SPACE", "WINDOW_TEXT", "EVENT", "WINDOW",
+		"FROM", "TO", "LAST", "SKIP_", "WITHIN", "THEN", "WHERE", "AND", "OR",
+		"GROUP", "DATE_UNIT", "OP_LOGICAL", "DOT", "L_BRACKET", "R_BRACKET",
+		"L_CURLY_BRACKET", "R_CURLY_BRACKET", "COMMA", "SEMI", "PLUS", "ASTERISK",
+		"NUMBER", "STRING", "ID",
 	}
 	staticData.ruleNames = []string{
-		"parse", "window", "ses", "event", "event_qty", "set_window", "dateInterval",
-		"date", "absoluteDate", "relativeDate", "event_expression", "expr_operand",
-		"eventAttr", "literal", "group",
+		"parse", "ses_window", "ses", "event", "event_qty", "set_window", "date",
+		"absoluteDate", "relativeDate", "dateInterval", "event_expression",
+		"expr_operand", "eventAttr", "literal", "group",
 	}
 	staticData.predictionContextCache = antlr.NewPredictionContextCache()
 	staticData.serializedATN = []int32{
-		4, 1, 29, 158, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7,
+		4, 1, 30, 159, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7,
 		4, 2, 5, 7, 5, 2, 6, 7, 6, 2, 7, 7, 7, 2, 8, 7, 8, 2, 9, 7, 9, 2, 10, 7,
 		10, 2, 11, 7, 11, 2, 12, 7, 12, 2, 13, 7, 13, 2, 14, 7, 14, 1, 0, 3, 0,
 		32, 8, 0, 1, 0, 4, 0, 35, 8, 0, 11, 0, 12, 0, 36, 1, 0, 3, 0, 40, 8, 0,
-		1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 49, 8, 1, 3, 1, 51, 8,
-		1, 1, 1, 3, 1, 54, 8, 1, 1, 1, 3, 1, 57, 8, 1, 1, 2, 3, 2, 60, 8, 2, 1,
-		2, 4, 2, 63, 8, 2, 11, 2, 12, 2, 64, 1, 3, 1, 3, 1, 3, 3, 3, 70, 8, 3,
-		1, 3, 1, 3, 1, 3, 1, 3, 5, 3, 76, 8, 3, 10, 3, 12, 3, 79, 9, 3, 3, 3, 81,
-		8, 3, 1, 4, 1, 4, 1, 4, 1, 4, 3, 4, 87, 8, 4, 1, 4, 1, 4, 3, 4, 91, 8,
-		4, 1, 4, 1, 4, 1, 4, 1, 4, 3, 4, 97, 8, 4, 1, 5, 3, 5, 100, 8, 5, 1, 5,
-		1, 5, 1, 5, 3, 5, 105, 8, 5, 1, 5, 3, 5, 108, 8, 5, 1, 5, 1, 5, 3, 5, 112,
-		8, 5, 1, 6, 1, 6, 1, 6, 1, 6, 5, 6, 118, 8, 6, 10, 6, 12, 6, 121, 9, 6,
-		1, 7, 1, 7, 3, 7, 125, 8, 7, 1, 8, 1, 8, 1, 9, 1, 9, 1, 9, 1, 10, 1, 10,
-		1, 10, 1, 10, 1, 11, 1, 11, 1, 11, 1, 11, 1, 11, 1, 11, 1, 11, 3, 11, 143,
-		8, 11, 1, 12, 1, 12, 3, 12, 147, 8, 12, 1, 12, 1, 12, 1, 13, 1, 13, 3,
-		13, 153, 8, 13, 1, 14, 1, 14, 1, 14, 1, 14, 0, 0, 15, 0, 2, 4, 6, 8, 10,
-		12, 14, 16, 18, 20, 22, 24, 26, 28, 0, 0, 169, 0, 31, 1, 0, 0, 0, 2, 43,
-		1, 0, 0, 0, 4, 59, 1, 0, 0, 0, 6, 66, 1, 0, 0, 0, 8, 96, 1, 0, 0, 0, 10,
-		99, 1, 0, 0, 0, 12, 113, 1, 0, 0, 0, 14, 124, 1, 0, 0, 0, 16, 126, 1, 0,
-		0, 0, 18, 128, 1, 0, 0, 0, 20, 131, 1, 0, 0, 0, 22, 142, 1, 0, 0, 0, 24,
-		146, 1, 0, 0, 0, 26, 152, 1, 0, 0, 0, 28, 154, 1, 0, 0, 0, 30, 32, 3, 2,
-		1, 0, 31, 30, 1, 0, 0, 0, 31, 32, 1, 0, 0, 0, 32, 34, 1, 0, 0, 0, 33, 35,
-		3, 4, 2, 0, 34, 33, 1, 0, 0, 0, 35, 36, 1, 0, 0, 0, 36, 34, 1, 0, 0, 0,
-		36, 37, 1, 0, 0, 0, 37, 39, 1, 0, 0, 0, 38, 40, 3, 28, 14, 0, 39, 38, 1,
-		0, 0, 0, 39, 40, 1, 0, 0, 0, 40, 41, 1, 0, 0, 0, 41, 42, 5, 0, 0, 1, 42,
-		1, 1, 0, 0, 0, 43, 50, 5, 5, 0, 0, 44, 45, 5, 6, 0, 0, 45, 48, 3, 14, 7,
-		0, 46, 47, 5, 7, 0, 0, 47, 49, 3, 14, 7, 0, 48, 46, 1, 0, 0, 0, 48, 49,
-		1, 0, 0, 0, 49, 51, 1, 0, 0, 0, 50, 44, 1, 0, 0, 0, 50, 51, 1, 0, 0, 0,
-		51, 56, 1, 0, 0, 0, 52, 54, 5, 10, 0, 0, 53, 52, 1, 0, 0, 0, 53, 54, 1,
-		0, 0, 0, 54, 55, 1, 0, 0, 0, 55, 57, 3, 12, 6, 0, 56, 53, 1, 0, 0, 0, 56,
-		57, 1, 0, 0, 0, 57, 3, 1, 0, 0, 0, 58, 60, 3, 10, 5, 0, 59, 58, 1, 0, 0,
-		0, 59, 60, 1, 0, 0, 0, 60, 62, 1, 0, 0, 0, 61, 63, 3, 6, 3, 0, 62, 61,
-		1, 0, 0, 0, 63, 64, 1, 0, 0, 0, 64, 62, 1, 0, 0, 0, 64, 65, 1, 0, 0, 0,
-		65, 5, 1, 0, 0, 0, 66, 67, 5, 4, 0, 0, 67, 69, 5, 29, 0, 0, 68, 70, 3,
-		8, 4, 0, 69, 68, 1, 0, 0, 0, 69, 70, 1, 0, 0, 0, 70, 80, 1, 0, 0, 0, 71,
-		72, 5, 12, 0, 0, 72, 77, 3, 20, 10, 0, 73, 74, 5, 13, 0, 0, 74, 76, 3,
-		20, 10, 0, 75, 73, 1, 0, 0, 0, 76, 79, 1, 0, 0, 0, 77, 75, 1, 0, 0, 0,
-		77, 78, 1, 0, 0, 0, 78, 81, 1, 0, 0, 0, 79, 77, 1, 0, 0, 0, 80, 71, 1,
-		0, 0, 0, 80, 81, 1, 0, 0, 0, 81, 7, 1, 0, 0, 0, 82, 97, 5, 25, 0, 0, 83,
-		97, 5, 26, 0, 0, 84, 86, 5, 21, 0, 0, 85, 87, 5, 27, 0, 0, 86, 85, 1, 0,
-		0, 0, 86, 87, 1, 0, 0, 0, 87, 88, 1, 0, 0, 0, 88, 90, 5, 23, 0, 0, 89,
-		91, 5, 27, 0, 0, 90, 89, 1, 0, 0, 0, 90, 91, 1, 0, 0, 0, 91, 92, 1, 0,
-		0, 0, 92, 97, 5, 22, 0, 0, 93, 94, 5, 21, 0, 0, 94, 95, 5, 27, 0, 0, 95,
-		97, 5, 22, 0, 0, 96, 82, 1, 0, 0, 0, 96, 83, 1, 0, 0, 0, 96, 84, 1, 0,
-		0, 0, 96, 93, 1, 0, 0, 0, 97, 9, 1, 0, 0, 0, 98, 100, 5, 13, 0, 0, 99,
-		98, 1, 0, 0, 0, 99, 100, 1, 0, 0, 0, 100, 101, 1, 0, 0, 0, 101, 104, 5,
-		11, 0, 0, 102, 103, 5, 9, 0, 0, 103, 105, 3, 12, 6, 0, 104, 102, 1, 0,
-		0, 0, 104, 105, 1, 0, 0, 0, 105, 111, 1, 0, 0, 0, 106, 108, 5, 13, 0, 0,
-		107, 106, 1, 0, 0, 0, 107, 108, 1, 0, 0, 0, 108, 109, 1, 0, 0, 0, 109,
-		110, 5, 10, 0, 0, 110, 112, 3, 12, 6, 0, 111, 107, 1, 0, 0, 0, 111, 112,
-		1, 0, 0, 0, 112, 11, 1, 0, 0, 0, 113, 114, 5, 27, 0, 0, 114, 119, 5, 16,
-		0, 0, 115, 116, 5, 13, 0, 0, 116, 118, 3, 12, 6, 0, 117, 115, 1, 0, 0,
-		0, 118, 121, 1, 0, 0, 0, 119, 117, 1, 0, 0, 0, 119, 120, 1, 0, 0, 0, 120,
-		13, 1, 0, 0, 0, 121, 119, 1, 0, 0, 0, 122, 125, 3, 16, 8, 0, 123, 125,
-		3, 18, 9, 0, 124, 122, 1, 0, 0, 0, 124, 123, 1, 0, 0, 0, 125, 15, 1, 0,
-		0, 0, 126, 127, 5, 28, 0, 0, 127, 17, 1, 0, 0, 0, 128, 129, 5, 8, 0, 0,
-		129, 130, 3, 12, 6, 0, 130, 19, 1, 0, 0, 0, 131, 132, 3, 22, 11, 0, 132,
-		133, 5, 17, 0, 0, 133, 134, 3, 22, 11, 0, 134, 21, 1, 0, 0, 0, 135, 136,
-		5, 29, 0, 0, 136, 137, 5, 19, 0, 0, 137, 138, 3, 24, 12, 0, 138, 139, 5,
-		20, 0, 0, 139, 143, 1, 0, 0, 0, 140, 143, 3, 24, 12, 0, 141, 143, 3, 26,
-		13, 0, 142, 135, 1, 0, 0, 0, 142, 140, 1, 0, 0, 0, 142, 141, 1, 0, 0, 0,
-		143, 23, 1, 0, 0, 0, 144, 145, 5, 29, 0, 0, 145, 147, 5, 18, 0, 0, 146,
-		144, 1, 0, 0, 0, 146, 147, 1, 0, 0, 0, 147, 148, 1, 0, 0, 0, 148, 149,
-		5, 29, 0, 0, 149, 25, 1, 0, 0, 0, 150, 153, 5, 27, 0, 0, 151, 153, 5, 28,
-		0, 0, 152, 150, 1, 0, 0, 0, 152, 151, 1, 0, 0, 0, 153, 27, 1, 0, 0, 0,
-		154, 155, 5, 15, 0, 0, 155, 156, 3, 24, 12, 0, 156, 29, 1, 0, 0, 0, 24,
-		31, 36, 39, 48, 50, 53, 56, 59, 64, 69, 77, 80, 86, 90, 96, 99, 104, 107,
-		111, 119, 124, 142, 146, 152,
+		1, 0, 1, 0, 1, 1, 1, 1, 1, 2, 3, 2, 47, 8, 2, 1, 2, 4, 2, 50, 8, 2, 11,
+		2, 12, 2, 51, 1, 3, 1, 3, 1, 3, 3, 3, 57, 8, 3, 1, 3, 1, 3, 1, 3, 1, 3,
+		5, 3, 63, 8, 3, 10, 3, 12, 3, 66, 9, 3, 3, 3, 68, 8, 3, 1, 4, 1, 4, 1,
+		4, 1, 4, 3, 4, 74, 8, 4, 1, 4, 1, 4, 3, 4, 78, 8, 4, 1, 4, 1, 4, 1, 4,
+		1, 4, 3, 4, 84, 8, 4, 1, 5, 3, 5, 87, 8, 5, 1, 5, 1, 5, 3, 5, 91, 8, 5,
+		1, 5, 3, 5, 94, 8, 5, 1, 5, 1, 5, 1, 5, 3, 5, 99, 8, 5, 1, 5, 1, 5, 3,
+		5, 103, 8, 5, 1, 5, 3, 5, 106, 8, 5, 1, 5, 3, 5, 109, 8, 5, 1, 5, 1, 5,
+		3, 5, 113, 8, 5, 1, 6, 1, 6, 3, 6, 117, 8, 6, 1, 7, 1, 7, 1, 8, 1, 8, 1,
+		8, 1, 9, 1, 9, 1, 9, 1, 9, 5, 9, 128, 8, 9, 10, 9, 12, 9, 131, 9, 9, 1,
+		10, 1, 10, 1, 10, 1, 10, 1, 11, 1, 11, 1, 11, 1, 11, 1, 11, 1, 11, 1, 11,
+		3, 11, 144, 8, 11, 1, 12, 1, 12, 3, 12, 148, 8, 12, 1, 12, 1, 12, 1, 13,
+		1, 13, 3, 13, 154, 8, 13, 1, 14, 1, 14, 1, 14, 1, 14, 0, 0, 15, 0, 2, 4,
+		6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 0, 0, 171, 0, 31, 1, 0, 0,
+		0, 2, 43, 1, 0, 0, 0, 4, 46, 1, 0, 0, 0, 6, 53, 1, 0, 0, 0, 8, 83, 1, 0,
+		0, 0, 10, 112, 1, 0, 0, 0, 12, 116, 1, 0, 0, 0, 14, 118, 1, 0, 0, 0, 16,
+		120, 1, 0, 0, 0, 18, 123, 1, 0, 0, 0, 20, 132, 1, 0, 0, 0, 22, 143, 1,
+		0, 0, 0, 24, 147, 1, 0, 0, 0, 26, 153, 1, 0, 0, 0, 28, 155, 1, 0, 0, 0,
+		30, 32, 3, 2, 1, 0, 31, 30, 1, 0, 0, 0, 31, 32, 1, 0, 0, 0, 32, 34, 1,
+		0, 0, 0, 33, 35, 3, 4, 2, 0, 34, 33, 1, 0, 0, 0, 35, 36, 1, 0, 0, 0, 36,
+		34, 1, 0, 0, 0, 36, 37, 1, 0, 0, 0, 37, 39, 1, 0, 0, 0, 38, 40, 3, 28,
+		14, 0, 39, 38, 1, 0, 0, 0, 39, 40, 1, 0, 0, 0, 40, 41, 1, 0, 0, 0, 41,
+		42, 5, 0, 0, 1, 42, 1, 1, 0, 0, 0, 43, 44, 5, 4, 0, 0, 44, 3, 1, 0, 0,
+		0, 45, 47, 3, 10, 5, 0, 46, 45, 1, 0, 0, 0, 46, 47, 1, 0, 0, 0, 47, 49,
+		1, 0, 0, 0, 48, 50, 3, 6, 3, 0, 49, 48, 1, 0, 0, 0, 50, 51, 1, 0, 0, 0,
+		51, 49, 1, 0, 0, 0, 51, 52, 1, 0, 0, 0, 52, 5, 1, 0, 0, 0, 53, 54, 5, 5,
+		0, 0, 54, 56, 5, 30, 0, 0, 55, 57, 3, 8, 4, 0, 56, 55, 1, 0, 0, 0, 56,
+		57, 1, 0, 0, 0, 57, 67, 1, 0, 0, 0, 58, 59, 5, 13, 0, 0, 59, 64, 3, 20,
+		10, 0, 60, 61, 5, 14, 0, 0, 61, 63, 3, 20, 10, 0, 62, 60, 1, 0, 0, 0, 63,
+		66, 1, 0, 0, 0, 64, 62, 1, 0, 0, 0, 64, 65, 1, 0, 0, 0, 65, 68, 1, 0, 0,
+		0, 66, 64, 1, 0, 0, 0, 67, 58, 1, 0, 0, 0, 67, 68, 1, 0, 0, 0, 68, 7, 1,
+		0, 0, 0, 69, 84, 5, 26, 0, 0, 70, 84, 5, 27, 0, 0, 71, 73, 5, 22, 0, 0,
+		72, 74, 5, 28, 0, 0, 73, 72, 1, 0, 0, 0, 73, 74, 1, 0, 0, 0, 74, 75, 1,
+		0, 0, 0, 75, 77, 5, 24, 0, 0, 76, 78, 5, 28, 0, 0, 77, 76, 1, 0, 0, 0,
+		77, 78, 1, 0, 0, 0, 78, 79, 1, 0, 0, 0, 79, 84, 5, 23, 0, 0, 80, 81, 5,
+		22, 0, 0, 81, 82, 5, 28, 0, 0, 82, 84, 5, 23, 0, 0, 83, 69, 1, 0, 0, 0,
+		83, 70, 1, 0, 0, 0, 83, 71, 1, 0, 0, 0, 83, 80, 1, 0, 0, 0, 84, 9, 1, 0,
+		0, 0, 85, 87, 5, 14, 0, 0, 86, 85, 1, 0, 0, 0, 86, 87, 1, 0, 0, 0, 87,
+		88, 1, 0, 0, 0, 88, 113, 5, 12, 0, 0, 89, 91, 5, 14, 0, 0, 90, 89, 1, 0,
+		0, 0, 90, 91, 1, 0, 0, 0, 91, 93, 1, 0, 0, 0, 92, 94, 5, 12, 0, 0, 93,
+		92, 1, 0, 0, 0, 93, 94, 1, 0, 0, 0, 94, 95, 1, 0, 0, 0, 95, 96, 5, 10,
+		0, 0, 96, 102, 3, 18, 9, 0, 97, 99, 5, 14, 0, 0, 98, 97, 1, 0, 0, 0, 98,
+		99, 1, 0, 0, 0, 99, 100, 1, 0, 0, 0, 100, 101, 5, 11, 0, 0, 101, 103, 3,
+		18, 9, 0, 102, 98, 1, 0, 0, 0, 102, 103, 1, 0, 0, 0, 103, 113, 1, 0, 0,
+		0, 104, 106, 5, 14, 0, 0, 105, 104, 1, 0, 0, 0, 105, 106, 1, 0, 0, 0, 106,
+		108, 1, 0, 0, 0, 107, 109, 5, 12, 0, 0, 108, 107, 1, 0, 0, 0, 108, 109,
+		1, 0, 0, 0, 109, 110, 1, 0, 0, 0, 110, 111, 5, 11, 0, 0, 111, 113, 3, 18,
+		9, 0, 112, 86, 1, 0, 0, 0, 112, 90, 1, 0, 0, 0, 112, 105, 1, 0, 0, 0, 113,
+		11, 1, 0, 0, 0, 114, 117, 3, 14, 7, 0, 115, 117, 3, 16, 8, 0, 116, 114,
+		1, 0, 0, 0, 116, 115, 1, 0, 0, 0, 117, 13, 1, 0, 0, 0, 118, 119, 5, 29,
+		0, 0, 119, 15, 1, 0, 0, 0, 120, 121, 5, 9, 0, 0, 121, 122, 3, 18, 9, 0,
+		122, 17, 1, 0, 0, 0, 123, 124, 5, 28, 0, 0, 124, 129, 5, 17, 0, 0, 125,
+		126, 5, 14, 0, 0, 126, 128, 3, 18, 9, 0, 127, 125, 1, 0, 0, 0, 128, 131,
+		1, 0, 0, 0, 129, 127, 1, 0, 0, 0, 129, 130, 1, 0, 0, 0, 130, 19, 1, 0,
+		0, 0, 131, 129, 1, 0, 0, 0, 132, 133, 3, 22, 11, 0, 133, 134, 5, 18, 0,
+		0, 134, 135, 3, 22, 11, 0, 135, 21, 1, 0, 0, 0, 136, 137, 5, 30, 0, 0,
+		137, 138, 5, 20, 0, 0, 138, 139, 3, 24, 12, 0, 139, 140, 5, 21, 0, 0, 140,
+		144, 1, 0, 0, 0, 141, 144, 3, 24, 12, 0, 142, 144, 3, 26, 13, 0, 143, 136,
+		1, 0, 0, 0, 143, 141, 1, 0, 0, 0, 143, 142, 1, 0, 0, 0, 144, 23, 1, 0,
+		0, 0, 145, 146, 5, 30, 0, 0, 146, 148, 5, 19, 0, 0, 147, 145, 1, 0, 0,
+		0, 147, 148, 1, 0, 0, 0, 148, 149, 1, 0, 0, 0, 149, 150, 5, 30, 0, 0, 150,
+		25, 1, 0, 0, 0, 151, 154, 5, 28, 0, 0, 152, 154, 5, 29, 0, 0, 153, 151,
+		1, 0, 0, 0, 153, 152, 1, 0, 0, 0, 154, 27, 1, 0, 0, 0, 155, 156, 5, 16,
+		0, 0, 156, 157, 3, 24, 12, 0, 157, 29, 1, 0, 0, 0, 24, 31, 36, 39, 46,
+		51, 56, 64, 67, 73, 77, 83, 86, 90, 93, 98, 102, 105, 108, 112, 116, 129,
+		143, 147, 153,
 	}
 	deserializer := antlr.NewATNDeserializer(nil)
 	staticData.atn = deserializer.Deserialize(staticData.serializedATN)
@@ -157,46 +159,47 @@ const (
 	SESParserParserWS              = 1
 	SESParserParserLINE_COMMENT    = 2
 	SESParserParserSPACE           = 3
-	SESParserParserEVENT           = 4
-	SESParserParserWINDOW          = 5
-	SESParserParserFROM            = 6
-	SESParserParserTO              = 7
-	SESParserParserLAST            = 8
-	SESParserParserSKIP_           = 9
-	SESParserParserWITHIN          = 10
-	SESParserParserTHEN            = 11
-	SESParserParserWHERE           = 12
-	SESParserParserAND             = 13
-	SESParserParserOR              = 14
-	SESParserParserGROUP           = 15
-	SESParserParserDATE_UNIT       = 16
-	SESParserParserOP_LOGICAL      = 17
-	SESParserParserDOT             = 18
-	SESParserParserL_BRACKET       = 19
-	SESParserParserR_BRACKET       = 20
-	SESParserParserL_CURLY_BRACKET = 21
-	SESParserParserR_CURLY_BRACKET = 22
-	SESParserParserCOMMA           = 23
-	SESParserParserSEMI            = 24
-	SESParserParserPLUS            = 25
-	SESParserParserASTERISK        = 26
-	SESParserParserNUMBER          = 27
-	SESParserParserSTRING          = 28
-	SESParserParserID              = 29
+	SESParserParserWINDOW_TEXT     = 4
+	SESParserParserEVENT           = 5
+	SESParserParserWINDOW          = 6
+	SESParserParserFROM            = 7
+	SESParserParserTO              = 8
+	SESParserParserLAST            = 9
+	SESParserParserSKIP_           = 10
+	SESParserParserWITHIN          = 11
+	SESParserParserTHEN            = 12
+	SESParserParserWHERE           = 13
+	SESParserParserAND             = 14
+	SESParserParserOR              = 15
+	SESParserParserGROUP           = 16
+	SESParserParserDATE_UNIT       = 17
+	SESParserParserOP_LOGICAL      = 18
+	SESParserParserDOT             = 19
+	SESParserParserL_BRACKET       = 20
+	SESParserParserR_BRACKET       = 21
+	SESParserParserL_CURLY_BRACKET = 22
+	SESParserParserR_CURLY_BRACKET = 23
+	SESParserParserCOMMA           = 24
+	SESParserParserSEMI            = 25
+	SESParserParserPLUS            = 26
+	SESParserParserASTERISK        = 27
+	SESParserParserNUMBER          = 28
+	SESParserParserSTRING          = 29
+	SESParserParserID              = 30
 )
 
 // SESParserParser rules.
 const (
 	SESParserParserRULE_parse            = 0
-	SESParserParserRULE_window           = 1
+	SESParserParserRULE_ses_window       = 1
 	SESParserParserRULE_ses              = 2
 	SESParserParserRULE_event            = 3
 	SESParserParserRULE_event_qty        = 4
 	SESParserParserRULE_set_window       = 5
-	SESParserParserRULE_dateInterval     = 6
-	SESParserParserRULE_date             = 7
-	SESParserParserRULE_absoluteDate     = 8
-	SESParserParserRULE_relativeDate     = 9
+	SESParserParserRULE_date             = 6
+	SESParserParserRULE_absoluteDate     = 7
+	SESParserParserRULE_relativeDate     = 8
+	SESParserParserRULE_dateInterval     = 9
 	SESParserParserRULE_event_expression = 10
 	SESParserParserRULE_expr_operand     = 11
 	SESParserParserRULE_eventAttr        = 12
@@ -246,10 +249,10 @@ func (s *ParseContext) EOF() antlr.TerminalNode {
 	return s.GetToken(SESParserParserEOF, 0)
 }
 
-func (s *ParseContext) Window() IWindowContext {
+func (s *ParseContext) Ses_window() ISes_windowContext {
 	var t antlr.RuleContext
 	for _, ctx := range s.GetChildren() {
-		if _, ok := ctx.(IWindowContext); ok {
+		if _, ok := ctx.(ISes_windowContext); ok {
 			t = ctx.(antlr.RuleContext)
 			break
 		}
@@ -259,7 +262,7 @@ func (s *ParseContext) Window() IWindowContext {
 		return nil
 	}
 
-	return t.(IWindowContext)
+	return t.(ISes_windowContext)
 }
 
 func (s *ParseContext) AllSes() []ISesContext {
@@ -368,10 +371,10 @@ func (p *SESParserParser) Parse() (localctx IParseContext) {
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
-	if _la == SESParserParserWINDOW {
+	if _la == SESParserParserWINDOW_TEXT {
 		{
 			p.SetState(30)
-			p.Window()
+			p.Ses_window()
 		}
 
 	}
@@ -379,7 +382,7 @@ func (p *SESParserParser) Parse() (localctx IParseContext) {
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
-	for ok := true; ok; ok = (((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<SESParserParserEVENT)|(1<<SESParserParserTHEN)|(1<<SESParserParserAND))) != 0) {
+	for ok := true; ok; ok = (((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<SESParserParserEVENT)|(1<<SESParserParserSKIP_)|(1<<SESParserParserWITHIN)|(1<<SESParserParserTHEN)|(1<<SESParserParserAND))) != 0) {
 		{
 			p.SetState(33)
 			p.Ses()
@@ -408,177 +411,74 @@ func (p *SESParserParser) Parse() (localctx IParseContext) {
 	return localctx
 }
 
-// IWindowContext is an interface to support dynamic dispatch.
-type IWindowContext interface {
+// ISes_windowContext is an interface to support dynamic dispatch.
+type ISes_windowContext interface {
 	antlr.ParserRuleContext
 
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
-	// GetFrom returns the from rule contexts.
-	GetFrom() IDateContext
-
-	// GetTo returns the to rule contexts.
-	GetTo() IDateContext
-
-	// GetWithin returns the within rule contexts.
-	GetWithin() IDateIntervalContext
-
-	// SetFrom sets the from rule contexts.
-	SetFrom(IDateContext)
-
-	// SetTo sets the to rule contexts.
-	SetTo(IDateContext)
-
-	// SetWithin sets the within rule contexts.
-	SetWithin(IDateIntervalContext)
-
-	// IsWindowContext differentiates from other interfaces.
-	IsWindowContext()
+	// IsSes_windowContext differentiates from other interfaces.
+	IsSes_windowContext()
 }
 
-type WindowContext struct {
+type Ses_windowContext struct {
 	*antlr.BaseParserRuleContext
 	parser antlr.Parser
-	from   IDateContext
-	to     IDateContext
-	within IDateIntervalContext
 }
 
-func NewEmptyWindowContext() *WindowContext {
-	var p = new(WindowContext)
+func NewEmptySes_windowContext() *Ses_windowContext {
+	var p = new(Ses_windowContext)
 	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
-	p.RuleIndex = SESParserParserRULE_window
+	p.RuleIndex = SESParserParserRULE_ses_window
 	return p
 }
 
-func (*WindowContext) IsWindowContext() {}
+func (*Ses_windowContext) IsSes_windowContext() {}
 
-func NewWindowContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *WindowContext {
-	var p = new(WindowContext)
+func NewSes_windowContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *Ses_windowContext {
+	var p = new(Ses_windowContext)
 
 	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = SESParserParserRULE_window
+	p.RuleIndex = SESParserParserRULE_ses_window
 
 	return p
 }
 
-func (s *WindowContext) GetParser() antlr.Parser { return s.parser }
+func (s *Ses_windowContext) GetParser() antlr.Parser { return s.parser }
 
-func (s *WindowContext) GetFrom() IDateContext { return s.from }
-
-func (s *WindowContext) GetTo() IDateContext { return s.to }
-
-func (s *WindowContext) GetWithin() IDateIntervalContext { return s.within }
-
-func (s *WindowContext) SetFrom(v IDateContext) { s.from = v }
-
-func (s *WindowContext) SetTo(v IDateContext) { s.to = v }
-
-func (s *WindowContext) SetWithin(v IDateIntervalContext) { s.within = v }
-
-func (s *WindowContext) WINDOW() antlr.TerminalNode {
-	return s.GetToken(SESParserParserWINDOW, 0)
+func (s *Ses_windowContext) WINDOW_TEXT() antlr.TerminalNode {
+	return s.GetToken(SESParserParserWINDOW_TEXT, 0)
 }
 
-func (s *WindowContext) FROM() antlr.TerminalNode {
-	return s.GetToken(SESParserParserFROM, 0)
-}
-
-func (s *WindowContext) AllDate() []IDateContext {
-	children := s.GetChildren()
-	len := 0
-	for _, ctx := range children {
-		if _, ok := ctx.(IDateContext); ok {
-			len++
-		}
-	}
-
-	tst := make([]IDateContext, len)
-	i := 0
-	for _, ctx := range children {
-		if t, ok := ctx.(IDateContext); ok {
-			tst[i] = t.(IDateContext)
-			i++
-		}
-	}
-
-	return tst
-}
-
-func (s *WindowContext) Date(i int) IDateContext {
-	var t antlr.RuleContext
-	j := 0
-	for _, ctx := range s.GetChildren() {
-		if _, ok := ctx.(IDateContext); ok {
-			if j == i {
-				t = ctx.(antlr.RuleContext)
-				break
-			}
-			j++
-		}
-	}
-
-	if t == nil {
-		return nil
-	}
-
-	return t.(IDateContext)
-}
-
-func (s *WindowContext) DateInterval() IDateIntervalContext {
-	var t antlr.RuleContext
-	for _, ctx := range s.GetChildren() {
-		if _, ok := ctx.(IDateIntervalContext); ok {
-			t = ctx.(antlr.RuleContext)
-			break
-		}
-	}
-
-	if t == nil {
-		return nil
-	}
-
-	return t.(IDateIntervalContext)
-}
-
-func (s *WindowContext) TO() antlr.TerminalNode {
-	return s.GetToken(SESParserParserTO, 0)
-}
-
-func (s *WindowContext) WITHIN() antlr.TerminalNode {
-	return s.GetToken(SESParserParserWITHIN, 0)
-}
-
-func (s *WindowContext) GetRuleContext() antlr.RuleContext {
+func (s *Ses_windowContext) GetRuleContext() antlr.RuleContext {
 	return s
 }
 
-func (s *WindowContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
+func (s *Ses_windowContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *WindowContext) EnterRule(listener antlr.ParseTreeListener) {
+func (s *Ses_windowContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(SESParserListener); ok {
-		listenerT.EnterWindow(s)
+		listenerT.EnterSes_window(s)
 	}
 }
 
-func (s *WindowContext) ExitRule(listener antlr.ParseTreeListener) {
+func (s *Ses_windowContext) ExitRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(SESParserListener); ok {
-		listenerT.ExitWindow(s)
+		listenerT.ExitSes_window(s)
 	}
 }
 
-func (p *SESParserParser) Window() (localctx IWindowContext) {
+func (p *SESParserParser) Ses_window() (localctx ISes_windowContext) {
 	this := p
 	_ = this
 
-	localctx = NewWindowContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 2, SESParserParserRULE_window)
-	var _la int
+	localctx = NewSes_windowContext(p, p.GetParserRuleContext(), p.GetState())
+	p.EnterRule(localctx, 2, SESParserParserRULE_ses_window)
 
 	defer func() {
 		p.ExitRule()
@@ -599,68 +499,7 @@ func (p *SESParserParser) Window() (localctx IWindowContext) {
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(43)
-		p.Match(SESParserParserWINDOW)
-	}
-	p.SetState(50)
-	p.GetErrorHandler().Sync(p)
-	_la = p.GetTokenStream().LA(1)
-
-	if _la == SESParserParserFROM {
-		{
-			p.SetState(44)
-			p.Match(SESParserParserFROM)
-		}
-		{
-			p.SetState(45)
-
-			var _x = p.Date()
-
-			localctx.(*WindowContext).from = _x
-		}
-		p.SetState(48)
-		p.GetErrorHandler().Sync(p)
-		_la = p.GetTokenStream().LA(1)
-
-		if _la == SESParserParserTO {
-			{
-				p.SetState(46)
-				p.Match(SESParserParserTO)
-			}
-			{
-				p.SetState(47)
-
-				var _x = p.Date()
-
-				localctx.(*WindowContext).to = _x
-			}
-
-		}
-
-	}
-	p.SetState(56)
-	p.GetErrorHandler().Sync(p)
-	_la = p.GetTokenStream().LA(1)
-
-	if _la == SESParserParserWITHIN || _la == SESParserParserNUMBER {
-		p.SetState(53)
-		p.GetErrorHandler().Sync(p)
-		_la = p.GetTokenStream().LA(1)
-
-		if _la == SESParserParserWITHIN {
-			{
-				p.SetState(52)
-				p.Match(SESParserParserWITHIN)
-			}
-
-		}
-		{
-			p.SetState(55)
-
-			var _x = p.DateInterval()
-
-			localctx.(*WindowContext).within = _x
-		}
-
+		p.Match(SESParserParserWINDOW_TEXT)
 	}
 
 	return localctx
@@ -808,25 +647,25 @@ func (p *SESParserParser) Ses() (localctx ISesContext) {
 	var _alt int
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(59)
+	p.SetState(46)
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
-	if _la == SESParserParserTHEN || _la == SESParserParserAND {
+	if ((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<SESParserParserSKIP_)|(1<<SESParserParserWITHIN)|(1<<SESParserParserTHEN)|(1<<SESParserParserAND))) != 0 {
 		{
-			p.SetState(58)
+			p.SetState(45)
 			p.Set_window()
 		}
 
 	}
-	p.SetState(62)
+	p.SetState(49)
 	p.GetErrorHandler().Sync(p)
 	_alt = 1
 	for ok := true; ok; ok = _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
 		switch _alt {
 		case 1:
 			{
-				p.SetState(61)
+				p.SetState(48)
 				p.Event()
 			}
 
@@ -834,9 +673,9 @@ func (p *SESParserParser) Ses() (localctx ISesContext) {
 			panic(antlr.NewNoViableAltException(p, nil, nil, nil, nil, nil))
 		}
 
-		p.SetState(64)
+		p.SetState(51)
 		p.GetErrorHandler().Sync(p)
-		_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 8, p.GetParserRuleContext())
+		_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 4, p.GetParserRuleContext())
 	}
 
 	return localctx
@@ -1027,23 +866,23 @@ func (p *SESParserParser) Event() (localctx IEventContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(66)
+		p.SetState(53)
 		p.Match(SESParserParserEVENT)
 	}
 	{
-		p.SetState(67)
+		p.SetState(54)
 
 		var _m = p.Match(SESParserParserID)
 
 		localctx.(*EventContext).name = _m
 	}
-	p.SetState(69)
+	p.SetState(56)
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
 	if ((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<SESParserParserL_CURLY_BRACKET)|(1<<SESParserParserPLUS)|(1<<SESParserParserASTERISK))) != 0 {
 		{
-			p.SetState(68)
+			p.SetState(55)
 
 			var _x = p.Event_qty()
 
@@ -1051,38 +890,38 @@ func (p *SESParserParser) Event() (localctx IEventContext) {
 		}
 
 	}
-	p.SetState(80)
+	p.SetState(67)
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
 	if _la == SESParserParserWHERE {
 		{
-			p.SetState(71)
+			p.SetState(58)
 			p.Match(SESParserParserWHERE)
 		}
 		{
-			p.SetState(72)
+			p.SetState(59)
 			p.Event_expression()
 		}
-		p.SetState(77)
+		p.SetState(64)
 		p.GetErrorHandler().Sync(p)
-		_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 10, p.GetParserRuleContext())
+		_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 6, p.GetParserRuleContext())
 
 		for _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
 			if _alt == 1 {
 				{
-					p.SetState(73)
+					p.SetState(60)
 					p.Match(SESParserParserAND)
 				}
 				{
-					p.SetState(74)
+					p.SetState(61)
 					p.Event_expression()
 				}
 
 			}
-			p.SetState(79)
+			p.SetState(66)
 			p.GetErrorHandler().Sync(p)
-			_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 10, p.GetParserRuleContext())
+			_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 6, p.GetParserRuleContext())
 		}
 
 	}
@@ -1339,14 +1178,14 @@ func (p *SESParserParser) Event_qty() (localctx IEvent_qtyContext) {
 		}
 	}()
 
-	p.SetState(96)
+	p.SetState(83)
 	p.GetErrorHandler().Sync(p)
-	switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 14, p.GetParserRuleContext()) {
+	switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 10, p.GetParserRuleContext()) {
 	case 1:
 		localctx = NewQty_plusContext(p, localctx)
 		p.EnterOuterAlt(localctx, 1)
 		{
-			p.SetState(82)
+			p.SetState(69)
 			p.Match(SESParserParserPLUS)
 		}
 
@@ -1354,7 +1193,7 @@ func (p *SESParserParser) Event_qty() (localctx IEvent_qtyContext) {
 		localctx = NewQty_asteriscContext(p, localctx)
 		p.EnterOuterAlt(localctx, 2)
 		{
-			p.SetState(83)
+			p.SetState(70)
 			p.Match(SESParserParserASTERISK)
 		}
 
@@ -1362,16 +1201,16 @@ func (p *SESParserParser) Event_qty() (localctx IEvent_qtyContext) {
 		localctx = NewQty_preciseContext(p, localctx)
 		p.EnterOuterAlt(localctx, 3)
 		{
-			p.SetState(84)
+			p.SetState(71)
 			p.Match(SESParserParserL_CURLY_BRACKET)
 		}
-		p.SetState(86)
+		p.SetState(73)
 		p.GetErrorHandler().Sync(p)
 		_la = p.GetTokenStream().LA(1)
 
 		if _la == SESParserParserNUMBER {
 			{
-				p.SetState(85)
+				p.SetState(72)
 
 				var _m = p.Match(SESParserParserNUMBER)
 
@@ -1380,16 +1219,16 @@ func (p *SESParserParser) Event_qty() (localctx IEvent_qtyContext) {
 
 		}
 		{
-			p.SetState(88)
+			p.SetState(75)
 			p.Match(SESParserParserCOMMA)
 		}
-		p.SetState(90)
+		p.SetState(77)
 		p.GetErrorHandler().Sync(p)
 		_la = p.GetTokenStream().LA(1)
 
 		if _la == SESParserParserNUMBER {
 			{
-				p.SetState(89)
+				p.SetState(76)
 
 				var _m = p.Match(SESParserParserNUMBER)
 
@@ -1398,7 +1237,7 @@ func (p *SESParserParser) Event_qty() (localctx IEvent_qtyContext) {
 
 		}
 		{
-			p.SetState(92)
+			p.SetState(79)
 			p.Match(SESParserParserR_CURLY_BRACKET)
 		}
 
@@ -1406,18 +1245,18 @@ func (p *SESParserParser) Event_qty() (localctx IEvent_qtyContext) {
 		localctx = NewQty_precise_altContext(p, localctx)
 		p.EnterOuterAlt(localctx, 4)
 		{
-			p.SetState(93)
+			p.SetState(80)
 			p.Match(SESParserParserL_CURLY_BRACKET)
 		}
 		{
-			p.SetState(94)
+			p.SetState(81)
 
 			var _m = p.Match(SESParserParserNUMBER)
 
 			localctx.(*Qty_precise_altContext).exact = _m
 		}
 		{
-			p.SetState(95)
+			p.SetState(82)
 			p.Match(SESParserParserR_CURLY_BRACKET)
 		}
 
@@ -1502,10 +1341,6 @@ func (s *Set_windowContext) SKIP_() antlr.TerminalNode {
 	return s.GetToken(SESParserParserSKIP_, 0)
 }
 
-func (s *Set_windowContext) WITHIN() antlr.TerminalNode {
-	return s.GetToken(SESParserParserWITHIN, 0)
-}
-
 func (s *Set_windowContext) AllDateInterval() []IDateIntervalContext {
 	children := s.GetChildren()
 	len := 0
@@ -1545,6 +1380,10 @@ func (s *Set_windowContext) DateInterval(i int) IDateIntervalContext {
 	}
 
 	return t.(IDateIntervalContext)
+}
+
+func (s *Set_windowContext) WITHIN() antlr.TerminalNode {
+	return s.GetToken(SESParserParserWITHIN, 0)
 }
 
 func (s *Set_windowContext) GetRuleContext() antlr.RuleContext {
@@ -1591,68 +1430,488 @@ func (p *SESParserParser) Set_window() (localctx ISet_windowContext) {
 		}
 	}()
 
-	p.EnterOuterAlt(localctx, 1)
-	p.SetState(99)
+	p.SetState(112)
 	p.GetErrorHandler().Sync(p)
-	_la = p.GetTokenStream().LA(1)
-
-	if _la == SESParserParserAND {
-		{
-			p.SetState(98)
-			p.Match(SESParserParserAND)
-		}
-
-	}
-	{
-		p.SetState(101)
-		p.Match(SESParserParserTHEN)
-	}
-	p.SetState(104)
-	p.GetErrorHandler().Sync(p)
-	_la = p.GetTokenStream().LA(1)
-
-	if _la == SESParserParserSKIP_ {
-		{
-			p.SetState(102)
-			p.Match(SESParserParserSKIP_)
-		}
-		{
-			p.SetState(103)
-
-			var _x = p.DateInterval()
-
-			localctx.(*Set_windowContext).skip = _x
-		}
-
-	}
-	p.SetState(111)
-	p.GetErrorHandler().Sync(p)
-	_la = p.GetTokenStream().LA(1)
-
-	if _la == SESParserParserWITHIN || _la == SESParserParserAND {
-		p.SetState(107)
+	switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 18, p.GetParserRuleContext()) {
+	case 1:
+		p.EnterOuterAlt(localctx, 1)
+		p.SetState(86)
 		p.GetErrorHandler().Sync(p)
 		_la = p.GetTokenStream().LA(1)
 
 		if _la == SESParserParserAND {
 			{
-				p.SetState(106)
+				p.SetState(85)
 				p.Match(SESParserParserAND)
 			}
 
 		}
 		{
-			p.SetState(109)
-			p.Match(SESParserParserWITHIN)
+			p.SetState(88)
+			p.Match(SESParserParserTHEN)
+		}
+
+	case 2:
+		p.EnterOuterAlt(localctx, 2)
+		p.SetState(90)
+		p.GetErrorHandler().Sync(p)
+		_la = p.GetTokenStream().LA(1)
+
+		if _la == SESParserParserAND {
+			{
+				p.SetState(89)
+				p.Match(SESParserParserAND)
+			}
+
+		}
+		p.SetState(93)
+		p.GetErrorHandler().Sync(p)
+		_la = p.GetTokenStream().LA(1)
+
+		if _la == SESParserParserTHEN {
+			{
+				p.SetState(92)
+				p.Match(SESParserParserTHEN)
+			}
+
+		}
+		{
+			p.SetState(95)
+			p.Match(SESParserParserSKIP_)
+		}
+		{
+			p.SetState(96)
+
+			var _x = p.DateInterval()
+
+			localctx.(*Set_windowContext).skip = _x
+		}
+		p.SetState(102)
+		p.GetErrorHandler().Sync(p)
+		_la = p.GetTokenStream().LA(1)
+
+		if _la == SESParserParserWITHIN || _la == SESParserParserAND {
+			p.SetState(98)
+			p.GetErrorHandler().Sync(p)
+			_la = p.GetTokenStream().LA(1)
+
+			if _la == SESParserParserAND {
+				{
+					p.SetState(97)
+					p.Match(SESParserParserAND)
+				}
+
+			}
+			{
+				p.SetState(100)
+				p.Match(SESParserParserWITHIN)
+			}
+			{
+				p.SetState(101)
+
+				var _x = p.DateInterval()
+
+				localctx.(*Set_windowContext).within = _x
+			}
+
+		}
+
+	case 3:
+		p.EnterOuterAlt(localctx, 3)
+		p.SetState(105)
+		p.GetErrorHandler().Sync(p)
+		_la = p.GetTokenStream().LA(1)
+
+		if _la == SESParserParserAND {
+			{
+				p.SetState(104)
+				p.Match(SESParserParserAND)
+			}
+
+		}
+		p.SetState(108)
+		p.GetErrorHandler().Sync(p)
+		_la = p.GetTokenStream().LA(1)
+
+		if _la == SESParserParserTHEN {
+			{
+				p.SetState(107)
+				p.Match(SESParserParserTHEN)
+			}
+
 		}
 		{
 			p.SetState(110)
+			p.Match(SESParserParserWITHIN)
+		}
+		{
+			p.SetState(111)
 
 			var _x = p.DateInterval()
 
 			localctx.(*Set_windowContext).within = _x
 		}
 
+	}
+
+	return localctx
+}
+
+// IDateContext is an interface to support dynamic dispatch.
+type IDateContext interface {
+	antlr.ParserRuleContext
+
+	// GetParser returns the parser.
+	GetParser() antlr.Parser
+
+	// IsDateContext differentiates from other interfaces.
+	IsDateContext()
+}
+
+type DateContext struct {
+	*antlr.BaseParserRuleContext
+	parser antlr.Parser
+}
+
+func NewEmptyDateContext() *DateContext {
+	var p = new(DateContext)
+	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	p.RuleIndex = SESParserParserRULE_date
+	return p
+}
+
+func (*DateContext) IsDateContext() {}
+
+func NewDateContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *DateContext {
+	var p = new(DateContext)
+
+	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+
+	p.parser = parser
+	p.RuleIndex = SESParserParserRULE_date
+
+	return p
+}
+
+func (s *DateContext) GetParser() antlr.Parser { return s.parser }
+
+func (s *DateContext) AbsoluteDate() IAbsoluteDateContext {
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IAbsoluteDateContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
+
+	if t == nil {
+		return nil
+	}
+
+	return t.(IAbsoluteDateContext)
+}
+
+func (s *DateContext) RelativeDate() IRelativeDateContext {
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IRelativeDateContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
+
+	if t == nil {
+		return nil
+	}
+
+	return t.(IRelativeDateContext)
+}
+
+func (s *DateContext) GetRuleContext() antlr.RuleContext {
+	return s
+}
+
+func (s *DateContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
+	return antlr.TreesStringTree(s, ruleNames, recog)
+}
+
+func (s *DateContext) EnterRule(listener antlr.ParseTreeListener) {
+	if listenerT, ok := listener.(SESParserListener); ok {
+		listenerT.EnterDate(s)
+	}
+}
+
+func (s *DateContext) ExitRule(listener antlr.ParseTreeListener) {
+	if listenerT, ok := listener.(SESParserListener); ok {
+		listenerT.ExitDate(s)
+	}
+}
+
+func (p *SESParserParser) Date() (localctx IDateContext) {
+	this := p
+	_ = this
+
+	localctx = NewDateContext(p, p.GetParserRuleContext(), p.GetState())
+	p.EnterRule(localctx, 12, SESParserParserRULE_date)
+
+	defer func() {
+		p.ExitRule()
+	}()
+
+	defer func() {
+		if err := recover(); err != nil {
+			if v, ok := err.(antlr.RecognitionException); ok {
+				localctx.SetException(v)
+				p.GetErrorHandler().ReportError(p, v)
+				p.GetErrorHandler().Recover(p, v)
+			} else {
+				panic(err)
+			}
+		}
+	}()
+
+	p.SetState(116)
+	p.GetErrorHandler().Sync(p)
+
+	switch p.GetTokenStream().LA(1) {
+	case SESParserParserSTRING:
+		p.EnterOuterAlt(localctx, 1)
+		{
+			p.SetState(114)
+			p.AbsoluteDate()
+		}
+
+	case SESParserParserLAST:
+		p.EnterOuterAlt(localctx, 2)
+		{
+			p.SetState(115)
+			p.RelativeDate()
+		}
+
+	default:
+		panic(antlr.NewNoViableAltException(p, nil, nil, nil, nil, nil))
+	}
+
+	return localctx
+}
+
+// IAbsoluteDateContext is an interface to support dynamic dispatch.
+type IAbsoluteDateContext interface {
+	antlr.ParserRuleContext
+
+	// GetParser returns the parser.
+	GetParser() antlr.Parser
+
+	// IsAbsoluteDateContext differentiates from other interfaces.
+	IsAbsoluteDateContext()
+}
+
+type AbsoluteDateContext struct {
+	*antlr.BaseParserRuleContext
+	parser antlr.Parser
+}
+
+func NewEmptyAbsoluteDateContext() *AbsoluteDateContext {
+	var p = new(AbsoluteDateContext)
+	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	p.RuleIndex = SESParserParserRULE_absoluteDate
+	return p
+}
+
+func (*AbsoluteDateContext) IsAbsoluteDateContext() {}
+
+func NewAbsoluteDateContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *AbsoluteDateContext {
+	var p = new(AbsoluteDateContext)
+
+	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+
+	p.parser = parser
+	p.RuleIndex = SESParserParserRULE_absoluteDate
+
+	return p
+}
+
+func (s *AbsoluteDateContext) GetParser() antlr.Parser { return s.parser }
+
+func (s *AbsoluteDateContext) STRING() antlr.TerminalNode {
+	return s.GetToken(SESParserParserSTRING, 0)
+}
+
+func (s *AbsoluteDateContext) GetRuleContext() antlr.RuleContext {
+	return s
+}
+
+func (s *AbsoluteDateContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
+	return antlr.TreesStringTree(s, ruleNames, recog)
+}
+
+func (s *AbsoluteDateContext) EnterRule(listener antlr.ParseTreeListener) {
+	if listenerT, ok := listener.(SESParserListener); ok {
+		listenerT.EnterAbsoluteDate(s)
+	}
+}
+
+func (s *AbsoluteDateContext) ExitRule(listener antlr.ParseTreeListener) {
+	if listenerT, ok := listener.(SESParserListener); ok {
+		listenerT.ExitAbsoluteDate(s)
+	}
+}
+
+func (p *SESParserParser) AbsoluteDate() (localctx IAbsoluteDateContext) {
+	this := p
+	_ = this
+
+	localctx = NewAbsoluteDateContext(p, p.GetParserRuleContext(), p.GetState())
+	p.EnterRule(localctx, 14, SESParserParserRULE_absoluteDate)
+
+	defer func() {
+		p.ExitRule()
+	}()
+
+	defer func() {
+		if err := recover(); err != nil {
+			if v, ok := err.(antlr.RecognitionException); ok {
+				localctx.SetException(v)
+				p.GetErrorHandler().ReportError(p, v)
+				p.GetErrorHandler().Recover(p, v)
+			} else {
+				panic(err)
+			}
+		}
+	}()
+
+	p.EnterOuterAlt(localctx, 1)
+	{
+		p.SetState(118)
+		p.Match(SESParserParserSTRING)
+	}
+
+	return localctx
+}
+
+// IRelativeDateContext is an interface to support dynamic dispatch.
+type IRelativeDateContext interface {
+	antlr.ParserRuleContext
+
+	// GetParser returns the parser.
+	GetParser() antlr.Parser
+
+	// GetLast returns the last rule contexts.
+	GetLast() IDateIntervalContext
+
+	// SetLast sets the last rule contexts.
+	SetLast(IDateIntervalContext)
+
+	// IsRelativeDateContext differentiates from other interfaces.
+	IsRelativeDateContext()
+}
+
+type RelativeDateContext struct {
+	*antlr.BaseParserRuleContext
+	parser antlr.Parser
+	last   IDateIntervalContext
+}
+
+func NewEmptyRelativeDateContext() *RelativeDateContext {
+	var p = new(RelativeDateContext)
+	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
+	p.RuleIndex = SESParserParserRULE_relativeDate
+	return p
+}
+
+func (*RelativeDateContext) IsRelativeDateContext() {}
+
+func NewRelativeDateContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *RelativeDateContext {
+	var p = new(RelativeDateContext)
+
+	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
+
+	p.parser = parser
+	p.RuleIndex = SESParserParserRULE_relativeDate
+
+	return p
+}
+
+func (s *RelativeDateContext) GetParser() antlr.Parser { return s.parser }
+
+func (s *RelativeDateContext) GetLast() IDateIntervalContext { return s.last }
+
+func (s *RelativeDateContext) SetLast(v IDateIntervalContext) { s.last = v }
+
+func (s *RelativeDateContext) LAST() antlr.TerminalNode {
+	return s.GetToken(SESParserParserLAST, 0)
+}
+
+func (s *RelativeDateContext) DateInterval() IDateIntervalContext {
+	var t antlr.RuleContext
+	for _, ctx := range s.GetChildren() {
+		if _, ok := ctx.(IDateIntervalContext); ok {
+			t = ctx.(antlr.RuleContext)
+			break
+		}
+	}
+
+	if t == nil {
+		return nil
+	}
+
+	return t.(IDateIntervalContext)
+}
+
+func (s *RelativeDateContext) GetRuleContext() antlr.RuleContext {
+	return s
+}
+
+func (s *RelativeDateContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
+	return antlr.TreesStringTree(s, ruleNames, recog)
+}
+
+func (s *RelativeDateContext) EnterRule(listener antlr.ParseTreeListener) {
+	if listenerT, ok := listener.(SESParserListener); ok {
+		listenerT.EnterRelativeDate(s)
+	}
+}
+
+func (s *RelativeDateContext) ExitRule(listener antlr.ParseTreeListener) {
+	if listenerT, ok := listener.(SESParserListener); ok {
+		listenerT.ExitRelativeDate(s)
+	}
+}
+
+func (p *SESParserParser) RelativeDate() (localctx IRelativeDateContext) {
+	this := p
+	_ = this
+
+	localctx = NewRelativeDateContext(p, p.GetParserRuleContext(), p.GetState())
+	p.EnterRule(localctx, 16, SESParserParserRULE_relativeDate)
+
+	defer func() {
+		p.ExitRule()
+	}()
+
+	defer func() {
+		if err := recover(); err != nil {
+			if v, ok := err.(antlr.RecognitionException); ok {
+				localctx.SetException(v)
+				p.GetErrorHandler().ReportError(p, v)
+				p.GetErrorHandler().Recover(p, v)
+			} else {
+				panic(err)
+			}
+		}
+	}()
+
+	p.EnterOuterAlt(localctx, 1)
+	{
+		p.SetState(120)
+		p.Match(SESParserParserLAST)
+	}
+	{
+		p.SetState(121)
+
+		var _x = p.DateInterval()
+
+		localctx.(*RelativeDateContext).last = _x
 	}
 
 	return localctx
@@ -1811,7 +2070,7 @@ func (p *SESParserParser) DateInterval() (localctx IDateIntervalContext) {
 	_ = this
 
 	localctx = NewDateIntervalContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 12, SESParserParserRULE_dateInterval)
+	p.EnterRule(localctx, 18, SESParserParserRULE_dateInterval)
 
 	defer func() {
 		p.ExitRule()
@@ -1833,31 +2092,31 @@ func (p *SESParserParser) DateInterval() (localctx IDateIntervalContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(113)
+		p.SetState(123)
 
 		var _m = p.Match(SESParserParserNUMBER)
 
 		localctx.(*DateIntervalContext).num = _m
 	}
 	{
-		p.SetState(114)
+		p.SetState(124)
 
 		var _m = p.Match(SESParserParserDATE_UNIT)
 
 		localctx.(*DateIntervalContext).unit = _m
 	}
-	p.SetState(119)
+	p.SetState(129)
 	p.GetErrorHandler().Sync(p)
-	_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 19, p.GetParserRuleContext())
+	_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 20, p.GetParserRuleContext())
 
 	for _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
 		if _alt == 1 {
 			{
-				p.SetState(115)
+				p.SetState(125)
 				p.Match(SESParserParserAND)
 			}
 			{
-				p.SetState(116)
+				p.SetState(126)
 
 				var _x = p.DateInterval()
 
@@ -1865,369 +2124,9 @@ func (p *SESParserParser) DateInterval() (localctx IDateIntervalContext) {
 			}
 
 		}
-		p.SetState(121)
+		p.SetState(131)
 		p.GetErrorHandler().Sync(p)
-		_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 19, p.GetParserRuleContext())
-	}
-
-	return localctx
-}
-
-// IDateContext is an interface to support dynamic dispatch.
-type IDateContext interface {
-	antlr.ParserRuleContext
-
-	// GetParser returns the parser.
-	GetParser() antlr.Parser
-
-	// IsDateContext differentiates from other interfaces.
-	IsDateContext()
-}
-
-type DateContext struct {
-	*antlr.BaseParserRuleContext
-	parser antlr.Parser
-}
-
-func NewEmptyDateContext() *DateContext {
-	var p = new(DateContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
-	p.RuleIndex = SESParserParserRULE_date
-	return p
-}
-
-func (*DateContext) IsDateContext() {}
-
-func NewDateContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *DateContext {
-	var p = new(DateContext)
-
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
-
-	p.parser = parser
-	p.RuleIndex = SESParserParserRULE_date
-
-	return p
-}
-
-func (s *DateContext) GetParser() antlr.Parser { return s.parser }
-
-func (s *DateContext) AbsoluteDate() IAbsoluteDateContext {
-	var t antlr.RuleContext
-	for _, ctx := range s.GetChildren() {
-		if _, ok := ctx.(IAbsoluteDateContext); ok {
-			t = ctx.(antlr.RuleContext)
-			break
-		}
-	}
-
-	if t == nil {
-		return nil
-	}
-
-	return t.(IAbsoluteDateContext)
-}
-
-func (s *DateContext) RelativeDate() IRelativeDateContext {
-	var t antlr.RuleContext
-	for _, ctx := range s.GetChildren() {
-		if _, ok := ctx.(IRelativeDateContext); ok {
-			t = ctx.(antlr.RuleContext)
-			break
-		}
-	}
-
-	if t == nil {
-		return nil
-	}
-
-	return t.(IRelativeDateContext)
-}
-
-func (s *DateContext) GetRuleContext() antlr.RuleContext {
-	return s
-}
-
-func (s *DateContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
-	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *DateContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(SESParserListener); ok {
-		listenerT.EnterDate(s)
-	}
-}
-
-func (s *DateContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(SESParserListener); ok {
-		listenerT.ExitDate(s)
-	}
-}
-
-func (p *SESParserParser) Date() (localctx IDateContext) {
-	this := p
-	_ = this
-
-	localctx = NewDateContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 14, SESParserParserRULE_date)
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
-	p.SetState(124)
-	p.GetErrorHandler().Sync(p)
-
-	switch p.GetTokenStream().LA(1) {
-	case SESParserParserSTRING:
-		p.EnterOuterAlt(localctx, 1)
-		{
-			p.SetState(122)
-			p.AbsoluteDate()
-		}
-
-	case SESParserParserLAST:
-		p.EnterOuterAlt(localctx, 2)
-		{
-			p.SetState(123)
-			p.RelativeDate()
-		}
-
-	default:
-		panic(antlr.NewNoViableAltException(p, nil, nil, nil, nil, nil))
-	}
-
-	return localctx
-}
-
-// IAbsoluteDateContext is an interface to support dynamic dispatch.
-type IAbsoluteDateContext interface {
-	antlr.ParserRuleContext
-
-	// GetParser returns the parser.
-	GetParser() antlr.Parser
-
-	// IsAbsoluteDateContext differentiates from other interfaces.
-	IsAbsoluteDateContext()
-}
-
-type AbsoluteDateContext struct {
-	*antlr.BaseParserRuleContext
-	parser antlr.Parser
-}
-
-func NewEmptyAbsoluteDateContext() *AbsoluteDateContext {
-	var p = new(AbsoluteDateContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
-	p.RuleIndex = SESParserParserRULE_absoluteDate
-	return p
-}
-
-func (*AbsoluteDateContext) IsAbsoluteDateContext() {}
-
-func NewAbsoluteDateContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *AbsoluteDateContext {
-	var p = new(AbsoluteDateContext)
-
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
-
-	p.parser = parser
-	p.RuleIndex = SESParserParserRULE_absoluteDate
-
-	return p
-}
-
-func (s *AbsoluteDateContext) GetParser() antlr.Parser { return s.parser }
-
-func (s *AbsoluteDateContext) STRING() antlr.TerminalNode {
-	return s.GetToken(SESParserParserSTRING, 0)
-}
-
-func (s *AbsoluteDateContext) GetRuleContext() antlr.RuleContext {
-	return s
-}
-
-func (s *AbsoluteDateContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
-	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *AbsoluteDateContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(SESParserListener); ok {
-		listenerT.EnterAbsoluteDate(s)
-	}
-}
-
-func (s *AbsoluteDateContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(SESParserListener); ok {
-		listenerT.ExitAbsoluteDate(s)
-	}
-}
-
-func (p *SESParserParser) AbsoluteDate() (localctx IAbsoluteDateContext) {
-	this := p
-	_ = this
-
-	localctx = NewAbsoluteDateContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 16, SESParserParserRULE_absoluteDate)
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
-	p.EnterOuterAlt(localctx, 1)
-	{
-		p.SetState(126)
-		p.Match(SESParserParserSTRING)
-	}
-
-	return localctx
-}
-
-// IRelativeDateContext is an interface to support dynamic dispatch.
-type IRelativeDateContext interface {
-	antlr.ParserRuleContext
-
-	// GetParser returns the parser.
-	GetParser() antlr.Parser
-
-	// GetLast returns the last rule contexts.
-	GetLast() IDateIntervalContext
-
-	// SetLast sets the last rule contexts.
-	SetLast(IDateIntervalContext)
-
-	// IsRelativeDateContext differentiates from other interfaces.
-	IsRelativeDateContext()
-}
-
-type RelativeDateContext struct {
-	*antlr.BaseParserRuleContext
-	parser antlr.Parser
-	last   IDateIntervalContext
-}
-
-func NewEmptyRelativeDateContext() *RelativeDateContext {
-	var p = new(RelativeDateContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
-	p.RuleIndex = SESParserParserRULE_relativeDate
-	return p
-}
-
-func (*RelativeDateContext) IsRelativeDateContext() {}
-
-func NewRelativeDateContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *RelativeDateContext {
-	var p = new(RelativeDateContext)
-
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
-
-	p.parser = parser
-	p.RuleIndex = SESParserParserRULE_relativeDate
-
-	return p
-}
-
-func (s *RelativeDateContext) GetParser() antlr.Parser { return s.parser }
-
-func (s *RelativeDateContext) GetLast() IDateIntervalContext { return s.last }
-
-func (s *RelativeDateContext) SetLast(v IDateIntervalContext) { s.last = v }
-
-func (s *RelativeDateContext) LAST() antlr.TerminalNode {
-	return s.GetToken(SESParserParserLAST, 0)
-}
-
-func (s *RelativeDateContext) DateInterval() IDateIntervalContext {
-	var t antlr.RuleContext
-	for _, ctx := range s.GetChildren() {
-		if _, ok := ctx.(IDateIntervalContext); ok {
-			t = ctx.(antlr.RuleContext)
-			break
-		}
-	}
-
-	if t == nil {
-		return nil
-	}
-
-	return t.(IDateIntervalContext)
-}
-
-func (s *RelativeDateContext) GetRuleContext() antlr.RuleContext {
-	return s
-}
-
-func (s *RelativeDateContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
-	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *RelativeDateContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(SESParserListener); ok {
-		listenerT.EnterRelativeDate(s)
-	}
-}
-
-func (s *RelativeDateContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(SESParserListener); ok {
-		listenerT.ExitRelativeDate(s)
-	}
-}
-
-func (p *SESParserParser) RelativeDate() (localctx IRelativeDateContext) {
-	this := p
-	_ = this
-
-	localctx = NewRelativeDateContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 18, SESParserParserRULE_relativeDate)
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
-	p.EnterOuterAlt(localctx, 1)
-	{
-		p.SetState(128)
-		p.Match(SESParserParserLAST)
-	}
-	{
-		p.SetState(129)
-
-		var _x = p.DateInterval()
-
-		localctx.(*RelativeDateContext).last = _x
+		_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 20, p.GetParserRuleContext())
 	}
 
 	return localctx
@@ -2394,21 +2293,21 @@ func (p *SESParserParser) Event_expression() (localctx IEvent_expressionContext)
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(131)
+		p.SetState(132)
 
 		var _x = p.Expr_operand()
 
 		localctx.(*Event_expressionContext).left = _x
 	}
 	{
-		p.SetState(132)
+		p.SetState(133)
 
 		var _m = p.Match(SESParserParserOP_LOGICAL)
 
 		localctx.(*Event_expressionContext).op = _m
 	}
 	{
-		p.SetState(133)
+		p.SetState(134)
 
 		var _x = p.Expr_operand()
 
@@ -2646,29 +2545,29 @@ func (p *SESParserParser) Expr_operand() (localctx IExpr_operandContext) {
 		}
 	}()
 
-	p.SetState(142)
+	p.SetState(143)
 	p.GetErrorHandler().Sync(p)
 	switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 21, p.GetParserRuleContext()) {
 	case 1:
 		localctx = NewAttrModifiedContext(p, localctx)
 		p.EnterOuterAlt(localctx, 1)
 		{
-			p.SetState(135)
+			p.SetState(136)
 
 			var _m = p.Match(SESParserParserID)
 
 			localctx.(*AttrModifiedContext).modifier = _m
 		}
 		{
-			p.SetState(136)
+			p.SetState(137)
 			p.Match(SESParserParserL_BRACKET)
 		}
 		{
-			p.SetState(137)
+			p.SetState(138)
 			p.EventAttr()
 		}
 		{
-			p.SetState(138)
+			p.SetState(139)
 			p.Match(SESParserParserR_BRACKET)
 		}
 
@@ -2676,7 +2575,7 @@ func (p *SESParserParser) Expr_operand() (localctx IExpr_operandContext) {
 		localctx = NewAttrContext(p, localctx)
 		p.EnterOuterAlt(localctx, 2)
 		{
-			p.SetState(140)
+			p.SetState(141)
 			p.EventAttr()
 		}
 
@@ -2684,7 +2583,7 @@ func (p *SESParserParser) Expr_operand() (localctx IExpr_operandContext) {
 		localctx = NewLitContext(p, localctx)
 		p.EnterOuterAlt(localctx, 3)
 		{
-			p.SetState(141)
+			p.SetState(142)
 			p.Literal()
 		}
 
@@ -2809,25 +2708,25 @@ func (p *SESParserParser) EventAttr() (localctx IEventAttrContext) {
 	}()
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(146)
+	p.SetState(147)
 	p.GetErrorHandler().Sync(p)
 
 	if p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 22, p.GetParserRuleContext()) == 1 {
 		{
-			p.SetState(144)
+			p.SetState(145)
 
 			var _m = p.Match(SESParserParserID)
 
 			localctx.(*EventAttrContext).eventName = _m
 		}
 		{
-			p.SetState(145)
+			p.SetState(146)
 			p.Match(SESParserParserDOT)
 		}
 
 	}
 	{
-		p.SetState(148)
+		p.SetState(149)
 
 		var _m = p.Match(SESParserParserID)
 
@@ -2978,7 +2877,7 @@ func (p *SESParserParser) Literal() (localctx ILiteralContext) {
 		}
 	}()
 
-	p.SetState(152)
+	p.SetState(153)
 	p.GetErrorHandler().Sync(p)
 
 	switch p.GetTokenStream().LA(1) {
@@ -2986,7 +2885,7 @@ func (p *SESParserParser) Literal() (localctx ILiteralContext) {
 		localctx = NewLiteral_numberContext(p, localctx)
 		p.EnterOuterAlt(localctx, 1)
 		{
-			p.SetState(150)
+			p.SetState(151)
 			p.Match(SESParserParserNUMBER)
 		}
 
@@ -2994,7 +2893,7 @@ func (p *SESParserParser) Literal() (localctx ILiteralContext) {
 		localctx = NewLiteral_stringContext(p, localctx)
 		p.EnterOuterAlt(localctx, 2)
 		{
-			p.SetState(151)
+			p.SetState(152)
 			p.Match(SESParserParserSTRING)
 		}
 
@@ -3108,11 +3007,11 @@ func (p *SESParserParser) Group() (localctx IGroupContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(154)
+		p.SetState(155)
 		p.Match(SESParserParserGROUP)
 	}
 	{
-		p.SetState(155)
+		p.SetState(156)
 		p.EventAttr()
 	}
 

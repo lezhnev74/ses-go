@@ -7,11 +7,11 @@ options {
 ////////////////////////// PARSER ///////////////////////////////////////////////////////////
 
 parse
-    :   window? ses+ group? EOF
+    :   ses_window? ses+ group? EOF
     ;
 
-window
-    :   WINDOW (FROM from=date (TO to=date)?)? (WITHIN? within=dateInterval)?
+ses_window
+    :   WINDOW_TEXT
     ;
 
 ses
@@ -30,7 +30,9 @@ event_qty
     ;
 
 set_window
-    :   AND? THEN (SKIP_ skip=dateInterval)? (AND? WITHIN within=dateInterval)?
+    :   AND? THEN
+    |   AND? THEN? SKIP_ skip=dateInterval (AND? WITHIN within=dateInterval)?
+    |   AND? THEN? WITHIN within=dateInterval
     ;
 
 date
@@ -78,6 +80,7 @@ group
 WS : [ \r\t\n]+ -> skip ;
 LINE_COMMENT: '//' ~[\r\n]* ('\r'? '\n' | EOF) -> skip;
 SPACE: [ \t\r\n]+;
+WINDOW_TEXT : WINDOW ANY+? (NL|SEMI) ; // delimiters are important, as the window specification is arbitrary text
 
 // KEYWORDS
 EVENT: E V E N T;
@@ -131,7 +134,6 @@ ASTERISK: '*';
 // LITERALS
 NUMBER: DIGIT+ (DOT DIGIT+)?;
 STRING: DQUOTA_STRING | SQUOTA_STRING;
-
 ID: [a-zA-Z_] [0-9a-zA-Z_]*;
 
 // FRAGMENTS
@@ -185,3 +187,6 @@ fragment W : [wW];
 fragment X : [xX];
 fragment Y : [yY];
 fragment Z : [zZ];
+
+fragment NL : [\n];
+fragment ANY : .;

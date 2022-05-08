@@ -10,8 +10,8 @@ type SESParserListener interface {
 	// EnterParse is called when entering the parse production.
 	EnterParse(c *ParseContext)
 
-	// EnterWindow is called when entering the window production.
-	EnterWindow(c *WindowContext)
+	// EnterSes_window is called when entering the ses_window production.
+	EnterSes_window(c *Ses_windowContext)
 
 	// EnterSes is called when entering the ses production.
 	EnterSes(c *SesContext)
@@ -34,9 +34,6 @@ type SESParserListener interface {
 	// EnterSet_window is called when entering the set_window production.
 	EnterSet_window(c *Set_windowContext)
 
-	// EnterDateInterval is called when entering the dateInterval production.
-	EnterDateInterval(c *DateIntervalContext)
-
 	// EnterDate is called when entering the date production.
 	EnterDate(c *DateContext)
 
@@ -45,6 +42,9 @@ type SESParserListener interface {
 
 	// EnterRelativeDate is called when entering the relativeDate production.
 	EnterRelativeDate(c *RelativeDateContext)
+
+	// EnterDateInterval is called when entering the dateInterval production.
+	EnterDateInterval(c *DateIntervalContext)
 
 	// EnterEvent_expression is called when entering the event_expression production.
 	EnterEvent_expression(c *Event_expressionContext)
@@ -73,8 +73,8 @@ type SESParserListener interface {
 	// ExitParse is called when exiting the parse production.
 	ExitParse(c *ParseContext)
 
-	// ExitWindow is called when exiting the window production.
-	ExitWindow(c *WindowContext)
+	// ExitSes_window is called when exiting the ses_window production.
+	ExitSes_window(c *Ses_windowContext)
 
 	// ExitSes is called when exiting the ses production.
 	ExitSes(c *SesContext)
@@ -97,9 +97,6 @@ type SESParserListener interface {
 	// ExitSet_window is called when exiting the set_window production.
 	ExitSet_window(c *Set_windowContext)
 
-	// ExitDateInterval is called when exiting the dateInterval production.
-	ExitDateInterval(c *DateIntervalContext)
-
 	// ExitDate is called when exiting the date production.
 	ExitDate(c *DateContext)
 
@@ -108,6 +105,9 @@ type SESParserListener interface {
 
 	// ExitRelativeDate is called when exiting the relativeDate production.
 	ExitRelativeDate(c *RelativeDateContext)
+
+	// ExitDateInterval is called when exiting the dateInterval production.
+	ExitDateInterval(c *DateIntervalContext)
 
 	// ExitEvent_expression is called when exiting the event_expression production.
 	ExitEvent_expression(c *Event_expressionContext)

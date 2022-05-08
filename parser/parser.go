@@ -3,6 +3,7 @@ package parser
 import (
 	"fmt"
 	"math"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -17,12 +18,13 @@ type SESListener struct {
 	*antlr_parser.BaseSESParserListener
 
 	*ses.SES
-	window  ses.SesWindow
-	groupBy *string
+	groupBy    *string
+	windowSpec *string
 }
 
 // ParseSESQuery read input text and makes an IR of it (ses)
-func ParseSESQuery(query string) *ses.SES {
+// time is needed to resolve relative time frames to absolute time values
+func ParseSESQuery(query string, t time.Time) *ses.SES {
 	listener := &SESListener{
 		SES: ses.MakeSES(make([]*ses.Set, 0), "", ses.SesWindow{}),
 	}
@@ -36,6 +38,11 @@ func ParseSESQuery(query string) *ses.SES {
 	p := antlr_parser.NewSESParserParser(tokenStream)
 	antlr.ParseTreeWalkerDefault.Walk(listener, p.Parse())
 
+	// If ses window is specified, resolve it against the given time
+	if listener.windowSpec != nil {
+		listener.SES.SetWindow(ses.MakeSesWindowFromText(*listener.windowSpec, t))
+	}
+
 	//after all validate the whole SES
 	listener.SES.Validate()
 
@@ -43,51 +50,11 @@ func ParseSESQuery(query string) *ses.SES {
 	return listener.SES
 }
 
-func (s *SESListener) EnterWindow(ctx *antlr_parser.WindowContext) {
-	// Edge case: "window from last week to last day within 3 days" is invalid (use FROM or WITHIN, but not mix it)
-	if ctx.GetFrom() != nil && ctx.GetWithin() != nil {
-		panic(fmt.Errorf("don't mix FROM and WITHIN in %s", ctx.GetText()))
-	}
-
-	s.window = ses.SesWindow{}
-
-	// Parse: WITHIN
-	if ctx.GetWithin() != nil {
-		s.window.Within = extractDuration(ctx.GetWithin())
-	}
-
-	// Parse: FROM
-	if ctx.GetFrom() != nil {
-		date := recognizeDateCtx(ctx.GetFrom())
-		if date == nil {
-			panic(fmt.Errorf("unable to recognize FROM date in %s", ctx.GetText()))
-		}
-		s.window.From = date
-	}
-
-	// Parse: TO
-	if ctx.GetTo() != nil {
-		date := recognizeDateCtx(ctx.GetTo())
-		if date == nil {
-			panic(fmt.Errorf("unable to recognize TO date in %s", ctx.GetText()))
-		}
-		s.window.To = date
-	}
-}
-
-func recognizeDateCtx(ctx *antlr_parser.DateContext) *time.Time {
-	// 1. Check if the date relative
-	// "last week", "last 50 days"
-	if ctx.RelativeDate() != nil {
-		relativeDuration := extractDuration(ctx.RelativeDate().GetLast())
-	}
-
-	// 2. Otherwise, assume an absolute date
-	if ctx.AbsoluteDate() != nil {
-
-	}
-
-	return nil
+func (s *SESListener) EnterSes_window(ctx *antlr_parser.Ses_windowContext) {
+	windowRe := regexp.MustCompile("^(window)?(.*)[\n;]$")
+	matches := windowRe.FindStringSubmatch(ctx.GetText())
+	windowText := strings.TrimSpace(matches[2])
+	s.windowSpec = &windowText
 }
 
 func (s *SESListener) EnterEvent(ctx *antlr_parser.EventContext) {

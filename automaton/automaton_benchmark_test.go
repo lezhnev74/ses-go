@@ -25,7 +25,7 @@ func benchmarkRunner(b *testing.B, db state.Db) {
 then event e1
 	 group by session 
 `
-	ses := parser.ParseSESQuery(query)
+	ses := parser.ParseSESQuery(query, time.Now())
 	r := MakeRunner(ses, db)
 
 	for i := 0; i < b.N; i++ {

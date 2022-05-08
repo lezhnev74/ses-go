@@ -40,7 +40,7 @@ func TestFailedAutomatons(t *testing.T) {
 		testName := fmt.Sprintf("test %d", i)
 		t.Run(testName, func(t *testing.T) {
 			db := state.MakeBadgerDb(testName, fmt.Sprintf("%s/%s", t.TempDir(), testName))
-			ses := parser.ParseSESQuery(tt)
+			ses := parser.ParseSESQuery(tt, time.Now())
 			runner := MakeRunner(ses, db)
 
 			// feed to the automaton
@@ -98,7 +98,7 @@ func TestSetWindow(t *testing.T) {
 	for i, tt := range tests {
 		t.Run(fmt.Sprintf("tt %d", i), func(t *testing.T) {
 			db := state.MakeBadgerDb("scope1", "")
-			ses := parser.ParseSESQuery(tt.query)
+			ses := parser.ParseSESQuery(tt.query, time.Now())
 			runner := MakeRunner(ses, db)
 
 			for _, e := range tt.events {
@@ -170,7 +170,7 @@ func TestSesWindow(t *testing.T) {
 		testName := fmt.Sprintf("tt %d", i)
 		t.Run(testName, func(t *testing.T) {
 			db := state.MakeBadgerDb(testName, "")
-			ses := parser.ParseSESQuery(tt.query)
+			ses := parser.ParseSESQuery(tt.query, time.Now())
 			runner := MakeRunner(ses, db)
 
 			for _, e := range tt.events {
@@ -255,7 +255,7 @@ func TestDeterministicAutomaton(t *testing.T) {
 		testName := fmt.Sprintf("test %d", i)
 		t.Run(testName, func(t *testing.T) {
 			db := state.MakeBadgerDb(testName, fmt.Sprintf("%s/%s", t.TempDir(), testName))
-			ses := parser.ParseSESQuery(tt.query)
+			ses := parser.ParseSESQuery(tt.query, time.Now())
 			runner := MakeRunner(ses, db)
 
 			// feed to the automaton
@@ -310,7 +310,7 @@ group by session_id
 	}
 
 	// Parse Query
-	ses := parser.ParseSESQuery(query)
+	ses := parser.ParseSESQuery(query, time.Now())
 
 	// Run Matching
 	db := state.MakeBadgerDb("scope1", fmt.Sprintf("%s/%s", t.TempDir(), "scope1"))

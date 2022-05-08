@@ -7,10 +7,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/araddon/dateparse"
 	"ses_pm_antlr/ses"
 )
 
 func TestSimpleQueries(t *testing.T) {
+	now := dateparse.MustParse("1 May 2022") // Freeze the Now
+
 	tests := []struct {
 		query    string
 		expected *ses.SES
@@ -174,23 +177,51 @@ func TestSimpleQueries(t *testing.T) {
 		},
 		/* SetWindow */
 		{
-			`within 1 minute event signed_up group by session`,
+			`within 1 second event a and then event b group by session`,
 			ses.MakeSES(
 				[]*ses.Set{
-					ses.MakeSet([]*ses.Event{
-						ses.MakeEvent("signed_up", 1, 1, []*ses.Condition{}),
-					},
-						ses.SetWindow{0, time.Minute},
-					),
+					ses.MakeSet([]*ses.Event{ses.MakeEvent("a", 1, 1, []*ses.Condition{})}, ses.SetWindow{0, time.Second}),
+					ses.MakeSet([]*ses.Event{ses.MakeEvent("b", 1, 1, []*ses.Condition{})}, ses.SetWindow{}),
 				},
 				"session",
 				ses.SesWindow{},
 			),
 		},
+		/* SesWindow */
+		{
+			`window within 1 minute; event signed_up group by session`,
+			ses.MakeSES(
+				[]*ses.Set{
+					ses.MakeSet([]*ses.Event{
+						ses.MakeEvent("signed_up", 1, 1, []*ses.Condition{}),
+					},
+						ses.SetWindow{0, 0},
+					),
+				},
+				"session",
+				ses.MakeSesWindowFromText("within 1 minute", now),
+			),
+		},
+		/* SesWindow + SetWindow */
+		{
+			`window 1 day; within 60 days event a group by b`,
+			ses.MakeSES(
+				[]*ses.Set{
+					ses.MakeSet([]*ses.Event{
+						ses.MakeEvent("a", 1, 1, []*ses.Condition{}),
+					},
+						ses.SetWindow{0, 60 * 24 * time.Hour},
+					),
+				},
+				"b",
+				ses.MakeSesWindowFromText("within 1 day", now),
+			),
+		},
 	}
+
 	for i, tt := range tests {
 		t.Run(fmt.Sprintf("test %d", i), func(t *testing.T) {
-			got := ParseSESQuery(tt.query)
+			got := ParseSESQuery(tt.query, now)
 			if !reflect.DeepEqual(*got, *tt.expected) {
 				t.Errorf("\nactual:\n%v \n expected:\n%v\n", *got, *tt.expected)
 			}
@@ -199,14 +230,11 @@ func TestSimpleQueries(t *testing.T) {
 }
 
 func TestValidation(t *testing.T) {
+	now := dateparse.MustParse("1 May 2022") // Freeze the Now
 	tests := []struct {
 		query        string
 		panicMessage string
 	}{
-		{
-			`window from last day to last day within 60 days event a group by b`,
-			`don't mix FROM and WITHIN in %s`,
-		},
 		{
 			`event signed_up where 2>1 group by session`,
 			`at least one operand must refer to an event attribute`,
@@ -244,7 +272,7 @@ func TestValidation(t *testing.T) {
 					}
 				}
 			}()
-			ParseSESQuery(tt.query)
+			ParseSESQuery(tt.query, now)
 			t.Errorf("\nshould have panicked with: %s\n", tt.panicMessage)
 		})
 	}

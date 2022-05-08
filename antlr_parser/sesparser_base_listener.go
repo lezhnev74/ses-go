@@ -26,11 +26,11 @@ func (s *BaseSESParserListener) EnterParse(ctx *ParseContext) {}
 // ExitParse is called when production parse is exited.
 func (s *BaseSESParserListener) ExitParse(ctx *ParseContext) {}
 
-// EnterWindow is called when production window is entered.
-func (s *BaseSESParserListener) EnterWindow(ctx *WindowContext) {}
+// EnterSes_window is called when production ses_window is entered.
+func (s *BaseSESParserListener) EnterSes_window(ctx *Ses_windowContext) {}
 
-// ExitWindow is called when production window is exited.
-func (s *BaseSESParserListener) ExitWindow(ctx *WindowContext) {}
+// ExitSes_window is called when production ses_window is exited.
+func (s *BaseSESParserListener) ExitSes_window(ctx *Ses_windowContext) {}
 
 // EnterSes is called when production ses is entered.
 func (s *BaseSESParserListener) EnterSes(ctx *SesContext) {}
@@ -74,12 +74,6 @@ func (s *BaseSESParserListener) EnterSet_window(ctx *Set_windowContext) {}
 // ExitSet_window is called when production set_window is exited.
 func (s *BaseSESParserListener) ExitSet_window(ctx *Set_windowContext) {}
 
-// EnterDateInterval is called when production dateInterval is entered.
-func (s *BaseSESParserListener) EnterDateInterval(ctx *DateIntervalContext) {}
-
-// ExitDateInterval is called when production dateInterval is exited.
-func (s *BaseSESParserListener) ExitDateInterval(ctx *DateIntervalContext) {}
-
 // EnterDate is called when production date is entered.
 func (s *BaseSESParserListener) EnterDate(ctx *DateContext) {}
 
@@ -97,6 +91,12 @@ func (s *BaseSESParserListener) EnterRelativeDate(ctx *RelativeDateContext) {}
 
 // ExitRelativeDate is called when production relativeDate is exited.
 func (s *BaseSESParserListener) ExitRelativeDate(ctx *RelativeDateContext) {}
+
+// EnterDateInterval is called when production dateInterval is entered.
+func (s *BaseSESParserListener) EnterDateInterval(ctx *DateIntervalContext) {}
+
+// ExitDateInterval is called when production dateInterval is exited.
+func (s *BaseSESParserListener) ExitDateInterval(ctx *DateIntervalContext) {}
 
 // EnterEvent_expression is called when production event_expression is entered.
 func (s *BaseSESParserListener) EnterEvent_expression(ctx *Event_expressionContext) {}
