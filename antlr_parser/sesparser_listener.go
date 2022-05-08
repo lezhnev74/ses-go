@@ -70,6 +70,9 @@ type SESParserListener interface {
 	// EnterGroup is called when entering the group production.
 	EnterGroup(c *GroupContext)
 
+	// EnterGroupAttr is called when entering the groupAttr production.
+	EnterGroupAttr(c *GroupAttrContext)
+
 	// ExitParse is called when exiting the parse production.
 	ExitParse(c *ParseContext)
 
@@ -132,4 +135,7 @@ type SESParserListener interface {
 
 	// ExitGroup is called when exiting the group production.
 	ExitGroup(c *GroupContext)
+
+	// ExitGroupAttr is called when exiting the groupAttr production.
+	ExitGroupAttr(c *GroupAttrContext)
 }

@@ -63,7 +63,7 @@ expr_operand
     ;
 
 eventAttr
-    :   (eventName=ID DOT)? attrName=ID //qualified or short attribute name
+    :   (eventName=ID DOT)? attrName=ID (DOT ID)* //qualified or short attribute name
     ;
 
 literal
@@ -72,7 +72,11 @@ literal
     ;
 
 group
-    :   GROUP eventAttr
+    :   GROUP groupAttr
+    ;
+
+groupAttr
+    :   attr1=eventAttr (COMMA extraAttr=groupAttr)*
     ;
 
 ////////////////////////////// LEXER ///////////////////////////////////////////////////////

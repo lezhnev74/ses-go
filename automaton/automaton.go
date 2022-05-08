@@ -23,7 +23,7 @@ type Automaton struct {
 	capturedAttributes map[int]map[string]EventAttrBuffer                // map full attr name to buffer
 	acceptedEventIds   map[int]map[string]EventAttrBuffer                // ids per set and per event
 	setLastEventTime   map[int]*time.Time                                // remember the last event's time for each set (used in window matching)
-	groupBy            any                                               // keep the unique value that we use to group events (populated from the initial event)
+	groupBy            []any                                             // keep the unique value that we use to group events (populated from the initial event)
 	windowStart        *time.Time                                        // first captured event's time
 }
 
@@ -36,8 +36,8 @@ func (a *Automaton) accept(incomingEvent Event) (isAccepted bool, isFailed bool,
 		return
 	}
 
-	// Condition: events must share group-by attribute
-	if a.groupBy != nil && incomingEvent.Attribute(a.ses.GetGroupBy()) != a.groupBy {
+	// Condition: events must share group-by attributes
+	if !a.checkGroupBy(incomingEvent) {
 		return
 	}
 
@@ -160,9 +160,54 @@ func (a *Automaton) checkSetWindow(e Event, set int) bool {
 	return true
 }
 
+// Group By are attributes that must have the same value for every event
+func (a *Automaton) checkGroupBy(e Event) bool {
+	if len(a.groupBy) == 0 { // first event, must accept
+		return true
+	}
+
+	actualValues := make([]any, 0, len(a.ses.GetGroupBy()))
+	for _, attr := range a.ses.GetGroupBy() {
+		actualValues = append(actualValues, e.Attribute(attr))
+	}
+	return vector.CmpAnySlices(actualValues, a.groupBy)
+}
+
+// checkEventQty tests the number of captured events against qty criteria in the SES specification
+func (a *Automaton) checkEventQty(set int, event *ses.Event) (isMatch, isOverflow bool) {
+	min, max := event.GetQty()
+	actualCount := 0
+
+	capturedSetIds, exists := a.acceptedEventIds[set]
+	if exists {
+		capturedEventIds, exists := capturedSetIds[event.GetName()]
+		if exists {
+			actualCount = len(capturedEventIds.GetIterator().ToSlice())
+		}
+	}
+
+	if actualCount > max {
+		isOverflow = true
+	}
+
+	if actualCount >= min && actualCount <= max {
+		isMatch = true
+	}
+
+	return
+}
+
 // saveAcceptedEvent saves matched event to automaton buffers
 func (a *Automaton) saveAcceptedEvent(e Event) {
-	a.groupBy = e.Attribute(a.ses.GetGroupBy())
+	// save group by
+	if len(a.groupBy) == 0 {
+		actualValues := make([]any, 0, len(a.ses.GetGroupBy()))
+		for _, attr := range a.ses.GetGroupBy() {
+			actualValues = append(actualValues, e.Attribute(attr))
+		}
+		a.groupBy = actualValues
+	}
+
 	t := e.Time()
 	a.setLastEventTime[a.curSet] = &t
 
@@ -276,30 +321,6 @@ func (a *Automaton) GetAcceptedEventIdsAsSlice() []map[string][]any {
 
 func (a *Automaton) GetGroupBy() any {
 	return a.groupBy
-}
-
-// checkEventQty tests the number of captured events against qty criteria in the SES specification
-func (a *Automaton) checkEventQty(set int, event *ses.Event) (isMatch, isOverflow bool) {
-	min, max := event.GetQty()
-	actualCount := 0
-
-	capturedSetIds, exists := a.acceptedEventIds[set]
-	if exists {
-		capturedEventIds, exists := capturedSetIds[event.GetName()]
-		if exists {
-			actualCount = len(capturedEventIds.GetIterator().ToSlice())
-		}
-	}
-
-	if actualCount > max {
-		isOverflow = true
-	}
-
-	if actualCount >= min && actualCount <= max {
-		isMatch = true
-	}
-
-	return
 }
 
 // fork creates a new instance and switches to the next set

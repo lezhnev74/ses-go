@@ -145,3 +145,9 @@ func (s *BaseSESParserListener) EnterGroup(ctx *GroupContext) {}
 
 // ExitGroup is called when production group is exited.
 func (s *BaseSESParserListener) ExitGroup(ctx *GroupContext) {}
+
+// EnterGroupAttr is called when production groupAttr is entered.
+func (s *BaseSESParserListener) EnterGroupAttr(ctx *GroupAttrContext) {}
+
+// ExitGroupAttr is called when production groupAttr is exited.
+func (s *BaseSESParserListener) ExitGroupAttr(ctx *GroupAttrContext) {}

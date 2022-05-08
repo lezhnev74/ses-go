@@ -26,7 +26,7 @@ type SESListener struct {
 // time is needed to resolve relative time frames to absolute time values
 func ParseSESQuery(query string, t time.Time) *ses.SES {
 	listener := &SESListener{
-		SES: ses.MakeSES(make([]*ses.Set, 0), "", ses.SesWindow{}),
+		SES: ses.MakeSES(make([]*ses.Set, 0), nil, ses.SesWindow{}),
 	}
 
 	// Configure ANTLR
@@ -188,7 +188,19 @@ func (s *SESListener) EnterSes(ctx *antlr_parser.SesContext) {
 }
 
 func (s *SESListener) EnterGroup(ctx *antlr_parser.GroupContext) {
-	s.SES.SetGroupBy(ctx.EventAttr().GetText())
+	var recAttrs func(ctx antlr_parser.IGroupAttrContext) (s []string)
+	recAttrs = func(ctx antlr_parser.IGroupAttrContext) (s []string) {
+		s = append(s, ctx.GetAttr1().GetText())
+		if extra := ctx.GetExtraAttr(); extra != nil {
+			for _, attr := range recAttrs(extra) {
+				s = append(s, attr)
+			}
+		}
+		return
+	}
+
+	attrs := recAttrs(ctx.GroupAttr())
+	s.SES.SetGroupBy(attrs)
 }
 
 func extractDuration(ctx antlr_parser.IDateIntervalContext) (d time.Duration) {

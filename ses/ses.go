@@ -85,12 +85,12 @@ func MakeSet(events []*Event, w SetWindow) *Set {
 type SES struct {
 	window    SesWindow
 	sets      []*Set
-	groupAttr string // group all events by this attribute value
+	groupAttr []string // group all events by this attribute values
 }
 
 func (s *SES) GetSets() []*Set                { return s.sets }
-func (s *SES) GetGroupBy() string             { return s.groupAttr }
-func (s *SES) SetGroupBy(groupBy string)      { s.groupAttr = groupBy }
+func (s *SES) GetGroupBy() []string           { return s.groupAttr }
+func (s *SES) SetGroupBy(groupBy []string)    { s.groupAttr = groupBy }
 func (s *SES) AddEvent(set int, event *Event) { s.sets[set].AddEvent(event) }
 func (s *SES) GetWindow() SesWindow           { return s.window }
 func (s *SES) SetWindow(w SesWindow)          { s.window = w }
@@ -142,7 +142,7 @@ func (s *SES) Validate() {
 }
 
 // MakeSES make a correct new SES with given default sets, otherwise panics
-func MakeSES(sets []*Set, groupBy string, window SesWindow) *SES {
+func MakeSES(sets []*Set, groupBy []string, window SesWindow) *SES {
 	ses := &SES{
 		sets:      sets,
 		groupAttr: groupBy,

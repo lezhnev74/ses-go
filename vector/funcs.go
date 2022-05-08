@@ -1,5 +1,28 @@
 package vector
 
+func CmpAnySlices(a, b []any) bool {
+	if len(a) != len(b) {
+		return false
+	}
+
+	for i, v1 := range a {
+		if v1 != b[i] {
+			return false
+		}
+	}
+
+	return true
+}
+
+func IsAnyWithinAny(v any, in []any) bool {
+	for _, v1 := range in {
+		if v == v1 {
+			return true
+		}
+	}
+	return false
+}
+
 func castFloat64(eventAttribute any) (float64, bool) {
 	eventAttributeFloat, isFloat := eventAttribute.(float64)
 	if !isFloat {

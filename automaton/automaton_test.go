@@ -11,6 +11,7 @@ import (
 
 	"ses_pm_antlr/automaton/state"
 	"ses_pm_antlr/parser"
+	"ses_pm_antlr/vector"
 )
 
 func TestFailedAutomatons(t *testing.T) {
@@ -63,7 +64,7 @@ func TestSetWindow(t *testing.T) {
 	type testInput struct {
 		query          string
 		events         []AnyData
-		matched_groups []string
+		matched_groups [][]any
 	}
 
 	tests := []testInput{
@@ -78,7 +79,7 @@ func TestSetWindow(t *testing.T) {
 				{"id": "3", "name": "a", "time": now.UnixNano(), "session": "s2"},
 				{"id": "4", "name": "b", "time": now.Add(2 * time.Minute).UnixNano(), "session": "s2"},
 			},
-			[]string{"s1"},
+			[][]any{{"s1"}},
 		},
 		{
 			`event a then skip 2 seconds and within 2 seconds event b 
@@ -91,7 +92,7 @@ func TestSetWindow(t *testing.T) {
 				{"id": "3", "name": "a", "time": now.UnixNano(), "session": "s2"},
 				{"id": "4", "name": "b", "time": now.Add(1 * time.Second).UnixNano(), "session": "s2"},
 			},
-			[]string{"s1"},
+			[][]any{{"s1"}},
 		},
 	}
 
@@ -105,16 +106,15 @@ func TestSetWindow(t *testing.T) {
 				runner.Accept(&SimpleEvent{e})
 			}
 
-			sessions := []string{}
+			sessions := [][]any{}
 			for _, a := range runner.GetAcceptingAutomatons() {
-				g := a.groupBy.(string)
-				sessions = append(sessions, g)
+				sessions = append(sessions, a.groupBy)
 			}
 
 			// remove duplicates
 			for i := 0; i < len(sessions); i++ {
 				for j := i + 1; j < len(sessions); j++ {
-					if sessions[i] == sessions[j] {
+					if vector.CmpAnySlices(sessions[i], sessions[j]) {
 						sessions = append(sessions[:j], sessions[j+1:]...)
 					}
 				}
@@ -132,7 +132,7 @@ func TestSesWindow(t *testing.T) {
 	tests := []struct {
 		query          string
 		events         []AnyData
-		matched_groups []string
+		matched_groups [][]any
 	}{
 		{
 			"within 1 second event a and then event a group by session",
@@ -141,7 +141,7 @@ func TestSesWindow(t *testing.T) {
 				{"id": "2", "name": "a", "time": now.Add(2 * time.Second).UnixNano(), "session": "s1"},
 				{"id": "3", "name": "a", "time": now.Add(3 * time.Second).UnixNano(), "session": "s1"},
 			},
-			[]string{"s1"},
+			[][]any{{"s1"}},
 		},
 		{
 			"window within 5 seconds; event a+ and then event a{2,} group by session",
@@ -151,7 +151,7 @@ func TestSesWindow(t *testing.T) {
 				{"id": "3", "name": "a", "time": now.Add(6 * time.Second).UnixNano(), "session": "s1"},
 				{"id": "4", "name": "a", "time": now.Add(7 * time.Second).UnixNano(), "session": "s1"},
 			},
-			[]string{"s1"},
+			[][]any{{"s1"}},
 		},
 		{
 			"window within 1 second; event a and then event b group by session",
@@ -163,7 +163,7 @@ func TestSesWindow(t *testing.T) {
 				{"id": "3", "name": "a", "time": now.UnixNano(), "session": "s2"},
 				{"id": "4", "name": "b", "time": now.Add(2 * time.Second).UnixNano(), "session": "s2"},
 			},
-			[]string{"s1"},
+			[][]any{{"s1"}},
 		},
 	}
 	for i, tt := range tests {
@@ -176,16 +176,15 @@ func TestSesWindow(t *testing.T) {
 				runner.Accept(&SimpleEvent{e})
 			}
 
-			sessions := []string{}
+			sessions := [][]any{}
 			for _, a := range runner.GetAcceptingAutomatons() {
-				g := a.groupBy.(string)
-				sessions = append(sessions, g)
+				sessions = append(sessions, a.groupBy)
 			}
 
 			// remove duplicates
 			for i := 0; i < len(sessions); i++ {
 				for j := i + 1; j < len(sessions); j++ {
-					if sessions[i] == sessions[j] {
+					if vector.CmpAnySlices(sessions[i], sessions[j]) {
 						sessions = append(sessions[:j], sessions[j+1:]...)
 					}
 				}
@@ -202,7 +201,7 @@ func TestDeterministicAutomaton(t *testing.T) {
 	type testData struct {
 		query            string
 		expectedEventIds []map[string][]any // result of matching
-		expectedGroupBy  any
+		expectedGroupBy  []any
 	}
 
 	tests := []testData{
@@ -220,7 +219,7 @@ func TestDeterministicAutomaton(t *testing.T) {
 				2: {"visit": {"43g"}},
 				3: {"visit": {"3h2"}},
 			},
-			"s1",
+			[]any{"s1"},
 		},
 		// find a session of interrupted purchase
 		{
@@ -235,7 +234,7 @@ func TestDeterministicAutomaton(t *testing.T) {
 				1: {"visit": {"0gk"}},
 				2: {"visit": {"g22"}},
 			},
-			"s2",
+			[]any{"s2"},
 		},
 	}
 
