@@ -144,7 +144,7 @@ func TestSesWindow(t *testing.T) {
 			[]string{"s1"},
 		},
 		{
-			"within 5 seconds event a+ and then event a{2,} group by session",
+			"window within 5 seconds; event a+ and then event a{2,} group by session",
 			[]AnyData{
 				{"id": "1", "name": "a", "time": now.UnixNano(), "session": "s1"},
 				{"id": "2", "name": "a", "time": now.Add(3 * time.Second).UnixNano(), "session": "s1"},
@@ -154,7 +154,7 @@ func TestSesWindow(t *testing.T) {
 			[]string{"s1"},
 		},
 		{
-			"within 1 second event a and then event b group by session",
+			"window within 1 second; event a and then event b group by session",
 			[]AnyData{
 				// two events match the window
 				{"id": "1", "name": "a", "time": now.UnixNano(), "session": "s1"},
@@ -167,9 +167,8 @@ func TestSesWindow(t *testing.T) {
 		},
 	}
 	for i, tt := range tests {
-		testName := fmt.Sprintf("tt %d", i)
-		t.Run(testName, func(t *testing.T) {
-			db := state.MakeBadgerDb(testName, "")
+		t.Run(fmt.Sprintf("tt %d", i), func(t *testing.T) {
+			db := state.MakeBadgerDb(fmt.Sprintf("tt %d", i), "")
 			ses := parser.ParseSESQuery(tt.query, time.Now())
 			runner := MakeRunner(ses, db)
 

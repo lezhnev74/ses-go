@@ -8,7 +8,20 @@ import (
 )
 
 type SesWindow struct {
-	window.Window
+	*window.Window
+}
+
+func (s SesWindow) GetDuration() time.Duration {
+	if s.Window == nil {
+		return 0
+	}
+
+	if s.IsSliding() {
+		return s.GetSlide()
+	}
+
+	from, to := s.GetBounds()
+	return to.Sub(from)
 }
 
 type SetWindow struct {
@@ -146,7 +159,5 @@ func MakeSesWindowFromText(text string, now time.Time) SesWindow {
 	}
 
 	w := winSpec.ResolveAt(now) // time resolving happens here, todo
-	return SesWindow{*w}
+	return SesWindow{w}
 }
-
-func MakeSesWindowFromWindow(w *window.Window) SesWindow { return SesWindow{*w} }

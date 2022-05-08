@@ -1,9 +1,12 @@
+------------------------------------
+Active consideration:
+- compound groupby (for more fine-grained matching)
 - add operator to work with collections (where checkout.product_id = any(product_viewed.product_id))
     - think of more use cases of this
 - come up with a design for exploring matched sequences. After the pattern match, how can we process the sequences of events?
-- benchmark test, memory profiling
-- compound groupby (for more fine-grained matching)
 
+
+------------------------------------
 Notes:
 - all numbers are floats
 - it assumes all time stamps are in NANOSECONDS

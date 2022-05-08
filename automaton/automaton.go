@@ -27,10 +27,10 @@ type Automaton struct {
 	windowStart        *time.Time                                        // first captured event's time
 }
 
-// Accept tests the incoming event according to automaton criteria
+// accept tests the incoming event according to automaton criteria
 // returns isAccepted if event was accepted otherwise false, isFailed is true if automaton reached unrecoverable fail state, forks are to test alternative branches of matching
 // note: if isFailed is true then isAccepted is false
-func (a *Automaton) Accept(incomingEvent Event) (isAccepted bool, isFailed bool, forks []*Automaton) {
+func (a *Automaton) accept(incomingEvent Event) (isAccepted bool, isFailed bool, forks []*Automaton) {
 	// Condition: If automaton is in failed state - reject
 	if a.failed {
 		return
@@ -95,16 +95,22 @@ func (a *Automaton) Accept(incomingEvent Event) (isAccepted bool, isFailed bool,
 // checkSesWindow return -1 is event is below the window, 0 if withing the window, 1 if after the window
 // the func has side-effects (it changes windowStart attribute)
 func (a *Automaton) checkSesWindow(e Event) int {
+	eventTime := e.Time()
+
 	// Condition: skip window check if duration is 0
-	windowDuration := a.ses.GetSets()[0].GetWindow().Within // use first set's window as the global window
+	windowDuration := a.ses.GetWindow().GetDuration()
 	if windowDuration == 0 {
 		return 0
 	}
 
-	// Condition: if this event is the first in a window
-	eventTime := e.Time()
+	// Condition: if this automaton is fresh and has no window initialized yet
 	if a.windowStart == nil {
-		a.windowStart = &eventTime // this is the first event in the window
+		if a.ses.GetWindow().IsSliding() {
+			a.windowStart = &eventTime
+		} else { // absolute bounds
+			from, _ := a.ses.GetWindow().GetBounds()
+			a.windowStart = &from
+		}
 		return 0
 	}
 
@@ -429,7 +435,7 @@ func (r *Runner) Accept(e Event) {
 		if i == len(r.instances) {
 			break // oob
 		}
-		_, isFailed, forks := r.instances[i].Accept(e)
+		_, isFailed, forks := r.instances[i].accept(e)
 		for _, f := range forks {
 			r.appendInstance(f)
 		}
