@@ -7,41 +7,45 @@ import "fmt"
 type Event struct {
 	eventName      string
 	qtyMin, qtyMax int
-	conditions     []*Condition
+	condition      *Condition
 }
 
 // validate is used during the parsing phase to make sure the event data is consistent
 func (e *Event) validate() {
-
 	// At least one operand in every condition must refer to this event
-	for _, c := range e.conditions {
-		leftEventAttribute, lOk := c.GetLeftOperand().(EventAttributeOperand)
-		rightEventAttribute, rOk := c.GetRightOperand().(EventAttributeOperand)
-
-		if !lOk && !rOk {
-			break // not the case
-		}
-
-		// Ok, at least one must refer the current event
-		if lOk && leftEventAttribute.EventName == e.eventName {
-			continue
-		}
-
-		if rOk && rightEventAttribute.EventName == e.eventName {
-			continue
-		}
-
-		panic(fmt.Sprintf("operands are not related to %s event", e.eventName))
+	if e.condition != nil {
+		e.validateCurEventAttributes()
 	}
 }
 
-func (e *Event) GetName() string             { return e.eventName }
-func (e *Event) GetQty() (int, int)          { return e.qtyMin, e.qtyMax }
-func (e *Event) GetConditions() []*Condition { return e.conditions }
+// At least one operand in every condition must refer to this event
+func (e *Event) validateCurEventAttributes() {
+	leftEventAttribute, lOk := e.condition.GetLeftOperand().(EventAttributeOperand)
+	rightEventAttribute, rOk := e.condition.GetRightOperand().(EventAttributeOperand)
+
+	if !lOk && !rOk {
+		return // not the case
+	}
+
+	// Ok, at least one must refer the current event
+	if lOk && leftEventAttribute.EventName == e.eventName {
+		return
+	}
+
+	if rOk && rightEventAttribute.EventName == e.eventName {
+		return
+	}
+
+	panic(fmt.Sprintf("operands are not related to %s event", e.eventName))
+}
+
+func (e *Event) GetName() string          { return e.eventName }
+func (e *Event) GetQty() (int, int)       { return e.qtyMin, e.qtyMax }
+func (e *Event) GetCondition() *Condition { return e.condition }
 
 // MakeEvent creates a valid event otherwise panics
-func MakeEvent(eventName string, qtyMin, qtyMax int, conditions []*Condition) *Event {
-	ev := &Event{eventName, qtyMin, qtyMax, conditions}
+func MakeEvent(eventName string, qtyMin, qtyMax int, condition *Condition) *Event {
+	ev := &Event{eventName, qtyMin, qtyMax, condition}
 	ev.validate()
 	return ev
 }

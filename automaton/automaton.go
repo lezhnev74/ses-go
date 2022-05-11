@@ -15,16 +15,16 @@ import (
 type Automaton struct {
 	db state.Db
 
-	ses                *ses.SES                                          // source definition of the automaton
-	matchers           map[int]map[string]map[string]expr.BoolExpression // map matches to set events
-	bufferSpecs        map[string]map[string]attrBufferSpec              // a map from event to attr name to buffer spec, when we need to capture an attr we use this spec to make a buffer
-	failed             bool                                              // set when nothing can no longer be accepted
-	curSet             int                                               // current set index
-	capturedAttributes map[int]map[string]EventAttrBuffer                // map full attr name to buffer
-	acceptedEventIds   map[int]map[string]EventAttrBuffer                // ids per set and per event
-	setLastEventTime   map[int]*time.Time                                // remember the last event's time for each set (used in window matching)
-	groupBy            []any                                             // keep the unique value that we use to group events (populated from the initial event)
-	windowStart        *time.Time                                        // first captured event's time
+	ses                *ses.SES                               // source definition of the automaton
+	matchers           map[int]map[string]expr.BoolExpression // map matches to set events
+	bufferSpecs        map[string]map[string]attrBufferSpec   // a map from event to attr name to buffer spec, when we need to capture an attr we use this spec to make a buffer
+	failed             bool                                   // set when nothing can no longer be accepted
+	curSet             int                                    // current set index
+	capturedAttributes map[int]map[string]EventAttrBuffer     // map full attr name to buffer
+	acceptedEventIds   map[int]map[string]EventAttrBuffer     // ids per set and per event
+	setLastEventTime   map[int]*time.Time                     // remember the last event's time for each set (used in window matching)
+	groupBy            []any                                  // keep the unique value that we use to group events (populated from the initial event)
+	windowStart        *time.Time                             // first captured event's time
 }
 
 // accept tests the incoming event according to automaton criteria
@@ -260,17 +260,15 @@ func (a *Automaton) matchEventInSet(e Event, set int) bool {
 	if !exists {
 		return false
 	}
-	eventConds, exists := setConds[e.Name()]
+	eventCond, exists := setConds[e.Name()]
 	if !exists {
 		return false
 	}
 
 	// Check: run where-criteria
 	env := &AutomatonEnv{a, e}
-	for _, attrCond := range eventConds {
-		if !attrCond(env) {
-			return false
-		}
+	if !eventCond(env) {
+		return false
 	}
 
 	// Check window criteria starting from the second set
@@ -348,7 +346,7 @@ func (a *Automaton) fork() *Automaton {
 func MakeAutomaton(s *ses.SES, db state.Db) *Automaton {
 	a := Automaton{
 		ses:              s,
-		matchers:         make(map[int]map[string]map[string]expr.BoolExpression),
+		matchers:         make(map[int]map[string]expr.BoolExpression),
 		db:               db,
 		setLastEventTime: make(map[int]*time.Time),
 	}
@@ -365,29 +363,15 @@ func MakeAutomaton(s *ses.SES, db state.Db) *Automaton {
 
 	// 2. Make condition expressions
 	for i, eventSets := range s.GetSets() {
-		a.matchers[i] = make(map[string]map[string]expr.BoolExpression)
+		a.matchers[i] = make(map[string]expr.BoolExpression)
 
 		for _, event := range eventSets.GetEvents() {
-			a.matchers[i][event.GetName()] = make(map[string]expr.BoolExpression)
-
-			eventAttrConds := map[string]map[string][]expr.Expression{} // collect all cond expressions for every attribute
-			for _, cond := range event.GetConditions() {
-				curAttrOperand := cond.GetLeftOperand().(ses.EventAttributeOperand)
-
-				_, exists := eventAttrConds[curAttrOperand.EventName][curAttrOperand.EventAttribute]
-				if !exists {
-					eventAttrConds[curAttrOperand.EventName] = make(map[string][]expr.Expression)
-				}
-
-				eventAttrConds[curAttrOperand.EventName][curAttrOperand.EventAttribute] = append(eventAttrConds[curAttrOperand.EventName][curAttrOperand.EventAttribute], expr.MakeExpressionFromCondition(cond))
+			if event.GetCondition() == nil {
+				a.matchers[i][event.GetName()] = func(e expr.Environment) bool { return true } // default always-true
+				continue
 			}
-
-			for eventName, eventExprs := range eventAttrConds {
-
-				for attrName, attrExprs := range eventExprs {
-					a.matchers[i][eventName][attrName] = expr.MakeAndBoolExpression(attrExprs...) // join all event attribute conditions with AND
-				}
-			}
+			// one unified expression for all event WHERE conditions
+			a.matchers[i][event.GetName()] = expr.MakeAndBoolExpression(expr.MakeExpressionFromCondition(event.GetCondition()))
 		}
 	}
 

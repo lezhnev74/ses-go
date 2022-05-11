@@ -98,11 +98,35 @@ func (s *BaseSESParserListener) EnterDateInterval(ctx *DateIntervalContext) {}
 // ExitDateInterval is called when production dateInterval is exited.
 func (s *BaseSESParserListener) ExitDateInterval(ctx *DateIntervalContext) {}
 
-// EnterEvent_expression is called when production event_expression is entered.
-func (s *BaseSESParserListener) EnterEvent_expression(ctx *Event_expressionContext) {}
+// EnterExpr_or is called when production expr_or is entered.
+func (s *BaseSESParserListener) EnterExpr_or(ctx *Expr_orContext) {}
 
-// ExitEvent_expression is called when production event_expression is exited.
-func (s *BaseSESParserListener) ExitEvent_expression(ctx *Event_expressionContext) {}
+// ExitExpr_or is called when production expr_or is exited.
+func (s *BaseSESParserListener) ExitExpr_or(ctx *Expr_orContext) {}
+
+// EnterExpr_bin is called when production expr_bin is entered.
+func (s *BaseSESParserListener) EnterExpr_bin(ctx *Expr_binContext) {}
+
+// ExitExpr_bin is called when production expr_bin is exited.
+func (s *BaseSESParserListener) ExitExpr_bin(ctx *Expr_binContext) {}
+
+// EnterExpr_bracketed is called when production expr_bracketed is entered.
+func (s *BaseSESParserListener) EnterExpr_bracketed(ctx *Expr_bracketedContext) {}
+
+// ExitExpr_bracketed is called when production expr_bracketed is exited.
+func (s *BaseSESParserListener) ExitExpr_bracketed(ctx *Expr_bracketedContext) {}
+
+// EnterExpr_and is called when production expr_and is entered.
+func (s *BaseSESParserListener) EnterExpr_and(ctx *Expr_andContext) {}
+
+// ExitExpr_and is called when production expr_and is exited.
+func (s *BaseSESParserListener) ExitExpr_and(ctx *Expr_andContext) {}
+
+// EnterBinary_expr is called when production binary_expr is entered.
+func (s *BaseSESParserListener) EnterBinary_expr(ctx *Binary_exprContext) {}
+
+// ExitBinary_expr is called when production binary_expr is exited.
+func (s *BaseSESParserListener) ExitBinary_expr(ctx *Binary_exprContext) {}
 
 // EnterAttrModified is called when production attrModified is entered.
 func (s *BaseSESParserListener) EnterAttrModified(ctx *AttrModifiedContext) {}

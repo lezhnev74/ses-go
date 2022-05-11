@@ -61,6 +61,10 @@ func MakeExpressionFromCondition(cond *ses.Condition) Expression {
 
 	// otherwise operands are floats (should be)
 	switch cond.GetOperator() {
+	case "and":
+		return func(env Environment) any { return operand1(env) == true && operand2(env) == true }
+	case "or":
+		return func(env Environment) any { return operand1(env) == true || operand2(env) == true }
 	case "=":
 		return func(env Environment) any { return operand1(env) == operand2(env) }
 	case "~=":
@@ -132,6 +136,8 @@ func MakeExpressionFromOperand(operand any) Expression {
 		return func(env Environment) any {
 			return env.Resolve(o)
 		}
+	case *ses.Condition:
+		return MakeExpressionFromCondition(o)
 	default:
 		panic(fmt.Sprintf("Unexpected operand type %T", operand))
 	}

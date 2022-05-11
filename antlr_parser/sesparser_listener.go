@@ -46,8 +46,20 @@ type SESParserListener interface {
 	// EnterDateInterval is called when entering the dateInterval production.
 	EnterDateInterval(c *DateIntervalContext)
 
-	// EnterEvent_expression is called when entering the event_expression production.
-	EnterEvent_expression(c *Event_expressionContext)
+	// EnterExpr_or is called when entering the expr_or production.
+	EnterExpr_or(c *Expr_orContext)
+
+	// EnterExpr_bin is called when entering the expr_bin production.
+	EnterExpr_bin(c *Expr_binContext)
+
+	// EnterExpr_bracketed is called when entering the expr_bracketed production.
+	EnterExpr_bracketed(c *Expr_bracketedContext)
+
+	// EnterExpr_and is called when entering the expr_and production.
+	EnterExpr_and(c *Expr_andContext)
+
+	// EnterBinary_expr is called when entering the binary_expr production.
+	EnterBinary_expr(c *Binary_exprContext)
 
 	// EnterAttrModified is called when entering the attrModified production.
 	EnterAttrModified(c *AttrModifiedContext)
@@ -112,8 +124,20 @@ type SESParserListener interface {
 	// ExitDateInterval is called when exiting the dateInterval production.
 	ExitDateInterval(c *DateIntervalContext)
 
-	// ExitEvent_expression is called when exiting the event_expression production.
-	ExitEvent_expression(c *Event_expressionContext)
+	// ExitExpr_or is called when exiting the expr_or production.
+	ExitExpr_or(c *Expr_orContext)
+
+	// ExitExpr_bin is called when exiting the expr_bin production.
+	ExitExpr_bin(c *Expr_binContext)
+
+	// ExitExpr_bracketed is called when exiting the expr_bracketed production.
+	ExitExpr_bracketed(c *Expr_bracketedContext)
+
+	// ExitExpr_and is called when exiting the expr_and production.
+	ExitExpr_and(c *Expr_andContext)
+
+	// ExitBinary_expr is called when exiting the binary_expr production.
+	ExitBinary_expr(c *Binary_exprContext)
 
 	// ExitAttrModified is called when exiting the attrModified production.
 	ExitAttrModified(c *AttrModifiedContext)

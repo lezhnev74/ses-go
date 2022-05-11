@@ -42,33 +42,36 @@ func (s *Set) validate() {
 	// within one set events should not be dependent on each other as the events are not ordered within the set
 	// Check that conditions do not refer to the same set events in both operands
 	for _, event := range s.events {
-		for _, c := range event.GetConditions() {
-			leftEventAttribute, lOk := c.GetLeftOperand().(EventAttributeOperand)
-			rightEventAttribute, rOk := c.GetRightOperand().(EventAttributeOperand)
+		c := event.condition
+		if c == nil {
+			continue
+		}
+		leftEventAttribute, lOk := c.GetLeftOperand().(EventAttributeOperand)
+		rightEventAttribute, rOk := c.GetRightOperand().(EventAttributeOperand)
 
-			if !lOk || !rOk {
-				continue // not the case
+		if !lOk || !rOk {
+			continue // not the case
+		}
+
+		// edge-case: event can refer to itself
+		if leftEventAttribute.EventName == rightEventAttribute.EventName {
+			continue
+		}
+
+		var leftEventSameSet, rightEventSameSet bool
+		for _, event2 := range s.events {
+			if leftEventAttribute.EventName == event2.GetName() {
+				leftEventSameSet = true
 			}
-
-			// edge-case: event can refer to itself
-			if leftEventAttribute.EventName == rightEventAttribute.EventName {
-				continue
-			}
-
-			var leftEventSameSet, rightEventSameSet bool
-			for _, event2 := range s.events {
-				if leftEventAttribute.EventName == event2.GetName() {
-					leftEventSameSet = true
-				}
-				if rightEventAttribute.EventName == event2.GetName() {
-					rightEventSameSet = true
-				}
-			}
-
-			if leftEventSameSet && rightEventSameSet {
-				panic(fmt.Sprintf("operands should not be both related to this event set as events are not ordered within a set"))
+			if rightEventAttribute.EventName == event2.GetName() {
+				rightEventSameSet = true
 			}
 		}
+
+		if leftEventSameSet && rightEventSameSet {
+			panic(fmt.Sprintf("operands should not be both related to this event set as events are not ordered within a set"))
+		}
+
 	}
 	// ---------------------------------------------------------------------------------------------------------
 }
@@ -120,16 +123,17 @@ func (s *SES) Validate() {
 		for _, setEvent := range set.events {
 			declaredEvents[setEvent.GetName()] = true
 
-			for _, c := range setEvent.GetConditions() {
-				leftEventAttribute, lOk := c.GetLeftOperand().(EventAttributeOperand)
-				rightEventAttribute, rOk := c.GetRightOperand().(EventAttributeOperand)
+			if setEvent.condition == nil {
+				continue
+			}
+			leftEventAttribute, lOk := setEvent.condition.GetLeftOperand().(EventAttributeOperand)
+			rightEventAttribute, rOk := setEvent.condition.GetRightOperand().(EventAttributeOperand)
 
-				if lOk && !declaredEvents[leftEventAttribute.EventName] {
-					panic(fmt.Sprintf("event name [%s] is not recognized", leftEventAttribute.EventName))
-				}
-				if rOk && !declaredEvents[rightEventAttribute.EventName] {
-					panic(fmt.Sprintf("event name [%s] is not recognized", rightEventAttribute.EventName))
-				}
+			if lOk && !declaredEvents[leftEventAttribute.EventName] {
+				panic(fmt.Sprintf("event name [%s] is not recognized", leftEventAttribute.EventName))
+			}
+			if rOk && !declaredEvents[rightEventAttribute.EventName] {
+				panic(fmt.Sprintf("event name [%s] is not recognized", rightEventAttribute.EventName))
 			}
 		}
 	}

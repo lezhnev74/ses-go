@@ -85,12 +85,13 @@ func mapSesToSpecs(s *ses.SES) []attrBufferSpec {
 	specs := make([]attrBufferSpec, 0)
 	for setIndex, eventSet := range s.GetSets() {
 		for _, event := range eventSet.GetEvents() {
-			for _, c := range event.GetConditions() {
-				// only test the right operand as the left one is always normalized to be the current event attribute
-				rightEventAttribute, rOk := c.GetRightOperand().(ses.EventAttributeOperand)
-				if rOk {
-					specs = append(specs, attrBufferSpec{rightEventAttribute, setIndex})
-				}
+			if event.GetCondition() == nil {
+				continue
+			}
+			// only test the right operand as the left one is always normalized to be the current event attribute
+			rightEventAttribute, rOk := event.GetCondition().GetRightOperand().(ses.EventAttributeOperand)
+			if rOk {
+				specs = append(specs, attrBufferSpec{rightEventAttribute, setIndex})
 			}
 		}
 	}

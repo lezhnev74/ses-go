@@ -19,14 +19,14 @@ ses
     ;
 
 event
-    : EVENT name=ID qty=event_qty? (WHERE event_expression (AND event_expression)*)?
+    : EVENT name=ID qty=event_qty? (WHERE where_expression)?
     ;
 
 event_qty
-    :   PLUS # qty_plus
-    |   ASTERISK # qty_asterisc
+    :   PLUS                                                            # qty_plus
+    |   ASTERISK                                                        # qty_asterisc
     |   (L_CURLY_BRACKET from=NUMBER? COMMA to=NUMBER? R_CURLY_BRACKET) # qty_precise
-    |   (L_CURLY_BRACKET exact=NUMBER R_CURLY_BRACKET) # qty_precise_alt
+    |   (L_CURLY_BRACKET exact=NUMBER R_CURLY_BRACKET)                  # qty_precise_alt
     ;
 
 set_window
@@ -52,7 +52,14 @@ dateInterval
     :   num=NUMBER unit=DATE_UNIT (AND extra=dateInterval)*
     ;
 
-event_expression
+where_expression
+    :   binary_expr extra=where_expression*                 # expr_bin
+    |   L_BRACKET where_expression R_BRACKET                # expr_bracketed
+    |   left=where_expression AND right=where_expression    # expr_and
+    |   left=where_expression OR right=where_expression     # expr_or
+    ;
+
+binary_expr
     :   left=expr_operand op=OP_LOGICAL right=expr_operand
     ;
 

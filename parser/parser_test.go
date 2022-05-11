@@ -24,7 +24,7 @@ func TestSimpleQueries(t *testing.T) {
 			ses.MakeSES(
 				[]*ses.Set{
 					ses.MakeSet([]*ses.Event{
-						ses.MakeEvent("signed_up", 1, 1, make([]*ses.Condition, 0)),
+						ses.MakeEvent("signed_up", 1, 1, nil),
 					},
 						ses.SetWindow{},
 					),
@@ -39,7 +39,7 @@ func TestSimpleQueries(t *testing.T) {
 			ses.MakeSES(
 				[]*ses.Set{
 					ses.MakeSet([]*ses.Event{
-						ses.MakeEvent("signed_up", 1, 10, make([]*ses.Condition, 0)),
+						ses.MakeEvent("signed_up", 1, 10, nil),
 					},
 						ses.SetWindow{},
 					),
@@ -54,7 +54,7 @@ func TestSimpleQueries(t *testing.T) {
 			ses.MakeSES(
 				[]*ses.Set{
 					ses.MakeSet([]*ses.Event{
-						ses.MakeEvent("signed_up", 0, 10, make([]*ses.Condition, 0)),
+						ses.MakeEvent("signed_up", 0, 10, nil),
 					},
 						ses.SetWindow{},
 					),
@@ -69,7 +69,7 @@ func TestSimpleQueries(t *testing.T) {
 			ses.MakeSES(
 				[]*ses.Set{
 					ses.MakeSet([]*ses.Event{
-						ses.MakeEvent("signed_up", 1, math.MaxInt64, make([]*ses.Condition, 0)),
+						ses.MakeEvent("signed_up", 1, math.MaxInt64, nil),
 					},
 						ses.SetWindow{},
 					),
@@ -84,7 +84,7 @@ func TestSimpleQueries(t *testing.T) {
 			ses.MakeSES(
 				[]*ses.Set{
 					ses.MakeSet([]*ses.Event{
-						ses.MakeEvent("signed_up", 0, math.MaxInt64, make([]*ses.Condition, 0)),
+						ses.MakeEvent("signed_up", 0, math.MaxInt64, nil),
 					},
 						ses.SetWindow{},
 					),
@@ -99,7 +99,7 @@ func TestSimpleQueries(t *testing.T) {
 			ses.MakeSES(
 				[]*ses.Set{
 					ses.MakeSet([]*ses.Event{
-						ses.MakeEvent("signed_up", 1, math.MaxInt64, make([]*ses.Condition, 0)),
+						ses.MakeEvent("signed_up", 1, math.MaxInt64, nil),
 					},
 						ses.SetWindow{},
 					),
@@ -114,7 +114,7 @@ func TestSimpleQueries(t *testing.T) {
 			ses.MakeSES(
 				[]*ses.Set{
 					ses.MakeSet([]*ses.Event{
-						ses.MakeEvent("signed_up", 0, math.MaxInt64, make([]*ses.Condition, 0)),
+						ses.MakeEvent("signed_up", 0, math.MaxInt64, nil),
 					},
 						ses.SetWindow{},
 					),
@@ -129,9 +129,7 @@ func TestSimpleQueries(t *testing.T) {
 			ses.MakeSES(
 				[]*ses.Set{
 					ses.MakeSet([]*ses.Event{
-						ses.MakeEvent("signed_up", 1, 2, []*ses.Condition{
-							ses.MakeCondition("=", ses.EventAttributeOperand{"signed_up", "name", true, ses.SelectAll}, "Jar Jar Binks"),
-						}),
+						ses.MakeEvent("signed_up", 1, 2, ses.MakeCondition("=", ses.EventAttributeOperand{"signed_up", "name", true, ses.SelectAll}, "Jar Jar Binks")),
 					},
 						ses.SetWindow{},
 					),
@@ -146,10 +144,10 @@ func TestSimpleQueries(t *testing.T) {
 			ses.MakeSES(
 				[]*ses.Set{
 					ses.MakeSet([]*ses.Event{
-						ses.MakeEvent("signed_up", 1, 1, []*ses.Condition{
+						ses.MakeEvent("signed_up", 1, 1, ses.MakeCondition("and",
 							ses.MakeCondition("<=", ses.EventAttributeOperand{"signed_up", "a", true, ses.SelectAll}, 2.0),
 							ses.MakeCondition("!=", 1000.0, ses.EventAttributeOperand{"signed_up", "amount", true, ses.SelectAll}),
-						}),
+						)),
 					},
 						ses.SetWindow{},
 					),
@@ -164,9 +162,7 @@ func TestSimpleQueries(t *testing.T) {
 			ses.MakeSES(
 				[]*ses.Set{
 					ses.MakeSet([]*ses.Event{
-						ses.MakeEvent("signed_up", 1, 1, []*ses.Condition{
-							ses.MakeCondition("<", ses.EventAttributeOperand{"signed_up", "a", true, ses.SelectAll}, ses.EventAttributeOperand{"signed_up", "a", false, ses.SelectLast}),
-						}),
+						ses.MakeEvent("signed_up", 1, 1, ses.MakeCondition("<", ses.EventAttributeOperand{"signed_up", "a", true, ses.SelectAll}, ses.EventAttributeOperand{"signed_up", "a", false, ses.SelectLast})),
 					},
 						ses.SetWindow{},
 					),
@@ -175,13 +171,13 @@ func TestSimpleQueries(t *testing.T) {
 				ses.SesWindow{},
 			),
 		},
-		/* SetWindow */
+		/* SetWindow + multiple group by */
 		{
 			`within 1 second event a and then event b group by session,country,language.iso`,
 			ses.MakeSES(
 				[]*ses.Set{
-					ses.MakeSet([]*ses.Event{ses.MakeEvent("a", 1, 1, []*ses.Condition{})}, ses.SetWindow{0, time.Second}),
-					ses.MakeSet([]*ses.Event{ses.MakeEvent("b", 1, 1, []*ses.Condition{})}, ses.SetWindow{}),
+					ses.MakeSet([]*ses.Event{ses.MakeEvent("a", 1, 1, nil)}, ses.SetWindow{0, time.Second}),
+					ses.MakeSet([]*ses.Event{ses.MakeEvent("b", 1, 1, nil)}, ses.SetWindow{}),
 				},
 				[]string{"session", "country", "language.iso"},
 				ses.SesWindow{},
@@ -193,7 +189,7 @@ func TestSimpleQueries(t *testing.T) {
 			ses.MakeSES(
 				[]*ses.Set{
 					ses.MakeSet([]*ses.Event{
-						ses.MakeEvent("signed_up", 1, 1, []*ses.Condition{}),
+						ses.MakeEvent("signed_up", 1, 1, nil),
 					},
 						ses.SetWindow{0, 0},
 					),
@@ -208,7 +204,7 @@ func TestSimpleQueries(t *testing.T) {
 			ses.MakeSES(
 				[]*ses.Set{
 					ses.MakeSet([]*ses.Event{
-						ses.MakeEvent("a", 1, 1, []*ses.Condition{}),
+						ses.MakeEvent("a", 1, 1, nil),
 					},
 						ses.SetWindow{0, 60 * 24 * time.Hour},
 					),

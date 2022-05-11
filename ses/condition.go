@@ -34,6 +34,7 @@ func MakeCondition(operator string, leftOperand, rightOperand any) *Condition {
 }
 
 // Condition is a result of parsing expressions in WHERE part of the event query
+// usually a binary expression, can be compound with "and"/"or" operator and sub-conditions
 type Condition struct {
 	operation                 string
 	operandLeft, operandRight any
@@ -52,7 +53,7 @@ func (c *Condition) validate() {
 	// At least one operand must be EventAttributeOperand
 	_, operandLeftEventAttribute := c.operandLeft.(EventAttributeOperand)
 	_, operandRightEventAttribute := c.operandRight.(EventAttributeOperand)
-	if !operandLeftEventAttribute && !operandRightEventAttribute {
+	if c.operation != "and" && c.operation != "or" && !operandLeftEventAttribute && !operandRightEventAttribute {
 		panic(fmt.Sprintf("at least one operand must refer to an event attribute"))
 	}
 	//note: IsCurrent is checked in Event.validate()
