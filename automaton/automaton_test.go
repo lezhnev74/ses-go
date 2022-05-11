@@ -197,7 +197,61 @@ func TestSesWindow(t *testing.T) {
 	}
 }
 
-func TestDeterministicAutomaton(t *testing.T) {
+func TestVariousAspects(t *testing.T) {
+	now := time.Now()
+
+	type testInput struct {
+		query          string
+		events         []AnyData
+		matched_groups [][]any
+	}
+
+	tests := []testInput{
+		{
+			`event a+ then event b where id=any(a.id) 
+			 group by session`,
+			[]AnyData{
+				{"id": "1", "name": "a", "time": now.UnixNano(), "session": "s1"},
+				{"id": "2", "name": "a", "time": now.Add(1 * time.Nanosecond).UnixNano(), "session": "s1"},
+				{"id": "3", "name": "a", "time": now.Add(2 * time.Nanosecond).UnixNano(), "session": "s1"},
+				{"id": "2", "name": "b", "time": now.Add(3 * time.Nanosecond).UnixNano(), "session": "s1"},
+			},
+			[][]any{{"s1"}},
+		},
+	}
+
+	for i, tt := range tests {
+		t.Run(fmt.Sprintf("tt %d", i), func(t *testing.T) {
+			db := state.MakeBadgerDb("scope1", "")
+			ses := parser.ParseSESQuery(tt.query, time.Now())
+			runner := MakeRunner(ses, db)
+
+			for _, e := range tt.events {
+				runner.Accept(&SimpleEvent{e})
+			}
+
+			sessions := [][]any{}
+			for _, a := range runner.GetAcceptingAutomatons() {
+				sessions = append(sessions, a.groupBy)
+			}
+
+			// remove duplicates
+			for i := 0; i < len(sessions); i++ {
+				for j := i + 1; j < len(sessions); j++ {
+					if vector.CmpAnySlices(sessions[i], sessions[j]) {
+						sessions = append(sessions[:j], sessions[j+1:]...)
+					}
+				}
+			}
+
+			if !reflect.DeepEqual(sessions, tt.matched_groups) {
+				t.Errorf("Unexpected sessions found %v, expected %v", sessions, tt.matched_groups)
+			}
+		})
+	}
+}
+
+func TestAutomatonStaticDataSet(t *testing.T) {
 	type testData struct {
 		query            string
 		expectedEventIds []map[string][]any // result of matching
@@ -205,6 +259,16 @@ func TestDeterministicAutomaton(t *testing.T) {
 	}
 
 	tests := []testData{
+		// complex where-expr
+		{
+			`event visit{5,} where (section="content" or section="shop") and page!="careers.html"
+		     group by session
+            `,
+			[]map[string][]any{
+				0: {"visit": {"wd1", "h4w", "eh3", "43g", "3h2"}},
+			},
+			[]any{"s1"},
+		},
 		// find a session of successful purchase
 		{
 			`event visit{2,} where section="content"
@@ -250,8 +314,8 @@ func TestDeterministicAutomaton(t *testing.T) {
 	}
 
 	for i, tt := range tests {
-		testName := fmt.Sprintf("test %d", i)
-		t.Run(testName, func(t *testing.T) {
+		t.Run(fmt.Sprintf("test %d", i), func(t *testing.T) {
+			testName := t.Name()
 			db := state.MakeBadgerDb(testName, fmt.Sprintf("%s/%s", t.TempDir(), testName))
 			ses := parser.ParseSESQuery(tt.query, time.Now())
 			runner := MakeRunner(ses, db)

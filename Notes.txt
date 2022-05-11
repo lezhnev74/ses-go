@@ -3,7 +3,6 @@ Active consideration:
 - pattern matching
     - support JSONPath as attribute addresses
     - add aliases to use the same event name in different sets and later address it
-    - AND/OR expressions in where-clauses
     - compare general functionality to RegExp and confirm parity
         - alternatives: event1{1,2} or b{2,3} (events in the set are AND)
         - any event BUT event1

@@ -85,14 +85,29 @@ func mapSesToSpecs(s *ses.SES) []attrBufferSpec {
 	specs := make([]attrBufferSpec, 0)
 	for setIndex, eventSet := range s.GetSets() {
 		for _, event := range eventSet.GetEvents() {
-			if event.GetCondition() == nil {
-				continue
+			// an expression can be nested, so we need to traverse it all
+			var checkCond func(c *ses.Condition) []attrBufferSpec
+			checkCond = func(c *ses.Condition) (specs []attrBufferSpec) {
+				if c == nil {
+					return specs
+				}
+
+				// only test the right operand as the left one is always normalized to be the current event attribute
+				if rightEventAttribute, rOk := c.GetRightOperand().(ses.EventAttributeOperand); rOk {
+					specs = append(specs, attrBufferSpec{rightEventAttribute, setIndex})
+				}
+
+				if leftAttr, isCond := c.GetLeftOperand().(*ses.Condition); isCond {
+					specs = append(specs, checkCond(leftAttr)...)
+				}
+
+				if rightAttr, isCond := c.GetLeftOperand().(*ses.Condition); isCond {
+					specs = append(specs, checkCond(rightAttr)...)
+				}
+
+				return specs
 			}
-			// only test the right operand as the left one is always normalized to be the current event attribute
-			rightEventAttribute, rOk := event.GetCondition().GetRightOperand().(ses.EventAttributeOperand)
-			if rOk {
-				specs = append(specs, attrBufferSpec{rightEventAttribute, setIndex})
-			}
+			specs = append(specs, checkCond(event.GetCondition())...)
 		}
 	}
 	return specs

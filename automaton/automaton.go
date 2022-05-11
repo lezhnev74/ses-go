@@ -352,6 +352,7 @@ func MakeAutomaton(s *ses.SES, db state.Db) *Automaton {
 	}
 
 	// 1. Make buffers
+	a.capturedAttributes = make(map[int]map[string]EventAttrBuffer)
 	a.bufferSpecs = make(map[string]map[string]attrBufferSpec)
 	for _, spec := range mapSesToSpecs(s) {
 		if _, exists := a.bufferSpecs[spec.operand.EventName]; !exists {
