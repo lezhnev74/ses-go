@@ -207,6 +207,17 @@ func TestVariousAspects(t *testing.T) {
 	}
 
 	tests := []testInput{
+		// aliases usages
+		{
+			`event a as b then event c 
+			 group by session`,
+			[]AnyData{
+				{"id": "1", "name": "a", "time": now.UnixNano(), "session": "s1"},
+				{"id": "2", "name": "c", "time": now.Add(1 * time.Nanosecond).UnixNano(), "session": "s1"},
+			},
+			[][]any{{"s1"}},
+		},
+		// "any" match condition
 		{
 			`event a+ then event b where id=any(a.id) 
 			 group by session`,

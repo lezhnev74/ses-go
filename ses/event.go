@@ -5,9 +5,9 @@ import "fmt"
 // Event of a single event in a Sequenced Event Set
 // a tuple (name, quantity, condition)
 type Event struct {
-	eventName      string
-	qtyMin, qtyMax int
-	condition      *Condition
+	eventName, originalName string // originalName os shadowed by new name (event1 as event2)
+	qtyMin, qtyMax          int
+	condition               *Condition
 }
 
 // validate is used during the parsing phase to make sure the event data is consistent
@@ -40,12 +40,13 @@ func (e *Event) validateCurEventAttributes() {
 }
 
 func (e *Event) GetName() string          { return e.eventName }
+func (e *Event) GetOriginalName() string  { return e.originalName }
 func (e *Event) GetQty() (int, int)       { return e.qtyMin, e.qtyMax }
 func (e *Event) GetCondition() *Condition { return e.condition }
 
 // MakeEvent creates a valid event otherwise panics
-func MakeEvent(eventName string, qtyMin, qtyMax int, condition *Condition) *Event {
-	ev := &Event{eventName, qtyMin, qtyMax, condition}
+func MakeEvent(eventName, originalName string, qtyMin, qtyMax int, condition *Condition) *Event {
+	ev := &Event{eventName, originalName, qtyMin, qtyMax, condition}
 	ev.validate()
 	return ev
 }

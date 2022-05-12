@@ -16,7 +16,7 @@ import (
 
 type SESListener struct {
 	*antlr_parser.BaseSESParserListener
-	curEventName string
+	curEventName, curEventNameOriginal string
 
 	*ses.SES
 	groupBy    *string
@@ -63,6 +63,10 @@ func (s *SESListener) EnterEvent(ctx *antlr_parser.EventContext) {
 
 	// 1.1 Event name
 	s.curEventName = ctx.GetName().GetText()
+	if alias := ctx.GetAlias(); alias != nil { // alias check
+		s.curEventNameOriginal = s.curEventName
+		s.curEventName = alias.GetText()
+	}
 
 	// 1.2 Quantity
 	from, to := 1, 1 // default
@@ -102,7 +106,7 @@ func (s *SESListener) EnterEvent(ctx *antlr_parser.EventContext) {
 	}
 
 	// 2. Push to the current event set
-	e := ses.MakeEvent(s.curEventName, from, to, condition)
+	e := ses.MakeEvent(s.curEventName, s.curEventNameOriginal, from, to, condition)
 	s.SES.AddEvent(len(s.SES.GetSets())-1, e)
 }
 

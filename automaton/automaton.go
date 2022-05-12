@@ -210,10 +210,11 @@ func (a *Automaton) saveAcceptedEvent(e Event) {
 
 	t := e.Time()
 	a.setLastEventTime[a.curSet] = &t
+	eventName := a.resolveEventName(e)
 
 	// save capturing attributes
 	for event, attrSpecs := range a.bufferSpecs {
-		if event != e.Name() {
+		if event != eventName {
 			continue
 		}
 
@@ -245,11 +246,11 @@ func (a *Automaton) saveAcceptedEvent(e Event) {
 		a.acceptedEventIds[a.curSet] = make(map[string]EventAttrBuffer)
 	}
 
-	_, exists = a.acceptedEventIds[a.curSet][e.Name()]
+	_, exists = a.acceptedEventIds[a.curSet][eventName]
 	if !exists {
-		a.acceptedEventIds[a.curSet][e.Name()] = MakeSimpleEventAttrBuffer(a.db)
+		a.acceptedEventIds[a.curSet][eventName] = MakeSimpleEventAttrBuffer(a.db)
 	}
-	a.acceptedEventIds[a.curSet][e.Name()].Accept(e.Id())
+	a.acceptedEventIds[a.curSet][eventName].Accept(e.Id())
 }
 
 // matchEventInSet tests a given event against criteria of a given set
@@ -260,7 +261,8 @@ func (a *Automaton) matchEventInSet(e Event, set int) bool {
 	if !exists {
 		return false
 	}
-	eventCond, exists := setConds[e.Name()]
+	eventName := a.resolveEventName(e)
+	eventCond, exists := setConds[eventName]
 	if !exists {
 		return false
 	}
@@ -341,6 +343,16 @@ func (a *Automaton) fork() *Automaton {
 	}
 
 	return &fork
+}
+
+// resolveEventName returns name of the incoming event with respect to aliasing
+func (a *Automaton) resolveEventName(e Event) string {
+	for _, setEvent := range a.ses.GetSets()[a.curSet].GetEvents() {
+		if setEvent.GetOriginalName() == e.Name() {
+			return setEvent.GetName()
+		}
+	}
+	return e.Name()
 }
 
 func MakeAutomaton(s *ses.SES, db state.Db) *Automaton {

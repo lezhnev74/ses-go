@@ -19,7 +19,7 @@ ses
     ;
 
 event
-    : EVENT name=ID qty=event_qty? (WHERE where_expression)?
+    : EVENT name=ID qty=event_qty? (AS alias=ID)? (WHERE where_expression)?
     ;
 
 event_qty
@@ -105,6 +105,7 @@ THEN: T H E N;
 WHERE: W H E R E;
 AND: A N D;
 OR: O R;
+AS: A S;
 GROUP: G R O U P SPACE B Y;
 
 // Interval type Keywords
