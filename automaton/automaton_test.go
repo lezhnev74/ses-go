@@ -414,9 +414,21 @@ func TestAutomatonSerialization(t *testing.T) {
 		// empty automaton
 		{
 			`event a+ group by s`,
-			`[ {"id": "1", "name": "a", "time":1, "s": "s1"} ]`,
+			`[  ]`,
 		},
 		// once matched id
+		{
+			`event a+ group by s`,
+			`[ {"id": "1", "name": "a", "time":1, "s": "s1"} ]`,
+		},
+		// captured attr
+		{
+			`event a then event b where id=a.id group by s`,
+			`	[ 
+					{"id": "1", "name": "a", "time":1, "s": "s1"},
+					{"id": "1", "name": "b", "time":2, "s": "s1"}
+				]`,
+		},
 	}
 
 	for i, tt := range tests {

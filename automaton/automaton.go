@@ -3,6 +3,7 @@ package automaton
 import (
 	"encoding/json"
 	"strconv"
+	"strings"
 	"time"
 
 	"ses_pm_antlr/automaton/state"
@@ -485,7 +486,9 @@ func RestoreAutomaton(id uint64, ses *ses.SES, db state.Db) (restoredAutomaton *
 	// Now make a new automaton
 	restoredAutomaton = MakeAutomaton(ses, db)
 	restoredAutomaton.id = uint64(data["id"].(float64))
-	restoredAutomaton.groupBy = data["groupBy"].([]any)
+	if data["groupBy"] != nil {
+		restoredAutomaton.groupBy = data["groupBy"].([]any)
+	}
 	restoredAutomaton.failed = data["failed"].(bool)
 	restoredAutomaton.curSet = int(data["curSet"].(float64))
 
@@ -518,8 +521,20 @@ func RestoreAutomaton(id uint64, ses *ses.SES, db state.Db) (restoredAutomaton *
 		if err != nil {
 			panic(err)
 		}
+
+		if restoredAutomaton.capturedAttributes[int(i)] == nil {
+			restoredAutomaton.capturedAttributes[int(i)] = make(map[string]EventAttrBuffer)
+		}
+
 		evs := p1.(map[string]any)
 		for ev, bufState := range evs {
+			if restoredAutomaton.capturedAttributes[int(i)][ev] == nil {
+				subs := strings.SplitN(ev, ".", 2)
+				eventName := subs[0]
+				eventAttribute := subs[1]
+				restoredAutomaton.capturedAttributes[int(i)][ev] = MakeBufferFromSpec(restoredAutomaton.bufferSpecs[eventName][eventAttribute], db)
+			}
+
 			restoredAutomaton.capturedAttributes[int(i)][ev].Unserialize(bufState.(string))
 		}
 	}
