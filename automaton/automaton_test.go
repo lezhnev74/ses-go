@@ -403,3 +403,68 @@ group by session_id
 		fmt.Printf("Matching session: %s\n", a.groupBy) // duplicates are possible
 	}
 }
+
+func TestAutomatonSerialization(t *testing.T) {
+	type testData struct {
+		query      string
+		jsonEvents string
+	}
+
+	tests := []testData{
+		// empty automaton
+		{
+			`event a+ group by s`,
+			`[ {"id": "1", "name": "a", "time":1, "s": "s1"} ]`,
+		},
+		// once matched id
+	}
+
+	for i, tt := range tests {
+		t.Run(fmt.Sprintf("test %d", i), func(t *testing.T) {
+			query := tt.query
+			ses := parser.ParseSESQuery(query, time.Now())
+			db := state.MakeBadgerDb("scope1", fmt.Sprintf("%s/%s", t.TempDir(), "scope1"))
+			a := MakeAutomaton(ses, db)
+
+			// feed available events
+			var events []AnyData
+			err := json.Unmarshal([]byte(tt.jsonEvents), &events)
+			if err != nil {
+				t.Fatalf("invalid json text: %s", err)
+			}
+			for _, e := range events {
+				a.accept(&SimpleEvent{e})
+			}
+
+			// Save and restore
+			a.save()                                    // saved the automaton state
+			restored := RestoreAutomaton(a.id, ses, db) // use only automaton id to restore it from the db
+
+			// Make sure everything is equal
+			if !reflect.DeepEqual(a.id, restored.id) {
+				t.Errorf("id differs")
+			}
+			if !reflect.DeepEqual(a.groupBy, restored.groupBy) {
+				t.Errorf("groupby differs")
+			}
+			if !reflect.DeepEqual(a.failed, restored.failed) {
+				t.Errorf("failed differs")
+			}
+			if !reflect.DeepEqual(a.curSet, restored.curSet) {
+				t.Errorf("curSet differs")
+			}
+			if !reflect.DeepEqual(a.windowStart, restored.windowStart) {
+				t.Errorf("windowStart differs")
+			}
+			if !reflect.DeepEqual(a.setLastEventTime, restored.setLastEventTime) {
+				t.Errorf("setLastEventTime differs")
+			}
+			if !reflect.DeepEqual(a.capturedAttributes, restored.capturedAttributes) {
+				t.Errorf("capturedAttributes differs")
+			}
+			if !reflect.DeepEqual(a.acceptedEventIds, restored.acceptedEventIds) {
+				t.Errorf("acceptedEventIds differs")
+			}
+		})
+	}
+}

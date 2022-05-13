@@ -1,6 +1,8 @@
 package automaton
 
 import (
+	"encoding/json"
+	"strconv"
 	"time"
 
 	"ses_pm_antlr/automaton/state"
@@ -15,16 +17,20 @@ import (
 type Automaton struct {
 	db state.Db
 
-	ses                *ses.SES                               // source definition of the automaton
-	matchers           map[int]map[string]expr.BoolExpression // map matches to set events
-	bufferSpecs        map[string]map[string]attrBufferSpec   // a map from event to attr name to buffer spec, when we need to capture an attr we use this spec to make a buffer
-	failed             bool                                   // set when nothing can no longer be accepted
-	curSet             int                                    // current set index
-	capturedAttributes map[int]map[string]EventAttrBuffer     // map full attr name to buffer
-	acceptedEventIds   map[int]map[string]EventAttrBuffer     // ids per set and per event
-	setLastEventTime   map[int]*time.Time                     // remember the last event's time for each set (used in window matching)
-	groupBy            []any                                  // keep the unique value that we use to group events (populated from the initial event)
-	windowStart        *time.Time                             // first captured event's time
+	// spec:
+	ses         *ses.SES                               // source definition of the automaton
+	matchers    map[int]map[string]expr.BoolExpression // map matches to set events
+	bufferSpecs map[string]map[string]attrBufferSpec   // a map from event to attr name to buffer spec, when we need to capture an attr we use this spec to make a buffer
+
+	// state:
+	id                 uint64                             // unique id
+	failed             bool                               // set when nothing can no longer be accepted
+	curSet             int                                // current set index
+	capturedAttributes map[int]map[string]EventAttrBuffer // map full attr name to buffer
+	acceptedEventIds   map[int]map[string]EventAttrBuffer // ids per set and per event
+	setLastEventTime   map[int]*time.Time                 // remember the last event's time for each set (used in window matching)
+	groupBy            []any                              // keep the unique value that we use to group events (populated from the initial event)
+	windowStart        *time.Time                         // first captured event's time
 }
 
 // accept tests the incoming event according to automaton criteria
@@ -355,8 +361,84 @@ func (a *Automaton) resolveEventName(e Event) string {
 	return e.Name()
 }
 
+// save serializes the current state of the automaton and saves it to the db
+func (a *Automaton) save() {
+	serialized := make(map[string]any) // put all the data in here
+	serialized["id"] = a.id
+	serialized["groupBy"] = a.groupBy
+	serialized["failed"] = a.failed
+	serialized["curSet"] = a.curSet
+
+	serialized["windowStart"] = nil
+	if a.windowStart != nil {
+		tt, err := a.windowStart.MarshalText()
+		if err != nil {
+			panic(err)
+		}
+		serialized["windowStart"] = tt
+	}
+
+	setTimes := make(map[int]string)
+	for s, t := range a.setLastEventTime {
+		if t != nil {
+			tt, err := t.MarshalText()
+			if err != nil {
+				panic(err)
+			}
+			setTimes[s] = string(tt)
+		}
+	}
+	serialized["setLastEventTime"] = setTimes
+
+	capturedAttrs := make(map[int]map[string]string)
+	for s, eventBuf := range a.capturedAttributes {
+		capturedAttrs[s] = make(map[string]string)
+		for event, attrBuf := range eventBuf {
+			capturedAttrs[s][event] = attrBuf.Serialize()
+		}
+	}
+	serialized["capturedAttrs"] = capturedAttrs
+
+	acceptedEventIds := make(map[int]map[string]string)
+	for s, eventBuf := range a.acceptedEventIds {
+		acceptedEventIds[s] = make(map[string]string)
+		for event, attrBuf := range eventBuf {
+			acceptedEventIds[s][event] = attrBuf.Serialize()
+		}
+	}
+	serialized["acceptedEventIds"] = acceptedEventIds
+
+	automatonState, err := json.Marshal(serialized)
+	if err != nil {
+		panic(err)
+	}
+
+	a.db.Save(a.id, automatonState)
+}
+
+// AutomatonEnv allows to use Automaton as an env for expr evaluation
+type AutomatonEnv struct {
+	a        *Automaton
+	curEvent Event
+}
+
+func (env *AutomatonEnv) Resolve(operand ses.EventAttributeOperand) any {
+	if operand.IsCurrent { // scalar value
+		val := env.curEvent.Attribute(operand.EventAttribute)
+		return val
+	}
+
+	// captured vector value
+	val := env.a.capturedAttributes[env.a.curSet][operand.GetQualifiedAttributeName()]
+	if val == nil {
+		return vector.MakeLinkedSlice(nil).GetIterator()
+	}
+	return val.GetIterator()
+}
+
 func MakeAutomaton(s *ses.SES, db state.Db) *Automaton {
 	a := Automaton{
+		id:               db.NextId(),
 		ses:              s,
 		matchers:         make(map[int]map[string]expr.BoolExpression),
 		db:               db,
@@ -392,99 +474,75 @@ func MakeAutomaton(s *ses.SES, db state.Db) *Automaton {
 	return &a
 }
 
-// AutomatonEnv allows to use Automaton as an env for expr evaluation
-type AutomatonEnv struct {
-	a        *Automaton
-	curEvent Event
-}
-
-func (env *AutomatonEnv) Resolve(operand ses.EventAttributeOperand) any {
-	if operand.IsCurrent { // scalar value
-		val := env.curEvent.Attribute(operand.EventAttribute)
-		return val
+func RestoreAutomaton(id uint64, ses *ses.SES, db state.Db) (restoredAutomaton *Automaton) {
+	var data map[string]any
+	serializedAutomaton := db.Find(id)
+	err := json.Unmarshal(serializedAutomaton, &data)
+	if err != nil {
+		panic(err)
 	}
 
-	// captured vector value
-	val := env.a.capturedAttributes[env.a.curSet][operand.GetQualifiedAttributeName()]
-	if val == nil {
-		return vector.MakeLinkedSlice(nil).GetIterator()
+	// Now make a new automaton
+	restoredAutomaton = MakeAutomaton(ses, db)
+	restoredAutomaton.id = uint64(data["id"].(float64))
+	restoredAutomaton.groupBy = data["groupBy"].([]any)
+	restoredAutomaton.failed = data["failed"].(bool)
+	restoredAutomaton.curSet = int(data["curSet"].(float64))
+
+	if data["windowStart"] != nil {
+		n := time.Now()
+		err := n.UnmarshalText(data["windowStart"].([]byte))
+		if err != nil {
+			panic(err)
+		}
+		restoredAutomaton.windowStart = &n
 	}
-	return val.GetIterator()
-}
-
-// Runner should accept incoming event and run all available instances of automatons against it,
-// if nondeterminism found it should add forked instances to the loop
-type Runner struct {
-	db        state.Db
-	ses       *ses.SES
-	instances []*Automaton
-}
-
-// removeInstanceAt is internal function to remove an instance that is in a failed state
-// it should try to avoid extra allocations and release unused resources
-func (r *Runner) removeInstanceAt(i int) {
-	r.instances[i] = nil // free up resources
-	r.instances = append(r.instances[:i], r.instances[i+1:]...)
-}
-
-// removeInstance is internal function to remove an instance that is in a failed state
-func (r *Runner) removeInstance(a1 *Automaton) {
-	for i, a2 := range r.instances {
-		if a2 == a1 {
-			r.removeInstanceAt(i)
+	if data["setLastEventTime"] != nil {
+		m := data["setLastEventTime"].(map[string]any)
+		for s, t := range m {
+			i, err := strconv.ParseInt(s, 10, 64)
+			if err != nil {
+				panic(err)
+			}
+			n := time.Now()
+			err = n.UnmarshalText([]byte(t.(string)))
+			if err != nil {
+				panic(err)
+			}
+			restoredAutomaton.setLastEventTime[int(i)] = &n
 		}
 	}
-}
-
-// appendInstance is internal function to add a new instance to the loop (as a result of nondeterminism)
-// it should try to avoid extra allocations and release unused resources
-func (r *Runner) appendInstance(a *Automaton) {
-	r.instances = append(r.instances, a) // no check for duplication
-}
-
-// Accept pushes the event to all available automaton instances
-func (r *Runner) Accept(e Event) {
-	// Every event starts a new potential thread
-	startInstance := MakeAutomaton(r.ses, r.db)
-	r.appendInstance(startInstance)
-
-	i := 0
-	for {
-		if i == len(r.instances) {
-			break // oob
+	capturedAttrs := data["capturedAttrs"].(map[string]any)
+	for s, p1 := range capturedAttrs {
+		i, err := strconv.ParseInt(s, 10, 64)
+		if err != nil {
+			panic(err)
 		}
-		_, isFailed, forks := r.instances[i].accept(e)
-		for _, f := range forks {
-			r.appendInstance(f)
-		}
-		if isFailed {
-			r.removeInstanceAt(i)
-			continue
-		}
-		i = i + 1
-	}
-
-	// startInstance is removed if it did not accept the event
-	if len(startInstance.GetAcceptedEventIdsAsSlice()) == 0 {
-		r.removeInstance(startInstance)
-	}
-}
-
-// GetAcceptingAutomatons returns automatons that are in accepting state
-func (r *Runner) GetAcceptingAutomatons() []*Automaton {
-	accepted := make([]*Automaton, 0)
-	for _, a := range r.instances {
-		if a.IsAcceptingState() {
-			accepted = append(accepted, a)
+		evs := p1.(map[string]any)
+		for ev, bufState := range evs {
+			restoredAutomaton.capturedAttributes[int(i)][ev].Unserialize(bufState.(string))
 		}
 	}
-	return accepted
-}
 
-func MakeRunner(ses *ses.SES, db state.Db) *Runner {
-	return &Runner{
-		ses:       ses,
-		instances: make([]*Automaton, 0),
-		db:        db,
+	restoredAutomaton.acceptedEventIds = make(map[int]map[string]EventAttrBuffer)
+	acceptedEventIds := data["acceptedEventIds"].(map[string]any)
+	for s, p1 := range acceptedEventIds {
+		i, err := strconv.ParseInt(s, 10, 64)
+		if err != nil {
+			panic(err)
+		}
+		if _, exists := restoredAutomaton.acceptedEventIds[int(i)]; !exists {
+			restoredAutomaton.acceptedEventIds[int(i)] = make(map[string]EventAttrBuffer)
+		}
+
+		evs := p1.(map[string]any)
+		for ev, bufState := range evs {
+			if _, exists := restoredAutomaton.acceptedEventIds[int(i)][ev]; !exists {
+				restoredAutomaton.acceptedEventIds[int(i)][ev] = MakeSimpleEventAttrBuffer(db)
+			}
+			restoredAutomaton.acceptedEventIds[int(i)][ev].Unserialize(bufState.(string))
+		}
 	}
+
+	return
 }

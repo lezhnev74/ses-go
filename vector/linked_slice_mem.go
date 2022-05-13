@@ -22,6 +22,9 @@ func (l *LinkedSliceMem) Serialize() []byte {
 	return encodedSlice
 }
 
+func (l *LinkedSliceMem) GetId() uint64   { return l.id }
+func (l *LinkedSliceMem) GetDb() state.Db { return l.db }
+
 func (l *LinkedSliceMem) Append(v any) {
 	l.data = append(l.data, v)
 	l.save()
@@ -77,6 +80,11 @@ func MakeLinkedSliceMem(db state.Db) *LinkedSliceMem {
 	}
 	db.SaveNode(s.id, s.prev, s.Serialize())
 	return s
+}
+
+func FindLinkedSliceMemById(id uint64, db state.Db) *LinkedSliceMem {
+	p, s := db.FindNode(id)
+	return Deserialize(id, p, s, db)
 }
 
 func Deserialize(id, prev uint64, state []byte, db state.Db) *LinkedSliceMem {

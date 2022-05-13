@@ -1,6 +1,9 @@
 package automaton
 
 import (
+	"encoding/json"
+	"fmt"
+
 	"ses_pm_antlr/automaton/state"
 	"ses_pm_antlr/ses"
 	"ses_pm_antlr/vector"
@@ -12,6 +15,8 @@ type EventAttrBuffer interface {
 	Accept(value any)             // store a new matched value to keep for later (store accordingly to the buffer impl)
 	GetIterator() vector.Iterator // return an iterator (reads the next value on each call)
 	Spawn() EventAttrBuffer       // start a new buffer with the same type (may link to the previous buffer for Data integrity)
+	Serialize() string            // save the state of the buffer
+	Unserialize(string)           // load the state of the buffer to the instance
 }
 
 // SimpleEventAttrBuffer keeps all appending values, no check for duplication or anything
@@ -22,6 +27,19 @@ type SimpleEventAttrBuffer struct {
 func MakeSimpleEventAttrBuffer(db state.Db) *SimpleEventAttrBuffer {
 	slice := vector.MakeLinkedSliceMem(db)
 	return &SimpleEventAttrBuffer{slice}
+}
+
+func (b *SimpleEventAttrBuffer) Serialize() string {
+	return fmt.Sprintf("%d", b.values.GetId())
+}
+
+func (b *SimpleEventAttrBuffer) Unserialize(s string) {
+	var id uint64
+	_, err := fmt.Sscanf(s, "%d", &id)
+	if err != nil {
+		panic(err)
+	}
+	b.values = vector.FindLinkedSliceMemById(id, b.values.GetDb())
 }
 
 func (b *SimpleEventAttrBuffer) Accept(value any) {
@@ -50,6 +68,19 @@ type UniqueEventAttrBuffer struct {
 func MakeUniqueEventAttrBuffer(db state.Db) *UniqueEventAttrBuffer {
 	slice := vector.MakeLinkedSliceMem(db)
 	return &UniqueEventAttrBuffer{slice}
+}
+
+func (b *UniqueEventAttrBuffer) Serialize() string {
+	return fmt.Sprintf("%d", b.values.GetId())
+}
+
+func (b *UniqueEventAttrBuffer) Unserialize(s string) {
+	var id uint64
+	_, err := fmt.Sscanf(s, "%d", &id)
+	if err != nil {
+		panic(err)
+	}
+	b.values = vector.FindLinkedSliceMemById(id, b.values.GetDb())
 }
 
 func (b *UniqueEventAttrBuffer) Accept(value any) {
@@ -91,6 +122,23 @@ func MakeFirstEventAttrBuffer() *FirstEventAttrBuffer {
 	return &FirstEventAttrBuffer{}
 }
 
+func (b *FirstEventAttrBuffer) Serialize() string {
+	s, err := json.Marshal(b.value)
+	if err != nil {
+		panic(err)
+	}
+	return string(s)
+}
+
+func (b *FirstEventAttrBuffer) Unserialize(s string) {
+	var val any
+	err := json.Unmarshal([]byte(s), val)
+	if err != nil {
+		panic(err)
+	}
+	b.value = val
+}
+
 func (b *FirstEventAttrBuffer) Accept(value any) {
 	if b.value != nil {
 		return // value already present
@@ -123,6 +171,23 @@ type LastEventAttrBuffer struct {
 
 func MakeLastEventAttrBuffer() *LastEventAttrBuffer {
 	return &LastEventAttrBuffer{}
+}
+
+func (b *LastEventAttrBuffer) Serialize() string {
+	s, err := json.Marshal(b.value)
+	if err != nil {
+		panic(err)
+	}
+	return string(s)
+}
+
+func (b *LastEventAttrBuffer) Unserialize(s string) {
+	var val any
+	err := json.Unmarshal([]byte(s), val)
+	if err != nil {
+		panic(err)
+	}
+	b.value = val
 }
 
 func (b *LastEventAttrBuffer) Accept(value any) {

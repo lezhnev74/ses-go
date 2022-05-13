@@ -53,3 +53,18 @@ func TestSliceIteration(t *testing.T) {
 		})
 	}
 }
+
+func TestSliceSerialization(t *testing.T) {
+	db := state.MakeBadgerDb("scope", "")
+	s1 := MakeLinkedSliceMem(db)
+	s1.Append("1")
+	s2 := s1.Spawn()
+	s2.Append("2")
+	s3 := FindLinkedSliceMemById(s2.id, db)
+
+	expectedSlice := s2.GetIterator().ToSlice()
+	actualSlice := s3.GetIterator().ToSlice()
+	if !reflect.DeepEqual(expectedSlice, actualSlice) {
+		t.Errorf("%v/%[1]T not equals to %v/%[2]T", actualSlice, expectedSlice)
+	}
+}
