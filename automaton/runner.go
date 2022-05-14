@@ -52,7 +52,7 @@ func (r *Runner) Accept(e Event) {
 		}
 		if isFailed {
 			r.removeInstanceAt(i)
-			continue
+			continue // reuse the current i as the source slice got reduced by 1
 		}
 		i = i + 1
 	}
